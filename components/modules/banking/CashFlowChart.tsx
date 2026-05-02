@@ -65,7 +65,7 @@ export function CashFlowChart() {
             />
             <Tooltip 
               contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
-              formatter={(value: number) => [`$${value.toLocaleString()}`, undefined]}
+              formatter={(value: any) => [`$${Number(value).toLocaleString()}`, undefined]}
             />
             <Area 
               type="monotone" 
