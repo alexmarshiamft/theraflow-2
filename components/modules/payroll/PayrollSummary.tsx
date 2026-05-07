@@ -5,6 +5,8 @@ import { formatCurrency, formatDate } from '@/lib/utils';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
+import { useState } from 'react';
+import { RunPayrollModal } from './RunPayrollModal';
 
 interface PayrollRun {
   id: string;
@@ -68,6 +70,8 @@ const statusConfig = {
 };
 
 export function PayrollSummary() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const ytdGross = 312_500;
   const ytdTaxes = 79_300;
   const ytdNet = 233_200;
@@ -104,8 +108,8 @@ export function PayrollSummary() {
       <div className="section-card overflow-hidden">
         <div className="flex items-center justify-between border-b border-gray-100 p-5">
           <h3 className="text-base font-semibold text-gray-900">Payroll Runs</h3>
-          <Button size="sm">
-            <Play className="h-3.5 w-3.5" /> Run Payroll
+          <Button size="sm" onClick={() => setIsModalOpen(true)} className="bg-brand-600 hover:bg-brand-700">
+            <Play className="h-3.5 w-3.5 mr-1.5" /> Run Payroll (AI Audit)
           </Button>
         </div>
         <div className="divide-y divide-gray-100">
@@ -135,7 +139,7 @@ export function PayrollSummary() {
                   <p className="font-semibold text-emerald-600">{formatCurrency(run.netPay)}</p>
                 </div>
                 {run.status === 'draft' && (
-                  <Button size="sm" variant="outline">
+                  <Button size="sm" variant="outline" onClick={() => setIsModalOpen(true)}>
                     Review
                   </Button>
                 )}
@@ -144,6 +148,12 @@ export function PayrollSummary() {
           })}
         </div>
       </div>
+
+      <RunPayrollModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        period="May 16–31, 2024"
+      />
     </div>
   );
 }

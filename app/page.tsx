@@ -6,9 +6,12 @@ import {
   CheckCircle2,
   CreditCard,
   FileText,
+  Heart,
   Lock,
   Shield,
   Star,
+  TrendingUp,
+  Users,
   Zap,
 } from 'lucide-react';
 
@@ -94,6 +97,7 @@ export default function LandingPage() {
           <div className="hidden items-center gap-8 md:flex">
             <a href="#features" className="text-sm text-gray-600 hover:text-gray-900">Features</a>
             <a href="#compliance" className="text-sm text-gray-600 hover:text-gray-900">Compliance</a>
+            <a href="#pricing" className="text-sm text-gray-600 hover:text-gray-900">Pricing</a>
             <a href="#testimonials" className="text-sm text-gray-600 hover:text-gray-900">Testimonials</a>
           </div>
           <div className="flex items-center gap-3">
@@ -178,6 +182,55 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Advantage Section */}
+      <section className="bg-gray-50 py-20 lg:py-28 border-b border-gray-100">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-3xl text-center mb-16">
+            <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+              Transform overhead into impact
+            </h2>
+            <p className="mt-4 text-lg text-gray-600 leading-relaxed">
+              Theraflow aligns the incentives of everyone in your practice, turning dead administrative hours into high-margin clinical revenue.
+            </p>
+          </div>
+          
+          <div className="grid gap-8 lg:grid-cols-3">
+            {/* Value Prop 1 */}
+            <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm hover:shadow-md transition-shadow">
+              <div className="mb-4 inline-flex rounded-xl bg-emerald-50 p-3 text-emerald-600">
+                <TrendingUp className="h-6 w-6" />
+              </div>
+              <h3 className="mb-3 text-xl font-bold text-gray-900">Maximize Profit Margins</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Non-clinical hours cost you money. Direct clinical hours make you money. By cutting your team&apos;s paperwork burden in half, Theraflow unlocks the capacity to bill <strong className="text-gray-900 font-semibold">15-20% more annual revenue</strong> without hiring a single new therapist.
+              </p>
+            </div>
+
+            {/* Value Prop 2 */}
+            <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm hover:shadow-md transition-shadow">
+              <div className="mb-4 inline-flex rounded-xl bg-brand-50 p-3 text-brand-600">
+                <Users className="h-6 w-6" />
+              </div>
+              <h3 className="mb-3 text-xl font-bold text-gray-900">The Win-Win-Win</h3>
+              <p className="text-gray-600 leading-relaxed">
+                <strong className="text-gray-900 font-semibold">Associates</strong> spend less time on admin and get licensed faster. <strong className="text-gray-900 font-semibold">Supervisors</strong> spend zero time chasing notes and focus on mentorship. <strong className="text-gray-900 font-semibold">Owners</strong> maximize their margins.
+              </p>
+            </div>
+
+            {/* Value Prop 3 */}
+            <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm hover:shadow-md transition-shadow">
+              <div className="mb-4 inline-flex rounded-xl bg-purple-50 p-3 text-purple-600">
+                <Heart className="h-6 w-6" />
+              </div>
+              <h3 className="mb-3 text-xl font-bold text-gray-900">Expand Community Care</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Therapists burn out from paperwork, not trauma. Curing burnout instantly expands your clinic&apos;s capacity, allowing your team to bring <strong className="text-gray-900 font-semibold">nearly 100 more clients</strong> off your waitlist and into active care.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Features */}
       <section id="features" className="py-20 lg:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -253,6 +306,94 @@ export default function LandingPage() {
                   <p className="font-semibold text-white">{label}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section id="pricing" className="py-20 lg:py-28 bg-gray-50 border-y border-gray-100">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+              Simple, transparent pricing
+            </h2>
+            <p className="mt-4 text-lg text-gray-600">
+              No hidden fees. Premium features built-in. Start your 30-day free trial today.
+            </p>
+          </div>
+
+          <div className="mt-16 grid gap-8 lg:grid-cols-2 lg:gap-12 max-w-5xl mx-auto">
+            {/* Solo Tier */}
+            <div className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm flex flex-col hover:shadow-md transition-shadow duration-300">
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-gray-900">Solo Practice</h3>
+                <p className="mt-2 text-gray-500">Perfect for independent therapists and solo practitioners.</p>
+              </div>
+              <div className="mb-6 flex items-baseline text-5xl font-extrabold text-gray-900">
+                $89
+                <span className="ml-1 text-xl font-medium text-gray-500">/mo</span>
+              </div>
+              <ul className="space-y-4 mb-8 flex-1">
+                {[
+                  '1 Licensed Provider',
+                  'Unlimited active clients',
+                  'Full EHR & Treatment Planning',
+                  'Integrated Telehealth',
+                  'Basic AI Documentation Assistant',
+                  'Business Banking Account',
+                ].map((feature) => (
+                  <li key={feature} className="flex items-center gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-emerald-500 flex-shrink-0" />
+                    <span className="text-gray-700 font-medium">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/auth/signup"
+                className="w-full inline-flex justify-center rounded-xl bg-brand-50 px-4 py-3.5 text-base font-bold text-brand-700 hover:bg-brand-100 transition-colors"
+              >
+                Start Free Trial
+              </Link>
+            </div>
+
+            {/* Group Tier */}
+            <div className="rounded-3xl border-2 border-brand-500 bg-white p-8 shadow-xl relative flex flex-col hover:shadow-2xl transition-shadow duration-300">
+              <div className="absolute top-0 right-8 -translate-y-1/2">
+                <span className="inline-flex rounded-full bg-brand-500 px-4 py-1 text-sm font-bold tracking-wide text-white uppercase shadow-sm">
+                  Most Popular
+                </span>
+              </div>
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-gray-900">Group Practice</h3>
+                <p className="mt-2 text-gray-500">For growing teams requiring advanced administration.</p>
+              </div>
+              <div className="mb-6 flex items-baseline text-5xl font-extrabold text-gray-900">
+                $149
+                <span className="ml-1 text-xl font-medium text-gray-500">/mo</span>
+              </div>
+              <p className="text-sm font-medium text-brand-600 mb-6 border-b border-gray-100 pb-6">+ $49/mo per additional clinician</p>
+              <ul className="space-y-4 mb-8 flex-1">
+                {[
+                  'Everything in Solo, plus:',
+                  'Unlimited administrative staff (Free)',
+                  'Automated Payroll & Tax Filing',
+                  'Insurance Clearinghouse (Auto-ERAs)',
+                  'Advanced AI "Auto-Note" Generation',
+                  'Priority 24/7 Phone Support',
+                ].map((feature, i) => (
+                  <li key={i} className="flex items-center gap-3">
+                    <CheckCircle2 className={`h-5 w-5 flex-shrink-0 ${i === 0 ? 'text-brand-300' : 'text-brand-500'}`} />
+                    <span className={i === 0 ? "font-bold text-gray-900" : "text-gray-700 font-medium"}>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/auth/signup"
+                className="w-full inline-flex justify-center rounded-xl bg-brand-600 px-4 py-3.5 text-base font-bold text-white hover:bg-brand-700 shadow-md shadow-brand-200 transition-colors"
+              >
+                Start Free Trial
+              </Link>
             </div>
           </div>
         </div>

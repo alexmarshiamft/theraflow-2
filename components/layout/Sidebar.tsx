@@ -13,6 +13,7 @@ import {
   Settings,
   Users,
   X,
+  Rocket,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -26,6 +27,12 @@ const navItems = [
     label: 'EHR',
     href: '/ehr',
     icon: Activity,
+    group: 'Clinical',
+  },
+  {
+    label: 'Supervision',
+    href: '/supervision',
+    icon: ClipboardList,
     group: 'Clinical',
   },
   {
@@ -45,6 +52,12 @@ const navItems = [
     href: '/tax',
     icon: FileText,
     group: 'Financial',
+  },
+  {
+    label: 'Intelligence',
+    href: '/intelligence',
+    icon: Activity,
+    group: 'Clinical',
   },
 ];
 
@@ -102,6 +115,17 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             >
               <LayoutDashboard className="h-4 w-4" />
               Dashboard
+            </Link>
+            
+            <Link
+              href="/platform"
+              className={cn(
+                'sidebar-link mt-1 text-brand-600',
+                pathname === '/platform' && 'active'
+              )}
+            >
+              <Rocket className="h-4 w-4" />
+              Platform Showcase
             </Link>
           </div>
 

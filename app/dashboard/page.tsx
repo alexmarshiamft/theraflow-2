@@ -39,6 +39,9 @@ const recentActivity = [
   { icon: Building2, label: 'Account reconciliation completed — May', time: '3 days ago', color: 'text-amber-600 bg-amber-50' },
 ];
 
+import { AutonomousPipeline } from '@/components/ui/AutonomousPipeline';
+import { AIFixIssues } from '@/components/ui/AIFixIssues';
+
 export default function DashboardPage() {
   const { clients, appointments, employees, claims } = useStore();
 
@@ -83,7 +86,9 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="page-title">Good morning, Dr. Sarah Jenkins 👋</h1>
-            <p className="page-subtitle">Friday, May 24, 2024 · Here&apos;s your practice overview</p>
+            <p className="page-subtitle" suppressHydrationWarning>
+              {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })} · Here&apos;s your practice overview
+            </p>
           </div>
           <div className="flex items-center gap-3">
             <span className="hipaa-badge">
@@ -99,6 +104,10 @@ export default function DashboardPage() {
             </Button>
           </div>
         </div>
+      </div>
+
+      <div className="px-8 pb-6">
+        <AutonomousPipeline />
       </div>
 
       {/* AI Insight Card */}
@@ -187,31 +196,7 @@ export default function DashboardPage() {
 
       {/* Alerts */}
       <div className="mb-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Action Required</CardTitle>
-            <span className="text-xs text-gray-400">{alerts.length} items</span>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {alerts.map((alert, i) => (
-                <Link
-                  key={i}
-                  href={alert.href}
-                  className="flex items-center gap-3 rounded-lg border border-gray-100 p-3 hover:bg-gray-50 transition-colors"
-                >
-                  {alert.type === 'warning' && <AlertCircle className="h-4 w-4 flex-shrink-0 text-amber-500" />}
-                  {alert.type === 'info' && <AlertCircle className="h-4 w-4 flex-shrink-0 text-brand-500" />}
-                  {alert.type === 'success' && <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-emerald-500" />}
-                  <span className="flex-1 text-sm text-gray-700">{alert.message}</span>
-                  <Badge variant={alert.type === 'warning' ? 'warning' : alert.type === 'success' ? 'success' : 'info'}>
-                    {alert.module}
-                  </Badge>
-                </Link>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <AIFixIssues />
       </div>
 
       {/* Lower grid */}

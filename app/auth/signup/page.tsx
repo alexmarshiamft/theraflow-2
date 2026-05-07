@@ -13,6 +13,8 @@ export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  const [agreeBaa, setAgreeBaa] = useState(false);
   const router = useRouter();
   const { showToast } = useToast();
 
@@ -67,6 +69,48 @@ export default function SignupPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 minLength={6}
               />
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex items-start">
+              <div className="flex h-5 items-center">
+                <input
+                  id="terms"
+                  name="terms"
+                  type="checkbox"
+                  required
+                  checked={agreeTerms}
+                  onChange={(e) => setAgreeTerms(e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-600"
+                />
+              </div>
+              <div className="ml-3 text-sm">
+                <label htmlFor="terms" className="font-medium text-gray-700">
+                  Terms & Privacy Policy
+                </label>
+                <p className="text-gray-500">I agree to the <Link href="/legal/terms" className="text-brand-600 hover:underline">Terms of Service</Link> and Privacy Policy.</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start">
+              <div className="flex h-5 items-center">
+                <input
+                  id="baa"
+                  name="baa"
+                  type="checkbox"
+                  required
+                  checked={agreeBaa}
+                  onChange={(e) => setAgreeBaa(e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-600"
+                />
+              </div>
+              <div className="ml-3 text-sm">
+                <label htmlFor="baa" className="font-medium text-gray-700">
+                  Business Associate Agreement (BAA)
+                </label>
+                <p className="text-gray-500">I agree to the <Link href="/legal/baa" className="text-brand-600 hover:underline">BAA</Link> for handling Protected Health Information (PHI) and assume liability for data uploaded to this platform.</p>
+              </div>
             </div>
           </div>
 

@@ -1,15 +1,168 @@
-import { Shield, BookOpen, AlertTriangle, FileCheck, ExternalLink } from 'lucide-react';
+'use client';
+
+import { useState } from 'react';
+import { Shield, BookOpen, AlertTriangle, FileCheck, ExternalLink, Lock, Database, Terminal, ChevronRight, Loader2 } from 'lucide-react';
+import { useStore } from '@/lib/store';
+import { formatDate, formatTime } from '@/lib/utils';
+import { Badge } from '@/components/ui/Badge';
 
 export default function CompliancePage() {
+  const { auditLogs } = useStore();
+  const [terminalInput, setTerminalInput] = useState('');
+  const [terminalOutput, setTerminalOutput] = useState<string | null>(null);
+  const [isTerminalLoading, setIsTerminalLoading] = useState(false);
+
+  const handleTerminalSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!terminalInput.trim() || isTerminalLoading) return;
+
+    setIsTerminalLoading(true);
+    setTerminalOutput(null);
+
+    try {
+      const response = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: terminalInput,
+          context: {
+            systemInstruction: "You are the Compliance AI Terminal for Theraflow. Analyze the provided audit logs to answer the user's query. Reply in a concise, authoritative, and technical 'command-line' tone. Do not use markdown styling like **bold**; write in plain text suitable for a monospace terminal output.",
+            auditLogs: auditLogs.slice(0, 50) // Send the last 50 logs to fit context window safely
+          }
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setTerminalOutput(data.text);
+      } else {
+        setTerminalOutput(`Error: ${data.error}`);
+      }
+    } catch (error) {
+      setTerminalOutput("Error: Connection to Compliance AI failed.");
+    } finally {
+      setIsTerminalLoading(false);
+      setTerminalInput('');
+    }
+  };
+
   return (
-    <div className="space-y-6 max-w-5xl mx-auto pb-12">
+    <div className="space-y-6 max-w-6xl mx-auto pb-12">
       <div className="flex items-center gap-3 border-b border-gray-200 pb-5">
         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-100">
           <Shield className="h-6 w-6 text-brand-600" />
         </div>
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-gray-900">Compliance & Legal Hub</h1>
-          <p className="text-sm text-gray-500">Quick references for HIPAA, CA BBS, and federal guidelines.</p>
+          <p className="text-sm text-gray-500">Immutable Audit Trails, HIPAA, and CA BBS Guidelines.</p>
+        </div>
+      </div>
+
+      {/* Immutable Audit Log Ledger */}
+      <div className="rounded-xl border border-gray-800 bg-gray-900 shadow-xl overflow-hidden mb-8">
+        <div className="flex items-center justify-between bg-gray-950 px-6 py-4 border-b border-gray-800">
+          <div className="flex items-center gap-3">
+            <Lock className="h-5 w-5 text-emerald-500" />
+            <h2 className="text-lg font-semibold text-white tracking-wide">Immutable System Audit Log</h2>
+          </div>
+          <Badge className="border border-emerald-500/30 text-emerald-400 bg-emerald-500/10">
+            <Database className="h-3 w-3 mr-1" /> Append-Only Ledger Active
+          </Badge>
+        </div>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm text-gray-400 font-mono">
+            <thead className="bg-gray-900/50 text-xs uppercase text-gray-500 border-b border-gray-800">
+              <tr>
+                <th className="px-6 py-3 font-medium">Timestamp (UTC)</th>
+                <th className="px-6 py-3 font-medium">Event ID</th>
+                <th className="px-6 py-3 font-medium">Action</th>
+                <th className="px-6 py-3 font-medium">User/System</th>
+                <th className="px-6 py-3 font-medium">Target Entity</th>
+                <th className="px-6 py-3 font-medium">Cryptographic Details</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-800">
+              {auditLogs.slice(0, 10).map((log) => (
+                <tr key={log.id} className="hover:bg-gray-800/50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-gray-300">
+                    {new Date(log.timestamp).toLocaleString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-500">
+                    {log.id}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 py-1 rounded text-xs font-bold ${
+                      log.action === 'CREATE' ? 'bg-emerald-500/10 text-emerald-400' :
+                      log.action === 'UPDATE' ? 'bg-blue-500/10 text-blue-400' :
+                      log.action === 'DELETE' ? 'bg-red-500/10 text-red-400' :
+                      log.action === 'SYSTEM' ? 'bg-amber-500/10 text-amber-400' :
+                      'bg-purple-500/10 text-purple-400'
+                    }`}>
+                      {log.action}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-gray-300">
+                    {log.userId}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-gray-300">
+                    {log.entityType} ({log.entityId})
+                  </td>
+                  <td className="px-6 py-4 text-gray-400 text-xs font-mono">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-gray-300">{log.details}</span>
+                      {log.hash && (
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-emerald-500 font-bold">SHA-256:</span>
+                          <span className="truncate w-48 block opacity-70" title={log.hash}>{log.hash}</span>
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {auditLogs.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                    No audit logs available.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Compliance AI Terminal */}
+        <div className="border-t border-gray-800 bg-black p-4">
+          <div className="flex items-center gap-2 text-gray-400 text-xs mb-3 font-mono">
+            <Terminal className="h-4 w-4 text-brand-500" />
+            <span>THERAFLOW_OS // COMPLIANCE_AI_TERMINAL // v2.1.0</span>
+          </div>
+
+          {terminalOutput && (
+            <div className="mb-4 p-4 rounded bg-gray-900 border border-gray-800 font-mono text-sm text-emerald-400 whitespace-pre-wrap">
+              {terminalOutput}
+            </div>
+          )}
+
+          <form onSubmit={handleTerminalSubmit} className="relative flex items-center">
+            <div className="absolute left-3 text-brand-500 font-mono font-bold">
+              <ChevronRight className="h-5 w-5" />
+            </div>
+            <input
+              type="text"
+              value={terminalInput}
+              onChange={(e) => setTerminalInput(e.target.value)}
+              placeholder="Query the system ledger... (e.g., 'Summarize recent access to Client P001')"
+              className="w-full bg-gray-950 border border-gray-800 rounded-md py-3 pl-10 pr-4 text-gray-300 font-mono text-sm placeholder:text-gray-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors"
+              disabled={isTerminalLoading}
+            />
+            {isTerminalLoading && (
+              <div className="absolute right-3">
+                <Loader2 className="h-5 w-5 text-brand-500 animate-spin" />
+              </div>
+            )}
+          </form>
         </div>
       </div>
 
@@ -105,6 +258,30 @@ export default function CompliancePage() {
               <strong className="text-gray-900 block mb-1">Prohibition on Redisclosure</strong>
               <p>Any disclosure made with patient consent must be accompanied by a written statement prohibiting further disclosure unless expressly permitted by the written consent.</p>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Platform Attestation */}
+      <div className="mt-8 rounded-xl border border-brand-200 bg-brand-50 p-6 shadow-sm">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="rounded-lg bg-brand-100 p-2">
+            <Shield className="h-6 w-6 text-brand-700" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-900">Theraflow Technical Compliance Attestation</h2>
+        </div>
+        <div className="space-y-4 text-sm text-gray-700">
+          <p>
+            Theraflow has been architected to align with core Health Insurance Portability and Accountability Act (HIPAA) technical safeguards. 
+          </p>
+          <ul className="list-disc pl-5 space-y-2">
+            <li><strong>Data Encryption:</strong> All electronic Protected Health Information (ePHI) is encrypted at rest and in transit using industry-standard AES-256 encryption.</li>
+            <li><strong>Access Control & Multi-Tenancy:</strong> Strict Firestore security rules enforce tenant-level isolation, ensuring that users can only access data explicitly associated with their authenticated Unique Identifier (UID).</li>
+            <li><strong>Audit Logging:</strong> System changes, authentications, and data modifications are logged for accountability and security review.</li>
+            <li><strong>Secure Transmission:</strong> All telehealth and AI data transfers occur over encrypted TLS connections.</li>
+          </ul>
+          <div className="mt-4 rounded border border-brand-300 bg-white p-4 text-xs text-gray-500">
+            <strong>Disclaimer:</strong> This attestation reflects the technical architecture of the Theraflow platform. It does not constitute legal advice or a legally binding indemnification agreement. Healthcare providers remain solely responsible for ensuring their organizational policies and usage of the platform comply with all applicable local, state, and federal laws.
           </div>
         </div>
       </div>

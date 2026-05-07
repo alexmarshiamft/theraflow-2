@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronLeft, ChevronRight, Clock, User, Video } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, User, Video, Mic, Plus, Sparkles, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { formatTime } from '@/lib/utils';
 import { cn } from '@/lib/utils';
@@ -9,8 +9,8 @@ import { useStore, Appointment } from '@/lib/store';
 import { useToast } from '@/lib/toast';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, Sparkles, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { AIScribeModal } from './AIScribeModal';
 
 const statusConfig = {
   scheduled: { variant: 'default' as const, label: 'Scheduled' },
@@ -39,6 +39,9 @@ export function AppointmentCalendar() {
   const [newClient, setNewClient] = useState('');
   const [newReason, setNewReason] = useState('');
   const [generatingAppt, setGeneratingAppt] = useState<string | null>(null);
+  
+  const [scribeOpen, setScribeOpen] = useState(false);
+  const [scribeAppt, setScribeAppt] = useState<Appointment | null>(null);
   
   const [noteModalOpen, setNoteModalOpen] = useState(false);
   const [draftedNote, setDraftedNote] = useState('');
@@ -214,6 +217,21 @@ export function AppointmentCalendar() {
                     </Button>
                   </div>
                 )}
+                {/* Ambient Scribe Button */}
+                <div className="mt-2 flex items-center gap-2">
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    className="border-gray-200 text-gray-700 hover:bg-brand-50 hover:text-brand-700 hover:border-brand-200"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setScribeAppt(appt);
+                      setScribeOpen(true);
+                    }}
+                  >
+                    <Mic className="h-3.5 w-3.5 mr-1.5" /> Ambient Scribe
+                  </Button>
+                </div>
               </div>
               <div className="flex-shrink-0 mt-1">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white border border-gray-200">
@@ -345,6 +363,18 @@ export function AppointmentCalendar() {
           </div>
         </div>
       )}
+
+      {/* AI Ambient Scribe Modal */}
+      <AIScribeModal 
+        isOpen={scribeOpen}
+        onClose={() => {
+          setScribeOpen(false);
+          setScribeAppt(null);
+        }}
+        appointmentId={scribeAppt?.id}
+        clientName={scribeAppt?.client}
+        appointmentType={scribeAppt?.type}
+      />
     </div>
   );
 }

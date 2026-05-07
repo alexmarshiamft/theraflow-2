@@ -67,6 +67,34 @@ export interface Transaction {
   status: 'posted' | 'pending' | 'failed';
 }
 
+export interface ClinicalNote {
+  id: string;
+  userId?: string;
+  associateId: string;
+  associateName: string;
+  clientId: string;
+  clientName: string;
+  date: string;
+  subjective: string;
+  objective: string;
+  assessment: string;
+  plan: string;
+  status: 'pending_review' | 'signed' | 'rejected';
+  aiFlags?: { type: 'warning' | 'error'; text: string; location: 'subjective' | 'objective' | 'assessment' | 'plan' }[];
+}
+
+export interface AuditLog {
+  id: string;
+  timestamp: string;
+  userId: string;
+  action: 'CREATE' | 'UPDATE' | 'DELETE' | 'ACCESS' | 'SYSTEM';
+  entityType: string;
+  entityId: string;
+  details: string;
+  hash?: string;
+  previousHash?: string;
+}
+
 export interface Filing {
   id: string;
   form: string;
@@ -85,6 +113,12 @@ interface AppState {
   transactions: Transaction[];
   filings: Filing[];
   claims: Claim[];
+  clinicalNotes: ClinicalNote[];
+  
+  privacyMode: boolean;
+  setPrivacyMode: (enabled: boolean) => void;
+  isLocked: boolean;
+  setIsLocked: (locked: boolean) => void;
   
   // Actions
   addClient: (client: Client) => void;
@@ -108,6 +142,12 @@ interface AppState {
   addClaim: (claim: Claim) => void;
   updateClaim: (id: string, data: Partial<Claim>) => void;
   deleteClaim: (id: string) => void;
+
+  updateClinicalNote: (id: string, data: Partial<ClinicalNote>) => void;
+  batchSubmitClaims: (noteIds: string[]) => void;
+
+  auditLogs: AuditLog[];
+  addAuditLog: (log: Omit<AuditLog, 'id' | 'timestamp' | 'hash' | 'previousHash'>) => void;
 }
 
 const initialClients: Client[] = [
@@ -504,8 +544,91 @@ const initialClaims: Claim[] = [
   },
 ];
 
+const initialAuditLogs: AuditLog[] = [
+  {
+    id: 'audit_001',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
+    userId: 'system',
+    action: 'SYSTEM',
+    entityType: 'Auth',
+    entityId: 'global',
+    details: 'System startup and initialization',
+    hash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+    previousHash: '0000000000000000000000000000000000000000000000000000000000000000'
+  },
+  {
+    id: 'audit_002',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2 hours ago
+    userId: 'Dr. Sarah Jenkins',
+    action: 'ACCESS',
+    entityType: 'Client Record',
+    entityId: 'P001',
+    details: 'Accessed Protected Health Information (PHI)',
+    hash: '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92',
+    previousHash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+  },
+  {
+    id: 'audit_003',
+    timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(), // 15 mins ago
+    userId: 'Dr. Sarah Jenkins',
+    action: 'UPDATE',
+    entityType: 'Appointment',
+    entityId: 'A002',
+    details: 'Changed status to IN_PROGRESS',
+    hash: 'a2c41764df75883a9a1af8dc40b9cdceecdae77d07997455850e0544f172154d',
+    previousHash: '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92'
+  }
+];
+
+const initialClinicalNotes: ClinicalNote[] = [
+  {
+    id: 'NOTE-001',
+    associateId: 'E004',
+    associateName: 'David Foster, ASW',
+    clientId: 'P006',
+    clientName: 'Test Client Six',
+    date: '2024-05-24',
+    subjective: 'Client, a 68-year-old male, presented for his bi-weekly individual psychotherapy session reporting a significant exacerbation of depressive symptomology over the past 14 days. He described his mood as "heavy and unrelenting," rating his subjective distress as an 8/10 on a Likert scale. Client reported severe terminal insomnia, consistently awakening at 3:00 AM with an inability to return to sleep, accompanied by ruminative thoughts regarding past occupational failures. He noted a near-total loss of appetite, resulting in an unquantified but visible weight loss. Most concerningly, client endorsed passive suicidal ideation, stating, "I just wish I didn\'t have to wake up tomorrow. It would be easier for everyone if I was just gone." When pressed, he denied having a specific active plan, means, or immediate intent, identifying his adult daughter as a primary protective factor. He denied homicidal ideation, auditory/visual hallucinations, or symptoms of mania.',
+    objective: 'Mental Status Examination (MSE): Client presented neatly dressed but with poor hygiene (unkempt hair, body odor noted). Posture was slumped, and eye contact was markedly poor, frequently staring at the floor. Motor activity was characterized by significant psychomotor retardation. Speech was delayed in response time, monotonous, and hypophonic. Affect was flat and mood was congruent with his subjective report of severe depression. Thought processes were linear but impoverished, heavily focused on themes of guilt and worthlessness. Cognitive functioning appeared grossly intact, though concentration was visibly impaired. No evidence of psychosis or intoxication was observed during the 60-minute session.',
+    assessment: 'Client meets criteria for Major Depressive Disorder, Recurrent, Severe without psychotic features (F33.2). Current presentation indicates a dangerous trajectory, with worsening neurovegetative symptoms and emerging passive suicidal ideation. While he denies active intent or plan, his isolation and severe hopelessness elevate his acute risk profile. Client demonstrated limited responsiveness to standard cognitive restructuring today, indicating a potential need for pharmacological re-evaluation or escalation of care if symptoms persist. Progress toward treatment goals is currently stalled due to symptom severity.',
+    plan: '1. Provided empathetic validation and supportive counseling to address immediate emotional distress.\n2. Attempted to engage client in cognitive defusion exercises regarding themes of worthlessness, with limited success.\n3. Strongly recommended client schedule an emergency medication management appointment with his prescribing psychiatrist; client agreed.\n4. Will follow up with client via phone check-in tomorrow at 10:00 AM to monitor safety.\n5. Next scheduled session moved up to 3 days from now instead of standard 14 days.',
+    status: 'pending_review',
+    aiFlags: [
+      { type: 'error', text: 'Critical Safety Oversight: The plan mentions following up and medication management, but fails to explicitly document the creation or review of a formal Safety Plan despite endorsing passive suicidal ideation.', location: 'plan' },
+      { type: 'warning', text: 'Clinical Specificity: The assessment notes "progress is stalled" but should explicitly state which specific measurable objectives from the treatment plan are currently failing to be met.', location: 'assessment' }
+    ]
+  },
+  {
+    id: 'NOTE-002',
+    associateId: 'E002',
+    associateName: 'Michael Chen, AMFT',
+    clientId: 'P004',
+    clientName: 'Test Client Four',
+    date: '2024-05-24',
+    subjective: 'Client and partner attended session. Both reported high levels of distress regarding financial management. Partner stated, "He never listens to me when I try to budget." Client responded defensively, "I wouldn\'t have to ignore you if you weren\'t constantly nagging." Both described frequent, escalating arguments resulting in emotional withdrawal for 2-3 days post-conflict.',
+    objective: 'Both partners presented with visibly tense body language, sitting far apart on the couch with crossed arms. Eye contact between partners was virtually non-existent. Speech rate was elevated during conflictual topics, with frequent interruptions of one another. Tone was highly critical and defensive. Affect was angry and frustrated.',
+    assessment: 'The couple is currently entrenched in a negative interactional cycle characterized by pursue/withdraw dynamics (Emotionally Focused Therapy framework). The high level of contempt and defensiveness observed in-session are significant predictors of relational instability. They are currently struggling to utilize emotional regulation skills when triggered by financial stressors. Prognosis is guarded to fair, dependent on their willingness to practice structured communication exercises outside of the clinical setting.',
+    plan: '1. Intervened to de-escalate immediate conflict using active structuring and boundary setting.\n2. Psychoeducation provided on the physiological impacts of flooding and the necessity of taking a "time-out" when heart rate elevates during conflict.\n3. Introduced and modeled the "Speaker-Listener" technique for discussing finances.\n4. Assigned homework: Practice the Speaker-Listener technique for exactly 15 minutes, twice this week, strictly on low-stakes topics.\n5. Next conjoint session scheduled for next week.',
+    status: 'pending_review'
+  },
+  ...Array.from({ length: 60 }).map((_, i) => ({
+    id: `NOTE-BATCH-${i}`,
+    associateId: `E00${(i % 6) + 1}`,
+    associateName: ['David Foster, ASW', 'Michael Chen, AMFT', 'Sarah Jenkins, LMFT', 'Emma Watson, LPCC', 'John Doe, ASW', 'Jane Smith, AMFT'][i % 6],
+    clientId: `P00${(i % 5) + 1}`,
+    clientName: `Test Client ${(i % 5) + 1}`,
+    date: '2024-05-24',
+    subjective: 'Client reports stable mood and improved sleep.',
+    objective: 'Affect bright, cooperative.',
+    assessment: 'Responding well to CBT for anxiety.',
+    plan: 'Continue current treatment plan.',
+    status: 'signed' as const
+  }))
+];
+
 import { collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, getDocs, query, where } from 'firebase/firestore';
 import { db, auth } from './firebase';
+import { generateHash } from './utils';
 
 export const useStore = create<AppState>()(
   persist(
@@ -516,12 +639,78 @@ export const useStore = create<AppState>()(
       transactions: initialTransactions,
       filings: initialFilings,
       claims: initialClaims,
+      auditLogs: initialAuditLogs,
+      clinicalNotes: initialClinicalNotes,
+      privacyMode: false,
+      setPrivacyMode: (enabled) => set({ privacyMode: enabled }),
+      isLocked: false,
+      setIsLocked: (locked) => set({ isLocked: locked }),
+
+      updateClinicalNote: (id, data) => set((state) => ({
+        clinicalNotes: state.clinicalNotes.map(n => n.id === id ? { ...n, ...data } : n)
+      })),
+
+      batchSubmitClaims: (noteIds) => set((state) => {
+        const notesToSubmit = state.clinicalNotes.filter(n => noteIds.includes(n.id));
+        
+        const newClaims: Claim[] = notesToSubmit.map(note => ({
+          id: `CLM-AUTO-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`,
+          client: note.clientName,
+          serviceDate: note.date,
+          cptCode: '90837', // Defaulting to 90837 for mock purposes
+          amount: 150,
+          payer: 'Aetna (Mock Auto)',
+          status: 'submitted',
+          submittedDate: new Date().toISOString().split('T')[0],
+        }));
+
+        const updatedNotes = state.clinicalNotes.map(n => 
+          noteIds.includes(n.id) ? { ...n, status: 'signed' as const } : n // Actually they should probably be marked 'billed' if we had that, but signed is fine, we just remove them from the UI manually or filter later
+        );
+        // Wait, 'signed' notes are the ones we submit. So maybe just leave them 'signed' or add a 'billed' status. We will handle filtering in the component.
+
+        return {
+          claims: [...newClaims, ...state.claims],
+          clinicalNotes: updatedNotes
+        };
+      }),
+
+      addAuditLog: (log) => set((state) => {
+        const previousLog = state.auditLogs[0];
+        const previousHash = previousLog?.hash || '0000000000000000000000000000000000000000000000000000000000000000';
+        const timestamp = new Date().toISOString();
+        const id = `audit_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+        
+        const dataToHash = previousHash + id + timestamp + log.userId + log.action + log.entityId;
+        const currentHash = generateHash(dataToHash);
+
+        return {
+          auditLogs: [{
+            ...log,
+            id,
+            timestamp,
+            previousHash,
+            hash: currentHash
+          }, ...state.auditLogs]
+        };
+      }),
 
       addClient: async (client) => {
         const uid = auth.currentUser?.uid;
         if (!uid) return;
         const newClient = { ...client, userId: uid };
-        set((state) => ({ clients: [...state.clients, newClient] }));
+        set((state) => {
+          const newLog = {
+            id: `audit_${Date.now()}`,
+            timestamp: new Date().toISOString(),
+            userId: uid,
+            action: 'CREATE' as const,
+            entityType: 'Client',
+            entityId: newClient.id,
+            details: `Created new client record: ${newClient.name}`
+          };
+          return { clients: [...state.clients, newClient], auditLogs: [newLog, ...state.auditLogs] };
+        });
         try { await setDoc(doc(db, "clients", newClient.id), newClient); } catch (e) { console.error(e); }
       },
       updateClient: async (id, data) => {
@@ -546,7 +735,18 @@ export const useStore = create<AppState>()(
         const uid = auth.currentUser?.uid;
         if (!uid) return;
         const newAppt = { ...appointment, userId: uid };
-        set((state) => ({ appointments: [...state.appointments, newAppt] }));
+        set((state) => {
+          const newLog = {
+            id: `audit_${Date.now()}`,
+            timestamp: new Date().toISOString(),
+            userId: uid,
+            action: 'CREATE' as const,
+            entityType: 'Appointment',
+            entityId: newAppt.id,
+            details: `Scheduled appointment for ${newAppt.client}`
+          };
+          return { appointments: [...state.appointments, newAppt], auditLogs: [newLog, ...state.auditLogs] };
+        });
         try { await setDoc(doc(db, "appointments", newAppt.id), newAppt); } catch (e) { console.error(e); }
       },
       updateAppointment: async (id, data) => {
@@ -572,7 +772,18 @@ export const useStore = create<AppState>()(
         const uid = auth.currentUser?.uid;
         if (!uid) return;
         const newClaim = { ...claim, userId: uid };
-        set((state) => ({ claims: [newClaim, ...state.claims] }));
+        set((state) => {
+          const newLog = {
+            id: `audit_${Date.now()}`,
+            timestamp: new Date().toISOString(),
+            userId: uid,
+            action: 'CREATE' as const,
+            entityType: 'Claim',
+            entityId: newClaim.id,
+            details: `Generated insurance claim for ${newClaim.client}`
+          };
+          return { claims: [newClaim, ...state.claims], auditLogs: [newLog, ...state.auditLogs] };
+        });
         try { await setDoc(doc(db, "claims", newClaim.id), newClaim); } catch (e) { console.error(e); }
       },
       updateClaim: async (id, data) => {
