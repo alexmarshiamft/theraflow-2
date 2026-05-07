@@ -118,14 +118,14 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             </Link>
             
             <Link
-              href="/platform"
+              href="/features"
               className={cn(
                 'sidebar-link mt-1 text-brand-600',
-                pathname === '/platform' && 'active'
+                pathname === '/features' && 'active'
               )}
             >
               <Rocket className="h-4 w-4" />
-              Platform Showcase
+              100+ Features
             </Link>
           </div>
 

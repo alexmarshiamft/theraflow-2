@@ -6,6 +6,7 @@ import { Navbar } from './Navbar';
 import { Sidebar } from './Sidebar';
 import { AIAssistant } from '@/components/ui/AIAssistant';
 import { AutoLock } from '@/components/ui/AutoLock';
+import { CommandPalette } from '@/components/ui/CommandPalette';
 import { initFirebaseSync, useStore } from '@/lib/store';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -47,6 +48,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <main className="flex-1 overflow-y-auto p-4 lg:p-6">{children}</main>
         <AIAssistant />
         <AutoLock />
+        <CommandPalette />
       </div>
     </div>
   );

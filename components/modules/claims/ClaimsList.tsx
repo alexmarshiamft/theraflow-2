@@ -167,7 +167,7 @@ export function ClaimsList() {
                     {claim.id}
                   </td>
                   <td className="px-4 py-3.5">
-                    <p className="font-medium text-gray-900">{claim.client}</p>
+                    <p className="font-medium text-gray-900" data-private>{claim.client}</p>
                     <p className="text-xs text-gray-500">DOS: {formatDate(claim.serviceDate)} | CPT {claim.cptCode}</p>
                   </td>
                   <td className="px-4 py-3.5 text-gray-600">{claim.payer}</td>

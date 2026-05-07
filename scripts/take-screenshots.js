@@ -17,6 +17,7 @@ const routes = [
   '/claims',
   '/compliance',
   '/ehr',
+  '/features',
   '/intelligence',
   '/payroll',
   '/platform',

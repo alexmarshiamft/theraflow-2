@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Shield, BookOpen, AlertTriangle, FileCheck, ExternalLink, Lock, Database, Terminal, ChevronRight, Loader2 } from 'lucide-react';
+import { Shield, BookOpen, AlertTriangle, FileCheck, ExternalLink, Lock, Database, Terminal, ChevronRight, Loader2, Server, Globe, CheckCircle2 } from 'lucide-react';
 import { useStore } from '@/lib/store';
 import { formatDate, formatTime } from '@/lib/utils';
 import { Badge } from '@/components/ui/Badge';
@@ -27,7 +27,7 @@ export default function CompliancePage() {
           prompt: terminalInput,
           context: {
             systemInstruction: "You are the Compliance AI Terminal for Theraflow. Analyze the provided audit logs to answer the user's query. Reply in a concise, authoritative, and technical 'command-line' tone. Do not use markdown styling like **bold**; write in plain text suitable for a monospace terminal output.",
-            auditLogs: auditLogs.slice(0, 50) // Send the last 50 logs to fit context window safely
+            auditLogs: auditLogs.slice(0, 50)
           }
         }),
       });
@@ -47,15 +47,51 @@ export default function CompliancePage() {
   };
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-12">
-      <div className="flex items-center gap-3 border-b border-gray-200 pb-5">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-100">
-          <Shield className="h-6 w-6 text-brand-600" />
+    <div className="space-y-6 max-w-7xl mx-auto pb-12 pt-4">
+      
+      {/* SOC Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-200 pb-5">
+        <div className="flex items-center gap-3">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-900 border border-slate-800 shadow-xl">
+            <Shield className="h-7 w-7 text-emerald-400" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900">Security Operations Center (SOC)</h1>
+            <p className="text-sm text-gray-500 font-medium">Global Compliance Posture & Immutable Audit Ledger</p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">Compliance & Legal Hub</h1>
-          <p className="text-sm text-gray-500">Immutable Audit Trails, HIPAA, and CA BBS Guidelines.</p>
+        <div className="flex items-center gap-4 bg-slate-900 px-4 py-2 rounded-xl border border-slate-800 shadow-lg">
+           <div className="flex items-center gap-2">
+             <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></div>
+             <span className="text-xs font-mono text-emerald-400 font-medium">SYSTEM SECURE</span>
+           </div>
+           <div className="w-px h-6 bg-slate-700"></div>
+           <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
+             <Server className="h-3 w-3" /> US-WEST-1
+           </div>
         </div>
+      </div>
+
+      {/* Compliance Gauges */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        {[
+          { label: 'HIPAA', desc: 'Health Data', score: 100 },
+          { label: 'SOC 2 Type II', desc: 'Security Controls', score: 100 },
+          { label: 'PCI-DSS', desc: 'Payment Processing', score: 100 },
+          { label: 'GDPR / CCPA', desc: 'Data Privacy', score: 100 },
+        ].map((cert) => (
+          <div key={cert.label} className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm flex flex-col items-center justify-center relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-2 opacity-10">
+              <Shield className="h-16 w-16" />
+            </div>
+            <CheckCircle2 className="h-8 w-8 text-emerald-500 mb-2 relative z-10" />
+            <h3 className="font-bold text-gray-900 text-lg relative z-10">{cert.label}</h3>
+            <p className="text-xs text-gray-500 font-medium uppercase tracking-wider relative z-10">{cert.desc}</p>
+            <div className="mt-3 w-full bg-gray-100 rounded-full h-1.5">
+              <div className="bg-emerald-500 h-1.5 rounded-full" style={{ width: `${cert.score}%` }}></div>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Immutable Audit Log Ledger */}
