@@ -3,6 +3,8 @@
 import { Sparkles, ArrowUpRight, ShieldAlert, BarChart3, Users, Clock, Activity } from 'lucide-react';
 import { BurnoutRadar } from '@/components/modules/intelligence/BurnoutRadar';
 import { RevenueForecast } from '@/components/modules/intelligence/RevenueForecast';
+import MoodTopography from '@/components/modules/intelligence/MoodTopography';
+import { ScheduleOptimizer } from '@/components/modules/intelligence/ScheduleOptimizer';
 
 export default function IntelligenceCenter() {
   return (
@@ -110,10 +112,139 @@ export default function IntelligenceCenter() {
           {/* Bento Box Main Section */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Revenue Forecast spans 2 cols */}
-            <RevenueForecast />
+            <div className="md:col-span-2">
+              <RevenueForecast />
+            </div>
 
             {/* Burnout Radar spans 1 col */}
-            <BurnoutRadar />
+            <div className="md:col-span-1">
+              <BurnoutRadar />
+            </div>
+
+            {/* Schedule Optimizer spans full width */}
+            <div className="md:col-span-3">
+              <ScheduleOptimizer />
+            </div>
+
+            {/* Mood Topography spans full width */}
+            <div className="md:col-span-3">
+              <MoodTopography />
+            </div>
+          </div>
+
+          {/* Bottom Section: AI Modules Grid */}
+          <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            {/* AI CFO / Wealth Optimizer Entry */}
+            <a href="/intelligence/wealth" className="block section-card p-8 bg-gradient-to-r from-slate-900 to-indigo-950/40 border-slate-800 hover:border-indigo-500/50 transition-all duration-500 group relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -mr-32 -mt-32 transition-opacity group-hover:opacity-100 opacity-50" />
+              <div className="relative z-10 flex flex-col h-full justify-between gap-6">
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-widest border border-indigo-500/20">New</span>
+                    <h3 className="text-2xl font-bold text-white tracking-tight">Practice Wealth Optimizer</h3>
+                  </div>
+                  <p className="text-slate-400 text-sm leading-relaxed">
+                    Deploy your virtual AI CFO. Simulate tax strategies, optimize your Traditional and Roth 401(k) contributions, and visualize real-time shifts in your marginal tax brackets.
+                  </p>
+                </div>
+                <div className="flex items-center justify-between mt-4">
+                  <div className="flex items-center gap-2 text-indigo-400 font-medium bg-indigo-500/10 hover:bg-indigo-500/20 px-6 py-3 rounded-xl transition-colors border border-indigo-500/20">
+                    Launch AI CFO
+                    <ArrowUpRight className="w-5 h-5 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                  </div>
+                </div>
+              </div>
+            </a>
+
+            {/* Alchemy Match Engine Entry */}
+            <a href="/intelligence/matching" className="block section-card p-8 bg-gradient-to-r from-slate-900 to-fuchsia-950/40 border-slate-800 hover:border-fuchsia-500/50 transition-all duration-500 group relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-fuchsia-500/10 rounded-full blur-3xl -mr-32 -mt-32 transition-opacity group-hover:opacity-100 opacity-50" />
+              <div className="relative z-10 flex flex-col h-full justify-between gap-6">
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="px-2.5 py-1 rounded-full bg-fuchsia-500/20 text-fuchsia-400 text-xs font-bold uppercase tracking-widest border border-fuchsia-500/20">Beta</span>
+                    <h3 className="text-2xl font-bold text-white tracking-tight">Alchemy Match Engine</h3>
+                  </div>
+                  <p className="text-slate-400 text-sm leading-relaxed">
+                    AI-driven predictive client-associate pairing. Automatically match incoming intakes with the optimal associate based on clinical focus, schedule availability, and current burnout risk.
+                  </p>
+                </div>
+                <div className="flex items-center justify-between mt-4">
+                  <div className="flex items-center gap-2 text-fuchsia-400 font-medium bg-fuchsia-500/10 hover:bg-fuchsia-500/20 px-6 py-3 rounded-xl transition-colors border border-fuchsia-500/20">
+                    Initialize Alchemy
+                    <ArrowUpRight className="w-5 h-5 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                  </div>
+                </div>
+              </div>
+            </a>
+
+            {/* Clinical Roleplay Simulator Entry */}
+            <a href="/intelligence/simulator" className="block section-card p-8 bg-gradient-to-r from-slate-900 to-rose-950/40 border-slate-800 hover:border-rose-500/50 transition-all duration-500 group relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-rose-500/10 rounded-full blur-3xl -mr-32 -mt-32 transition-opacity group-hover:opacity-100 opacity-50" />
+              <div className="relative z-10 flex flex-col h-full justify-between gap-6">
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-400 text-xs font-bold uppercase tracking-widest border border-rose-500/20">Beta</span>
+                    <h3 className="text-2xl font-bold text-white tracking-tight">Clinical Roleplay Simulator</h3>
+                  </div>
+                  <p className="text-slate-400 text-sm leading-relaxed">
+                    Practice de-escalation with high-acuity AI patients. Monitor real-time dysregulation meters, vocal tremor biomarkers, and refine your clinical interventions safely.
+                  </p>
+                </div>
+                <div className="flex items-center justify-between mt-4">
+                  <div className="flex items-center gap-2 text-rose-400 font-medium bg-rose-500/10 hover:bg-rose-500/20 px-6 py-3 rounded-xl transition-colors border border-rose-500/20">
+                    Start Simulation
+                    <ArrowUpRight className="w-5 h-5 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                  </div>
+                </div>
+              </div>
+            </a>
+
+            {/* Interactive Treatment Roadmap Entry */}
+            <a href="/intelligence/roadmap" className="block section-card p-8 bg-gradient-to-r from-slate-900 to-emerald-950/40 border-slate-800 hover:border-emerald-500/50 transition-all duration-500 group relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -mr-32 -mt-32 transition-opacity group-hover:opacity-100 opacity-50" />
+              <div className="relative z-10 flex flex-col h-full justify-between gap-6">
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-widest border border-emerald-500/20">Premium</span>
+                    <h3 className="text-2xl font-bold text-white tracking-tight">Interactive Treatment Roadmap</h3>
+                  </div>
+                  <p className="text-slate-400 text-sm leading-relaxed">
+                    Visualize client recovery trajectories. See historical modality effectiveness, predict future outcomes, and generate dynamic visual timelines for client psychoeducation.
+                  </p>
+                </div>
+                <div className="flex items-center justify-between mt-4">
+                  <div className="flex items-center gap-2 text-emerald-400 font-medium bg-emerald-500/10 hover:bg-emerald-500/20 px-6 py-3 rounded-xl transition-colors border border-emerald-500/20">
+                    View Roadmaps
+                    <ArrowUpRight className="w-5 h-5 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                  </div>
+                </div>
+              </div>
+            </a>
+
+            {/* AI Supervisor Entry */}
+            <a href="/intelligence/supervisor" className="block section-card p-8 bg-gradient-to-r from-slate-900 to-amber-950/40 border-slate-800 hover:border-amber-500/50 transition-all duration-500 group relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl -mr-32 -mt-32 transition-opacity group-hover:opacity-100 opacity-50" />
+              <div className="relative z-10 flex flex-col h-full justify-between gap-6">
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-widest border border-amber-500/20">Early Access</span>
+                    <h3 className="text-2xl font-bold text-white tracking-tight">AI Case Supervisor</h3>
+                  </div>
+                  <p className="text-slate-400 text-sm leading-relaxed">
+                    Submit anonymized challenging cases to your dedicated AI clinical consultant. Get alternative perspectives, DSM-5 differential diagnoses, and countertransference insights.
+                  </p>
+                </div>
+                <div className="flex items-center justify-between mt-4">
+                  <div className="flex items-center gap-2 text-amber-400 font-medium bg-amber-500/10 hover:bg-amber-500/20 px-6 py-3 rounded-xl transition-colors border border-amber-500/20">
+                    Consult Supervisor
+                    <ArrowUpRight className="w-5 h-5 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                  </div>
+                </div>
+              </div>
+            </a>
+
           </div>
 
         </div>

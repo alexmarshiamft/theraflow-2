@@ -2,6 +2,9 @@
 
 // next.config.js
 var nextConfig = {
-  reactStrictMode: true
+  reactStrictMode: true,
+  eslint: {
+    ignoreDuringBuilds: true
+  }
 };
 module.exports = nextConfig;

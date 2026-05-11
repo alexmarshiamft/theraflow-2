@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { useStore, Claim } from '@/lib/store';
 import { useToast } from '@/lib/toast';
+import { ClaimReviewModal } from './ClaimReviewModal';
 
 const statusConfig = {
   submitted: { variant: 'info' as const, label: 'Submitted', icon: Clock },
@@ -29,6 +30,8 @@ export function ClaimsList() {
   const [analysisModalOpen, setAnalysisModalOpen] = useState(false);
   const [selectedClaim, setSelectedClaim] = useState<Claim | null>(null);
   const [aiAnalysis, setAiAnalysis] = useState<{ reason: string, suggestedCpt: string } | null>(null);
+  
+  const [reviewClaim, setReviewClaim] = useState<Claim | null>(null);
 
   const { updateClaim } = useStore(); // Import updateClaim from store
 
@@ -198,8 +201,8 @@ export function ClaimsList() {
                           Analyze
                         </Button>
                       )}
-                      <Button variant="outline" size="sm" onClick={() => showToast('Opening ERA details...', 'info')}>
-                        View
+                      <Button variant="outline" size="sm" onClick={() => setReviewClaim(claim)}>
+                        Review
                       </Button>
                     </div>
                   </td>
@@ -291,6 +294,14 @@ export function ClaimsList() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Claim Review Modal */}
+      {reviewClaim && (
+        <ClaimReviewModal 
+          claim={reviewClaim} 
+          onClose={() => setReviewClaim(null)} 
+        />
       )}
     </div>
   );

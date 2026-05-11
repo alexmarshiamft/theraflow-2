@@ -5,6 +5,7 @@ import { Shield, BookOpen, AlertTriangle, FileCheck, ExternalLink, Lock, Databas
 import { useStore } from '@/lib/store';
 import { formatDate, formatTime } from '@/lib/utils';
 import { Badge } from '@/components/ui/Badge';
+import { AuditSimulator } from '@/components/modules/compliance/AuditSimulator';
 
 export default function CompliancePage() {
   const { auditLogs } = useStore();
@@ -50,14 +51,14 @@ export default function CompliancePage() {
     <div className="space-y-6 max-w-7xl mx-auto pb-12 pt-4">
       
       {/* SOC Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-200 pb-5">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-5">
         <div className="flex items-center gap-3">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-900 border border-slate-800 shadow-xl">
             <Shield className="h-7 w-7 text-emerald-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900">Security Operations Center (SOC)</h1>
-            <p className="text-sm text-gray-500 font-medium">Global Compliance Posture & Immutable Audit Ledger</p>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">Security Operations Center (SOC)</h1>
+            <p className="text-sm text-muted-foreground font-medium">Global Compliance Posture & Immutable Audit Ledger</p>
           </div>
         </div>
         <div className="flex items-center gap-4 bg-slate-900 px-4 py-2 rounded-xl border border-slate-800 shadow-lg">
@@ -66,10 +67,15 @@ export default function CompliancePage() {
              <span className="text-xs font-mono text-emerald-400 font-medium">SYSTEM SECURE</span>
            </div>
            <div className="w-px h-6 bg-slate-700"></div>
-           <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
+           <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground/80">
              <Server className="h-3 w-3" /> US-WEST-1
            </div>
         </div>
+      </div>
+
+      {/* Flash Audit Simulator */}
+      <div className="mb-8">
+        <AuditSimulator />
       </div>
 
       {/* Compliance Gauges */}
@@ -80,14 +86,14 @@ export default function CompliancePage() {
           { label: 'PCI-DSS', desc: 'Payment Processing', score: 100 },
           { label: 'GDPR / CCPA', desc: 'Data Privacy', score: 100 },
         ].map((cert) => (
-          <div key={cert.label} className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm flex flex-col items-center justify-center relative overflow-hidden group">
+          <div key={cert.label} className="bg-card border border-border rounded-2xl p-4 shadow-sm flex flex-col items-center justify-center relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-2 opacity-10">
               <Shield className="h-16 w-16" />
             </div>
             <CheckCircle2 className="h-8 w-8 text-emerald-500 mb-2 relative z-10" />
-            <h3 className="font-bold text-gray-900 text-lg relative z-10">{cert.label}</h3>
-            <p className="text-xs text-gray-500 font-medium uppercase tracking-wider relative z-10">{cert.desc}</p>
-            <div className="mt-3 w-full bg-gray-100 rounded-full h-1.5">
+            <h3 className="font-bold text-foreground text-lg relative z-10">{cert.label}</h3>
+            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider relative z-10">{cert.desc}</p>
+            <div className="mt-3 w-full bg-muted rounded-full h-1.5">
               <div className="bg-emerald-500 h-1.5 rounded-full" style={{ width: `${cert.score}%` }}></div>
             </div>
           </div>
@@ -107,8 +113,8 @@ export default function CompliancePage() {
         </div>
         
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-gray-400 font-mono">
-            <thead className="bg-gray-900/50 text-xs uppercase text-gray-500 border-b border-gray-800">
+          <table className="w-full text-left text-sm text-muted-foreground/80 font-mono">
+            <thead className="bg-gray-900/50 text-xs uppercase text-muted-foreground border-b border-gray-800">
               <tr>
                 <th className="px-6 py-3 font-medium">Timestamp (UTC)</th>
                 <th className="px-6 py-3 font-medium">Event ID</th>
@@ -124,7 +130,7 @@ export default function CompliancePage() {
                   <td className="px-6 py-4 whitespace-nowrap text-gray-300">
                     {new Date(log.timestamp).toLocaleString()}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-xs text-muted-foreground">
                     {log.id}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -144,7 +150,7 @@ export default function CompliancePage() {
                   <td className="px-6 py-4 whitespace-nowrap text-gray-300">
                     {log.entityType} ({log.entityId})
                   </td>
-                  <td className="px-6 py-4 text-gray-400 text-xs font-mono">
+                  <td className="px-6 py-4 text-muted-foreground/80 text-xs font-mono">
                     <div className="flex flex-col gap-1">
                       <span className="text-gray-300">{log.details}</span>
                       {log.hash && (
@@ -159,7 +165,7 @@ export default function CompliancePage() {
               ))}
               {auditLogs.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                  <td colSpan={6} className="px-6 py-8 text-center text-muted-foreground">
                     No audit logs available.
                   </td>
                 </tr>
@@ -170,7 +176,7 @@ export default function CompliancePage() {
 
         {/* Compliance AI Terminal */}
         <div className="border-t border-gray-800 bg-black p-4">
-          <div className="flex items-center gap-2 text-gray-400 text-xs mb-3 font-mono">
+          <div className="flex items-center gap-2 text-muted-foreground/80 text-xs mb-3 font-mono">
             <Terminal className="h-4 w-4 text-brand-500" />
             <span>THERAFLOW_OS // COMPLIANCE_AI_TERMINAL // v2.1.0</span>
           </div>
@@ -190,7 +196,7 @@ export default function CompliancePage() {
               value={terminalInput}
               onChange={(e) => setTerminalInput(e.target.value)}
               placeholder="Query the system ledger... (e.g., 'Summarize recent access to Client P001')"
-              className="w-full bg-gray-950 border border-gray-800 rounded-md py-3 pl-10 pr-4 text-gray-300 font-mono text-sm placeholder:text-gray-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors"
+              className="w-full bg-gray-950 border border-gray-800 rounded-md py-3 pl-10 pr-4 text-gray-300 font-mono text-sm placeholder:text-muted-foreground focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors"
               disabled={isTerminalLoading}
             />
             {isTerminalLoading && (
@@ -204,24 +210,24 @@ export default function CompliancePage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* BBS Card */}
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-4">
             <div className="rounded-lg bg-blue-50 p-2">
               <BookOpen className="h-5 w-5 text-blue-600" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-900">California BBS Guidelines</h2>
+            <h2 className="text-lg font-semibold text-foreground">California BBS Guidelines</h2>
           </div>
-          <div className="space-y-4 text-sm text-gray-600">
+          <div className="space-y-4 text-sm text-muted-foreground">
             <div>
-              <strong className="text-gray-900 block mb-1">Telehealth Consent</strong>
+              <strong className="text-foreground block mb-1">Telehealth Consent</strong>
               <p>Prior to the delivery of health care via telehealth, the provider initiating the use of telehealth shall inform the patient about the use of telehealth and obtain verbal or written consent.</p>
             </div>
             <div>
-              <strong className="text-gray-900 block mb-1">Record Retention</strong>
+              <strong className="text-foreground block mb-1">Record Retention</strong>
               <p>Patient records shall be retained for a minimum of 7 years from the date therapy is terminated. If the client is a minor, records must be retained for at least 7 years past the age of majority (25 years old).</p>
             </div>
             <div>
-              <strong className="text-gray-900 block mb-1">Supervision Requirements</strong>
+              <strong className="text-foreground block mb-1">Supervision Requirements</strong>
               <p>Associates must receive 1 unit of supervision for the first 10 clients, and an additional unit for any clients over 10 in a given week. Video supervision requires explicit consent.</p>
             </div>
             <a href="https://www.bbs.ca.gov/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-brand-600 hover:text-brand-700 font-medium mt-2">
@@ -231,24 +237,24 @@ export default function CompliancePage() {
         </div>
 
         {/* HIPAA Card */}
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-4">
             <div className="rounded-lg bg-emerald-50 p-2">
               <Shield className="h-5 w-5 text-emerald-600" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-900">HIPAA Privacy & Security</h2>
+            <h2 className="text-lg font-semibold text-foreground">HIPAA Privacy & Security</h2>
           </div>
-          <div className="space-y-4 text-sm text-gray-600">
+          <div className="space-y-4 text-sm text-muted-foreground">
             <div>
-              <strong className="text-gray-900 block mb-1">Minimum Necessary Rule</strong>
+              <strong className="text-foreground block mb-1">Minimum Necessary Rule</strong>
               <p>Covered entities must make reasonable efforts to limit protected health information (PHI) to the minimum necessary to accomplish the intended purpose.</p>
             </div>
             <div>
-              <strong className="text-gray-900 block mb-1">Breach Notification Rule</strong>
+              <strong className="text-foreground block mb-1">Breach Notification Rule</strong>
               <p>Breaches affecting 500 or more individuals must be reported to the HHS Secretary without unreasonable delay and in no case later than 60 days following the discovery of the breach.</p>
             </div>
             <div>
-              <strong className="text-gray-900 block mb-1">Psychotherapy Notes</strong>
+              <strong className="text-foreground block mb-1">Psychotherapy Notes</strong>
               <p>Requires specific written authorization by the patient for any use or disclosure of psychotherapy notes, except for treatment, payment, or health care operations.</p>
             </div>
             <a href="https://www.hhs.gov/hipaa/index.html" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-brand-600 hover:text-brand-700 font-medium mt-2">
@@ -258,40 +264,40 @@ export default function CompliancePage() {
         </div>
 
         {/* No Surprises Act Card */}
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-4">
             <div className="rounded-lg bg-amber-50 p-2">
               <AlertTriangle className="h-5 w-5 text-amber-600" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-900">No Surprises Act</h2>
+            <h2 className="text-lg font-semibold text-foreground">No Surprises Act</h2>
           </div>
-          <div className="space-y-4 text-sm text-gray-600">
+          <div className="space-y-4 text-sm text-muted-foreground">
             <div>
-              <strong className="text-gray-900 block mb-1">Good Faith Estimate (GFE)</strong>
+              <strong className="text-foreground block mb-1">Good Faith Estimate (GFE)</strong>
               <p>Providers must give uninsured and self-pay clients a "Good Faith Estimate" of expected charges. This applies to both current and prospective patients.</p>
             </div>
             <div>
-              <strong className="text-gray-900 block mb-1">Timeline</strong>
+              <strong className="text-foreground block mb-1">Timeline</strong>
               <p>GFE must be provided within 1 business day if scheduling at least 3 business days ahead, or within 3 business days if scheduling at least 10 days ahead.</p>
             </div>
           </div>
         </div>
 
         {/* 42 CFR Part 2 Card */}
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-4">
             <div className="rounded-lg bg-purple-50 p-2">
               <FileCheck className="h-5 w-5 text-purple-600" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-900">42 CFR Part 2 (SUD)</h2>
+            <h2 className="text-lg font-semibold text-foreground">42 CFR Part 2 (SUD)</h2>
           </div>
-          <div className="space-y-4 text-sm text-gray-600">
+          <div className="space-y-4 text-sm text-muted-foreground">
             <div>
-              <strong className="text-gray-900 block mb-1">Substance Use Disorder Privacy</strong>
+              <strong className="text-foreground block mb-1">Substance Use Disorder Privacy</strong>
               <p>Stricter than HIPAA. Requires explicit, specific written consent to disclose patient identifying information related to substance use disorder treatment.</p>
             </div>
             <div>
-              <strong className="text-gray-900 block mb-1">Prohibition on Redisclosure</strong>
+              <strong className="text-foreground block mb-1">Prohibition on Redisclosure</strong>
               <p>Any disclosure made with patient consent must be accompanied by a written statement prohibiting further disclosure unless expressly permitted by the written consent.</p>
             </div>
           </div>
@@ -304,9 +310,9 @@ export default function CompliancePage() {
           <div className="rounded-lg bg-brand-100 p-2">
             <Shield className="h-6 w-6 text-brand-700" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900">Theraflow Technical Compliance Attestation</h2>
+          <h2 className="text-xl font-bold text-foreground">Theraflow Technical Compliance Attestation</h2>
         </div>
-        <div className="space-y-4 text-sm text-gray-700">
+        <div className="space-y-4 text-sm text-foreground/80">
           <p>
             Theraflow has been architected to align with core Health Insurance Portability and Accountability Act (HIPAA) technical safeguards. 
           </p>
@@ -316,7 +322,7 @@ export default function CompliancePage() {
             <li><strong>Audit Logging:</strong> System changes, authentications, and data modifications are logged for accountability and security review.</li>
             <li><strong>Secure Transmission:</strong> All telehealth and AI data transfers occur over encrypted TLS connections.</li>
           </ul>
-          <div className="mt-4 rounded border border-brand-300 bg-white p-4 text-xs text-gray-500">
+          <div className="mt-4 rounded border border-brand-300 bg-card p-4 text-xs text-muted-foreground">
             <strong>Disclaimer:</strong> This attestation reflects the technical architecture of the Theraflow platform. It does not constitute legal advice or a legally binding indemnification agreement. Healthcare providers remain solely responsible for ensuring their organizational policies and usage of the platform comply with all applicable local, state, and federal laws.
           </div>
         </div>

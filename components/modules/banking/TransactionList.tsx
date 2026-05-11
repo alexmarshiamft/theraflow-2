@@ -24,8 +24,21 @@ const categoryColors: Record<string, string> = {
   Operations: 'bg-gray-100 text-gray-700',
 };
 
-export function TransactionList() {
-  const { transactions, addTransaction } = useStore();
+export interface TransactionListProps {
+  transactions?: Transaction[];
+  hideAdd?: boolean;
+  title?: string;
+  subtitle?: string;
+}
+
+export function TransactionList({
+  transactions: propTransactions,
+  hideAdd = false,
+  title = "Recent Transactions",
+  subtitle = "All accounts · Last 30 days"
+}: TransactionListProps = {}) {
+  const { transactions: storeTransactions, addTransaction } = useStore();
+  const displayTransactions = propTransactions || storeTransactions;
   const { showToast } = useToast();
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -51,7 +64,7 @@ export function TransactionList() {
     showToast('Transaction added successfully!', 'success');
   };
 
-  const filtered = transactions.filter(
+  const filtered = displayTransactions.filter(
     (t) =>
       t.description.toLowerCase().includes(search.toLowerCase()) ||
       t.category.toLowerCase().includes(search.toLowerCase())
@@ -62,8 +75,8 @@ export function TransactionList() {
       {/* Header */}
       <div className="flex flex-col gap-3 border-b border-gray-100 p-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 className="text-base font-semibold text-gray-900">Recent Transactions</h3>
-          <p className="text-sm text-gray-500">All accounts · Last 30 days</p>
+          <h3 className="text-base font-semibold text-gray-900">{title}</h3>
+          <p className="text-sm text-gray-500">{subtitle}</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="relative">
@@ -76,11 +89,13 @@ export function TransactionList() {
               className="w-full rounded-lg border border-gray-200 bg-gray-50 py-2 pl-9 pr-3 text-sm focus:border-brand-400 focus:bg-white focus:outline-none sm:w-52"
             />
           </div>
-          <button 
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-1.5 rounded-lg border border-brand-200 bg-brand-50 px-3 py-2 text-sm text-brand-700 hover:bg-brand-100 font-medium">
-            <ArrowDownLeft className="h-3.5 w-3.5" /> Add Manual
-          </button>
+          {!hideAdd && (
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center gap-1.5 rounded-lg border border-brand-200 bg-brand-50 px-3 py-2 text-sm text-brand-700 hover:bg-brand-100 font-medium">
+              <ArrowDownLeft className="h-3.5 w-3.5" /> Add Manual
+            </button>
+          )}
           <button 
             onClick={() => showToast('Opening filters panel...', 'info')}
             className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-600 hover:bg-gray-50">
@@ -157,7 +172,7 @@ export function TransactionList() {
       </div>
 
       <div className="border-t border-gray-100 px-5 py-3">
-        <p className="text-xs text-gray-500">Showing {filtered.length} of {transactions.length} transactions</p>
+        <p className="text-xs text-gray-500">Showing {filtered.length} of {displayTransactions.length} transactions</p>
       </div>
 
       {/* Add Modal overlay */}

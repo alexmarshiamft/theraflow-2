@@ -1,9 +1,11 @@
 'use client';
-
+import { useState } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useStore } from '@/lib/store';
 import { ClientList } from '@/components/modules/ehr/ClientList';
 import { AppointmentCalendar } from '@/components/modules/ehr/AppointmentCalendar';
+import { AIScribeModal } from '@/components/modules/ehr/AIScribeModal';
+import { BurnoutRadar } from '@/components/modules/intelligence/BurnoutRadar';
 import { StatCard } from '@/components/ui/StatCard';
 import {
   Activity,
@@ -11,10 +13,14 @@ import {
   ClipboardList,
   Shield,
   Users,
+  Mic
 } from 'lucide-react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/Button';
 
 export default function EHRPage() {
   const { clients, appointments } = useStore();
+  const [isScribeOpen, setIsScribeOpen] = useState(false);
 
   const totalClients = clients.length;
   const activeCases = clients.filter(c => c.status === 'active' || c.status === 'critical').length;
@@ -38,9 +44,18 @@ export default function EHRPage() {
             <h1 className="page-title">Electronic Health Records</h1>
             <p className="page-subtitle">Manage client records, appointments, and clinical documentation</p>
           </div>
-          <span className="hipaa-badge">
-            <Shield className="h-3 w-3" /> PHI Protected
-          </span>
+          <div className="flex items-center gap-3">
+            <Button 
+              onClick={() => setIsScribeOpen(true)}
+              className="bg-brand-600 hover:bg-brand-500 text-white shadow-[0_0_15px_rgba(59,130,246,0.3)] border border-brand-400/50"
+            >
+              <Mic className="mr-2 h-4 w-4" />
+              Start Ambient Scribe
+            </Button>
+            <span className="hipaa-badge">
+              <Shield className="h-3 w-3" /> PHI Protected
+            </span>
+          </div>
         </div>
       </div>
 
@@ -85,14 +100,21 @@ export default function EHRPage() {
       </div>
 
       {/* Main content */}
-      <div className="grid gap-6 xl:grid-cols-5">
-        <div className="xl:col-span-3">
+      <div className="grid gap-6 xl:grid-cols-12 mb-6">
+        <div className="xl:col-span-8">
           <ClientList />
         </div>
-        <div className="xl:col-span-2">
+        <div className="xl:col-span-4 flex flex-col gap-6">
+          <BurnoutRadar />
           <AppointmentCalendar />
         </div>
       </div>
+
+      <AIScribeModal 
+        isOpen={isScribeOpen} 
+        onClose={() => setIsScribeOpen(false)} 
+        clientName="Select a client..."
+      />
     </DashboardLayout>
   );
 }

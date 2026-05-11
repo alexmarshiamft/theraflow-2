@@ -4,12 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next lint && next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-chime-sdk-media-pipelines": "^3.600.0",
+    "@aws-sdk/client-chime-sdk-meetings": "^3.600.0",
     "@google/genai": "^1.50.1",
+    "amazon-chime-sdk-component-library-react": "^3.7.0",
+    "amazon-chime-sdk-js": "^3.19.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "firebase": "^12.12.1",
@@ -19,6 +23,8 @@
     "react": "^18",
     "react-dom": "^18",
     "recharts": "^3.8.1",
+    "styled-components": "^6.1.11",
+    "styled-system": "^5.1.5",
     "tailwind-merge": "^2.3.0",
     "zustand": "^5.0.12"
   },

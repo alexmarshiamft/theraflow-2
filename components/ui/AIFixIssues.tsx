@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { AlertCircle, CheckCircle2, Loader2, Sparkles, Wand2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { useStore } from '@/lib/store';
 
 type IssueStatus = 'idle' | 'resolving' | 'fixed';
 
@@ -15,11 +16,32 @@ interface Issue {
 }
 
 export function AIFixIssues() {
-  const [issues, setIssues] = useState<Issue[]>([
-    { id: '1', message: '12 claims rejected by Aetna: Missing CPT modifier 95', module: 'Claims', status: 'idle' },
-    { id: '2', message: '3 clients missing annual intake assessment updates', module: 'Clinical', status: 'idle' },
-    { id: '3', message: 'Payroll discrepancy: David Foster, ASW missing triadic supervision hour', module: 'Payroll', status: 'idle' },
-  ]);
+  const { vaAuthorizations, clients } = useStore();
+  const [issues, setIssues] = useState<Issue[]>([]);
+
+  useEffect(() => {
+    const vaIssues = vaAuthorizations
+      .filter(auth => auth.status === 'EXHAUSTED' || (auth.approvedSessions - auth.sessionsUsed <= 2 && auth.status === 'ACTIVE'))
+      .map(auth => {
+        const client = clients.find(c => c.id === auth.clientId);
+        const isExhausted = auth.status === 'EXHAUSTED';
+        return {
+          id: `va-auth-${auth.id}`,
+          message: isExhausted 
+            ? `TriWest Auth Exhausted: ${client?.name || 'Client'} (${auth.authorizationNumber})` 
+            : `TriWest Auth Expiring: ${client?.name || 'Client'} (${auth.approvedSessions - auth.sessionsUsed} sessions left)`,
+          module: 'Compliance',
+          status: 'idle' as IssueStatus
+        };
+      });
+
+    setIssues([
+      ...vaIssues,
+      { id: '1', message: '12 claims rejected by Aetna: Missing CPT modifier 95', module: 'Claims', status: 'idle' },
+      { id: '2', message: '3 clients missing annual intake assessment updates', module: 'Clinical', status: 'idle' },
+      { id: '3', message: 'Payroll discrepancy: David Foster, ASW missing triadic supervision hour', module: 'Payroll', status: 'idle' },
+    ]);
+  }, [vaAuthorizations, clients]);
 
   const [isFixingAll, setIsFixingAll] = useState(false);
 

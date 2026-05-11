@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Bot, X, Send, Sparkles, Loader2 } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Bot, X, Send, Sparkles, Loader2, Paperclip, FileText } from 'lucide-react';
 import { Button } from './Button';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/lib/store';
@@ -11,24 +11,30 @@ export function AIAssistant() {
   const [messages, setMessages] = useState<{role: 'user' | 'ai', text: string}[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [attachedFile, setAttachedFile] = useState<{name: string, content: string} | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const store = useStore();
 
   const handleSend = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() && !attachedFile) return;
 
-    const userMessage = input.trim();
+    const userMessage = input.trim() || 'Please analyze the attached file.';
     setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
     setInput('');
     setIsLoading(true);
 
     try {
       // Provide high-level store context
-      const context = {
+      const context: any = {
         clients: store.clients.length,
         appointments: store.appointments.length,
         employees: store.employees.length,
         claims: store.claims.length,
       };
+
+      if (attachedFile) {
+        context.uploadedFile = attachedFile;
+      }
 
       const res = await fetch('/api/gemini', {
         method: 'POST',
@@ -49,6 +55,21 @@ export function AIAssistant() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const text = event.target?.result;
+      if (typeof text === 'string') {
+        setAttachedFile({ name: file.name, content: text });
+      }
+    };
+    reader.readAsText(file);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   return (
@@ -113,24 +134,54 @@ export function AIAssistant() {
           )}
         </div>
 
-        <div className="p-3 bg-white border-t border-gray-100">
+        <div className="p-3 bg-white border-t border-gray-100 flex flex-col gap-2">
+          {attachedFile && (
+            <div className="flex items-center justify-between bg-brand-50 border border-brand-100 rounded-lg p-2 text-sm text-brand-700">
+              <div className="flex items-center gap-2 overflow-hidden">
+                <FileText className="h-4 w-4 shrink-0 text-brand-500" />
+                <span className="truncate max-w-[200px] text-xs font-medium">{attachedFile.name}</span>
+              </div>
+              <button 
+                onClick={() => setAttachedFile(null)}
+                className="hover:bg-brand-100 p-1 rounded-md text-brand-600 transition-colors"
+                type="button"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          )}
           <form 
             onSubmit={e => { e.preventDefault(); handleSend(); }}
             className="flex items-center gap-2 relative"
           >
             <input
+              type="file"
+              accept=".csv,.txt,.json"
+              className="hidden"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="p-2 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-colors shrink-0"
+              disabled={isLoading}
+            >
+              <Paperclip className="h-5 w-5" />
+            </button>
+            <input
               type="text"
               value={input}
               onChange={e => setInput(e.target.value)}
               placeholder="Ask anything..."
-              className="flex-1 border border-gray-200 rounded-full pl-4 pr-10 py-2.5 text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+              className="flex-1 border border-gray-200 rounded-full pl-4 pr-10 py-2.5 text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 min-w-0"
               disabled={isLoading}
             />
             <Button 
               type="submit" 
               size="sm" 
               className="absolute right-1 top-1 bottom-1 rounded-full px-3 bg-brand-600 hover:bg-brand-700"
-              disabled={!input.trim() || isLoading}
+              disabled={(!input.trim() && !attachedFile) || isLoading}
             >
               <Send className="h-3.5 w-3.5" />
             </Button>

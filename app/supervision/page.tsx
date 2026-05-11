@@ -298,7 +298,7 @@ export default function SupervisionPage() {
               </p>
             </div>
           </div>
-          <Button variant="ghost" size="icon" onClick={() => setShowChat(false)} className="text-slate-400 hover:text-white">
+          <Button variant="ghost" size="sm" onClick={() => setShowChat(false)} className="text-slate-400 hover:text-white">
             <X className="h-5 w-5" />
           </Button>
         </div>
@@ -322,7 +322,7 @@ export default function SupervisionPage() {
             {chatState !== 'idle' && (
               <div className="text-xs mt-1 flex items-center gap-1 text-slate-400">
                 {chatState === 'delivered' && 'Delivered'}
-                {chatState !== 'idle' && chatState !== 'delivered' && (
+                {chatState !== 'delivered' && (
                   <span className="text-brand-400 flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Read</span>
                 )}
               </div>
@@ -374,7 +374,7 @@ export default function SupervisionPage() {
                 disabled 
                 className="w-full bg-slate-800 border border-slate-700 rounded-full py-2 px-4 text-sm text-slate-300 opacity-50 cursor-not-allowed"
               />
-              <Button disabled size="icon" className="absolute right-1 top-1 h-7 w-7 rounded-full bg-slate-700">
+              <Button disabled size="sm" className="absolute right-1 top-1 h-7 w-7 rounded-full bg-slate-700">
                 <Send className="h-3 w-3" />
               </Button>
             </div>

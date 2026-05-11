@@ -1,59 +1,36 @@
 'use client';
 
-import { Download, Eye, FileText, Upload } from 'lucide-react';
+import { Download, Eye, FileText, Calendar } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { formatDate } from '@/lib/utils';
-
-import { useStore, Filing } from '@/lib/store';
 import { useToast } from '@/lib/toast';
-import { useState } from 'react';
 
-const statusConfig = {
-  filed: { variant: 'success' as const, label: 'Filed' },
-  pending: { variant: 'warning' as const, label: 'Pending' },
-  overdue: { variant: 'danger' as const, label: 'Overdue' },
-  upcoming: { variant: 'info' as const, label: 'Upcoming' },
+const mockDocuments = [
+  { id: '1', name: '2023 W-2 Form', type: 'Tax Form', date: 'Jan 31, 2024', status: 'available' },
+  { id: '2', name: 'Pay Stub - Dec 2023', type: 'Pay Stub', date: 'Dec 31, 2023', status: 'available' },
+  { id: '3', name: 'Pay Stub - Nov 2023', type: 'Pay Stub', date: 'Nov 30, 2023', status: 'available' },
+  { id: '4', name: '1095-C Health Coverage', type: 'Tax Form', date: 'Feb 15, 2024', status: 'available' },
+  { id: '5', name: '2024 W-2 Form', type: 'Tax Form', date: 'Jan 31, 2025', status: 'upcoming' },
+];
+
+const typeConfig = {
+  'Tax Form': { variant: 'info' as const, bg: 'bg-indigo-50', text: 'text-indigo-600' },
+  'Pay Stub': { variant: 'default' as const, bg: 'bg-emerald-50', text: 'text-emerald-600' },
 };
 
 export function FilingsList() {
-  const { filings, addFiling } = useStore();
   const { showToast } = useToast();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newForm, setNewForm] = useState('');
-  const [newDesc, setNewDesc] = useState('');
-
-  const handleAddFiling = () => {
-    if (!newForm || !newDesc) return;
-    addFiling({
-      id: `F${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`,
-      form: newForm,
-      description: newDesc,
-      period: 'Q3 2024',
-      dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      filedDate: null,
-      status: 'upcoming',
-      preparer: 'Self-filed',
-    });
-    setNewForm('');
-    setNewDesc('');
-    setIsModalOpen(false);
-    showToast('Tax filing created successfully!', 'success');
-  };
 
   return (
     <div className="section-card overflow-hidden">
       <div className="flex items-center justify-between border-b border-gray-100 p-5">
         <div>
-          <h3 className="text-base font-semibold text-gray-900">Tax Filings & Documents</h3>
-          <p className="text-sm text-gray-500">{filings.filter((f) => f.status === 'filed').length} filed · {filings.filter((f) => f.status !== 'filed').length} pending</p>
+          <h3 className="text-base font-semibold text-gray-900">Documents & Pay Stubs</h3>
+          <p className="text-sm text-gray-500">Access your tax forms and payment history</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => showToast('Opening file upload dialog...', 'info')}>
-            <Upload className="h-3.5 w-3.5" /> Upload
-          </Button>
-          <Button size="sm" onClick={() => setIsModalOpen(true)}>
-            <FileText className="h-3.5 w-3.5" /> New Filing
+          <Button variant="outline" size="sm" onClick={() => showToast('Opening secure document vault...', 'info')}>
+            <FileText className="h-3.5 w-3.5 mr-2" /> Vault
           </Button>
         </div>
       </div>
@@ -62,55 +39,56 @@ export function FilingsList() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50">
-              <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Form</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 hidden md:table-cell">Period</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 hidden lg:table-cell">Due Date</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 hidden lg:table-cell">Filed</th>
+              <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Document</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 hidden md:table-cell">Date / Period</th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Status</th>
               <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {filings.map((filing) => (
-              <tr key={filing.id} className="hover:bg-gray-50 transition-colors">
+            {mockDocuments.map((doc) => (
+              <tr key={doc.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-5 py-3.5">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-brand-50">
-                      <FileText className="h-4 w-4 text-brand-600" />
+                    <div className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg ${typeConfig[doc.type as keyof typeof typeConfig].bg}`}>
+                      <FileText className={`h-4 w-4 ${typeConfig[doc.type as keyof typeof typeConfig].text}`} />
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-900">{filing.form}</p>
-                      <p className="text-xs text-gray-500 truncate max-w-[180px]">{filing.description}</p>
+                      <p className="font-semibold text-gray-900">{doc.name}</p>
+                      <p className="text-xs text-gray-500">{doc.type}</p>
                     </div>
                   </div>
                 </td>
-                <td className="px-4 py-3.5 text-gray-600 hidden md:table-cell">{filing.period}</td>
-                <td className="px-4 py-3.5 text-gray-600 hidden lg:table-cell">{formatDate(filing.dueDate)}</td>
-                <td className="px-4 py-3.5 hidden lg:table-cell">
-                  {filing.filedDate ? (
-                    <span className="text-emerald-600 font-medium">{formatDate(filing.filedDate)}</span>
-                  ) : (
-                    <span className="text-gray-400">—</span>
-                  )}
+                <td className="px-4 py-3.5 text-gray-600 hidden md:table-cell">
+                  <div className="flex items-center gap-1.5">
+                    <Calendar className="h-3.5 w-3.5 text-gray-400" />
+                    {doc.date}
+                  </div>
                 </td>
                 <td className="px-4 py-3.5">
-                  <Badge variant={statusConfig[filing.status].variant}>
-                    {statusConfig[filing.status].label}
-                  </Badge>
+                  {doc.status === 'available' ? (
+                    <Badge variant="success">Available</Badge>
+                  ) : (
+                    <Badge variant="warning">Upcoming</Badge>
+                  )}
                 </td>
                 <td className="px-4 py-3.5 text-right">
                   <div className="flex items-center justify-end gap-1">
-                    <button 
-                      onClick={() => showToast(`Opening document viewer for ${filing.form}...`, 'info')}
-                      className="rounded-lg p-1.5 text-gray-400 hover:bg-brand-50 hover:text-brand-600 transition-colors">
-                      <Eye className="h-4 w-4" />
-                    </button>
-                    {filing.filedDate && (
-                      <button 
-                        onClick={() => showToast(`Downloading ${filing.form} as PDF...`, 'success')}
-                        className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors">
-                        <Download className="h-4 w-4" />
-                      </button>
+                    {doc.status === 'available' ? (
+                      <>
+                        <button 
+                          onClick={() => showToast(`Opening ${doc.name}...`, 'info')}
+                          className="rounded-lg p-1.5 text-gray-400 hover:bg-brand-50 hover:text-brand-600 transition-colors">
+                          <Eye className="h-4 w-4" />
+                        </button>
+                        <button 
+                          onClick={() => showToast(`Downloading ${doc.name} as PDF...`, 'success')}
+                          className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors">
+                          <Download className="h-4 w-4" />
+                        </button>
+                      </>
+                    ) : (
+                      <span className="text-xs text-gray-400 italic">Not yet available</span>
                     )}
                   </div>
                 </td>
@@ -119,41 +97,6 @@ export function FilingsList() {
           </tbody>
         </table>
       </div>
-
-      {/* Add Modal overlay */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Create Tax Filing</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-gray-700">Form Type</label>
-                <input 
-                  type="text" 
-                  value={newForm} 
-                  onChange={e => setNewForm(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-200 p-2 text-sm focus:border-brand-500 focus:outline-none" 
-                  placeholder="e.g. Form 941" 
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-700">Description</label>
-                <input 
-                  type="text" 
-                  value={newDesc} 
-                  onChange={e => setNewDesc(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-200 p-2 text-sm focus:border-brand-500 focus:outline-none" 
-                  placeholder="e.g. Employer Quarterly Tax" 
-                />
-              </div>
-            </div>
-            <div className="mt-6 flex justify-end gap-3">
-              <button className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50" onClick={() => setIsModalOpen(false)}>Cancel</button>
-              <button className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700" onClick={handleAddFiling}>Save Filing</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

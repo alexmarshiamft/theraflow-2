@@ -6,69 +6,63 @@ import { TaxSummary } from '@/components/modules/tax/TaxSummary';
 import { FilingsList } from '@/components/modules/tax/FilingsList';
 import { StatCard } from '@/components/ui/StatCard';
 import {
-  AlertTriangle,
-  CheckCircle2,
-  DollarSign,
+  Wallet,
+  Landmark,
   FileText,
+  DollarSign,
 } from 'lucide-react';
 
 export default function TaxPage() {
-  const { filings, transactions } = useStore();
-
-  const totalFilings = filings.length;
-  const filedCount = filings.filter(f => f.status === 'filed').length;
-  const pendingCount = filings.filter(f => f.status !== 'filed').length;
+  const ytdGross = 3771.04; // YTD Gross
+  const ytdTaxes = 524.06; // YTD Taxes Withheld
+  const ytdNet = 2850.32; // YTD Net Pay
   
-  const estimatedTax = transactions
-    .filter(t => t.category === 'Tax' && t.type === 'debit')
-    .reduce((acc, t) => acc + t.amount, 101100); // 101100 base for demo
-
   return (
     <DashboardLayout>
       <div className="page-header">
         <div>
-          <h1 className="page-title">Tax Preparation</h1>
-          <p className="page-subtitle">Manage tax filings, estimated payments, and financial documents</p>
+          <h1 className="page-title">Earnings & Taxes</h1>
+          <p className="page-subtitle">Manage your W-2 earnings, pay stubs, and tax documents</p>
         </div>
       </div>
 
       {/* Stats */}
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title="2024 Tax Estimate"
-          value={`$${estimatedTax.toLocaleString('en-US')}`}
-          change="Federal, state & payroll"
+          title={`YTD Gross Pay`}
+          value={`$${ytdGross.toLocaleString('en-US')}`}
+          change="Before taxes & deductions"
           changeType="neutral"
-          icon={DollarSign}
-          iconColor="text-amber-600"
-          iconBg="bg-amber-50"
+          icon={Wallet}
+          iconColor="text-indigo-600"
+          iconBg="bg-indigo-50"
         />
         <StatCard
-          title="Filings This Year"
-          value={totalFilings.toString()}
-          change={`${filedCount} filed, ${pendingCount} pending`}
+          title="YTD Taxes Withheld"
+          value={`$${ytdTaxes.toLocaleString('en-US')}`}
+          change="Federal, State, FICA"
           changeType="neutral"
-          icon={FileText}
-          iconColor="text-brand-600"
-          iconBg="bg-brand-50"
+          icon={Landmark}
+          iconColor="text-rose-600"
+          iconBg="bg-rose-50"
         />
         <StatCard
-          title="Estimated Deductions"
-          value="$12,400"
-          change="$3,720 in tax savings"
+          title="YTD Net Pay"
+          value={`$${ytdNet.toLocaleString('en-US')}`}
+          change="Take-home pay"
           changeType="up"
-          icon={CheckCircle2}
+          icon={DollarSign}
           iconColor="text-emerald-600"
           iconBg="bg-emerald-50"
         />
         <StatCard
-          title="Next Payment Due"
-          value="Jun 17"
-          change="Q2 2024"
-          changeType="down"
-          icon={AlertTriangle}
-          iconColor="text-red-500"
-          iconBg="bg-red-50"
+          title="Available Documents"
+          value="14"
+          change={`12 Pay Stubs, 2 Tax Forms`}
+          changeType="neutral"
+          icon={FileText}
+          iconColor="text-blue-500"
+          iconBg="bg-blue-50"
         />
       </div>
 

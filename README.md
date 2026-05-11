@@ -26,6 +26,16 @@ npm install
 npm run dev
 ```
 
+### Environment Variables
+
+To run the application with the Amazon Chime telehealth integration, you must add your AWS credentials to a `.env.local` file in the root directory:
+
+```env
+AWS_REGION=us-west-2
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+```
+
 Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ## License

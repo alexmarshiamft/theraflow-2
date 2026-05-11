@@ -1,152 +1,75 @@
 'use client';
 
-import { AlertTriangle, CheckCircle2, Clock, DollarSign, TrendingDown } from 'lucide-react';
-import { formatCurrency } from '@/lib/utils';
-import { cn } from '@/lib/utils';
-
-interface TaxEstimate {
-  label: string;
-  amount: number;
-  category: string;
-}
-
-const estimates: TaxEstimate[] = [
-  { label: 'Federal Income Tax', amount: 42_800, category: 'federal' },
-  { label: 'Self-Employment Tax', amount: 18_400, category: 'federal' },
-  { label: 'State Income Tax (CA)', amount: 22_100, category: 'state' },
-  { label: 'Payroll Tax (Employer)', amount: 14_200, category: 'payroll' },
-  { label: 'Business Property Tax', amount: 3_600, category: 'local' },
-];
-
-const categoryColors: Record<string, string> = {
-  federal: 'bg-brand-500',
-  state: 'bg-teal-500',
-  payroll: 'bg-purple-500',
-  local: 'bg-amber-500',
-};
-
-const categoryBg: Record<string, string> = {
-  federal: 'bg-brand-50 border-brand-200',
-  state: 'bg-teal-50 border-teal-200',
-  payroll: 'bg-purple-50 border-purple-200',
-  local: 'bg-amber-50 border-amber-200',
-};
-
-const categoryText: Record<string, string> = {
-  federal: 'text-brand-700',
-  state: 'text-teal-700',
-  payroll: 'text-purple-700',
-  local: 'text-amber-700',
-};
-
-const total = estimates.reduce((s, e) => s + e.amount, 0);
-
-const quarterlyPayments = [
-  { quarter: 'Q1 2024', due: 'Apr 15, 2024', amount: 25_275, status: 'paid' },
-  { quarter: 'Q2 2024', due: 'Jun 17, 2024', amount: 25_275, status: 'upcoming' },
-  { quarter: 'Q3 2024', due: 'Sep 16, 2024', amount: 25_275, status: 'pending' },
-  { quarter: 'Q4 2024', due: 'Jan 15, 2025', amount: 25_275, status: 'pending' },
-];
+import { Sparkles, ShieldCheck } from 'lucide-react';
+import { formatCurrency, cn } from '@/lib/utils';
 
 export function TaxSummary() {
+  const currentYear = new Date().getFullYear();
+  
   return (
     <div className="space-y-4">
-      {/* Estimated Tax Breakdown */}
+      {/* AI Guidance Card */}
+      <div className="section-card bg-gradient-to-br from-indigo-900 to-purple-900 text-white p-5 border-0 shadow-lg relative overflow-hidden">
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-white opacity-5 blur-3xl"></div>
+        <div className="relative z-10">
+          <div className="flex items-center gap-2 mb-4">
+            <Sparkles className="h-5 w-5 text-indigo-300" />
+            <h3 className="text-base font-semibold text-white">AI Tax Insights</h3>
+          </div>
+          <div className="space-y-3">
+            <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm border border-white/10">
+              <p className="text-sm text-indigo-100">
+                <strong className="text-white">W-2 Status:</strong> As a W-2 employee, your employer automatically withholds federal and state taxes. You do not need to make quarterly estimated tax payments.
+              </p>
+            </div>
+            <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm border border-white/10">
+              <p className="text-sm text-indigo-100 leading-relaxed">
+                <strong className="text-white">California Deductions:</strong> While federal tax law no longer allows W-2 employees to deduct unreimbursed business expenses, <strong>California still allows it.</strong> You can deduct qualifying expenses (like BBS licensing fees, liability insurance, and mandatory CEUs) on your CA state return (Form 540) to the extent they exceed 2% of your Adjusted Gross Income.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-indigo-200 mt-2">
+              <ShieldCheck className="h-3 w-3" />
+              <span>Guidance is informational, not financial advice.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Pay Breakdown */}
       <div className="section-card p-5">
         <div className="flex items-start justify-between mb-5">
           <div>
-            <h3 className="text-base font-semibold text-gray-900">2024 Tax Estimate</h3>
-            <p className="text-sm text-gray-500">Based on current year projections</p>
+            <h3 className="text-base font-semibold text-gray-900">YTD Tax Withholdings</h3>
+            <p className="text-sm text-gray-500">Breakdown for {currentYear}</p>
           </div>
           <div className="text-right">
-            <p className="text-xs text-gray-500">Total Estimated</p>
-            <p className="text-2xl font-bold text-gray-900">{formatCurrency(total)}</p>
+            <p className="text-xs text-gray-500">Total Withheld</p>
+            <p className="text-2xl font-bold text-gray-900">{formatCurrency(524.06)}</p>
           </div>
         </div>
 
-        {/* Bar breakdown */}
-        <div className="mb-4 flex h-4 w-full overflow-hidden rounded-full">
-          {estimates.map((e) => (
-            <div
-              key={e.label}
-              className={cn('h-full transition-all', categoryColors[e.category])}
-              style={{ width: `${(e.amount / total) * 100}%` }}
-              title={`${e.label}: ${formatCurrency(e.amount)}`}
-            />
-          ))}
-        </div>
-
-        <div className="space-y-2">
-          {estimates.map((e) => (
-            <div key={e.label} className={cn('flex items-center justify-between rounded-lg border p-3', categoryBg[e.category])}>
-              <div className="flex items-center gap-2">
-                <div className={cn('h-2.5 w-2.5 rounded-full', categoryColors[e.category])} />
-                <span className={cn('text-sm font-medium', categoryText[e.category])}>{e.label}</span>
-              </div>
-              <span className={cn('font-semibold', categoryText[e.category])}>{formatCurrency(e.amount)}</span>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 p-3">
+            <div className="flex items-center gap-3">
+              <div className="h-2 w-2 rounded-full bg-blue-500" />
+              <span className="text-sm font-medium text-gray-700">Federal Income Tax</span>
             </div>
-          ))}
-        </div>
-
-        <div className="mt-4 flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 p-3">
-          <TrendingDown className="h-4 w-4 text-emerald-600 flex-shrink-0" />
-          <p className="text-sm text-emerald-700">
-            <span className="font-semibold">{formatCurrency(12_400)} in deductions</span> identified — estimated savings of {formatCurrency(3_720)}
-          </p>
-        </div>
-      </div>
-
-      {/* Quarterly Payments */}
-      <div className="section-card overflow-hidden">
-        <div className="border-b border-gray-100 p-5">
-          <h3 className="text-base font-semibold text-gray-900">Quarterly Estimated Payments</h3>
-          <p className="text-sm text-gray-500">IRS Form 1040-ES schedule</p>
-        </div>
-        <div className="divide-y divide-gray-100">
-          {quarterlyPayments.map((q) => (
-            <div key={q.quarter} className="flex items-center justify-between px-5 py-4">
-              <div className="flex items-center gap-3">
-                {q.status === 'paid' ? (
-                  <CheckCircle2 className="h-5 w-5 text-emerald-500 flex-shrink-0" />
-                ) : q.status === 'upcoming' ? (
-                  <AlertTriangle className="h-5 w-5 text-amber-500 flex-shrink-0" />
-                ) : (
-                  <Clock className="h-5 w-5 text-gray-300 flex-shrink-0" />
-                )}
-                <div>
-                  <p className="font-medium text-gray-900">{q.quarter}</p>
-                  <p className="text-xs text-gray-500">Due: {q.due}</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className={cn('font-semibold', q.status === 'paid' ? 'text-emerald-600' : q.status === 'upcoming' ? 'text-amber-600' : 'text-gray-500')}>
-                  {formatCurrency(q.amount)}
-                </p>
-                <p className="text-xs capitalize text-gray-400">{q.status}</p>
-              </div>
+            <span className="font-semibold text-gray-900">{formatCurrency(152.68)}</span>
+          </div>
+          <div className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 p-3">
+            <div className="flex items-center gap-3">
+              <div className="h-2 w-2 rounded-full bg-teal-500" />
+              <span className="text-sm font-medium text-gray-700">CA State Income Tax & SDI</span>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Escrow Status */}
-      <div className="section-card p-5">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold text-gray-900">Tax Escrow Account</h3>
-          <span className="text-sm font-bold text-gray-900">{formatCurrency(31_520.75)}</span>
-        </div>
-        <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-100">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-brand-500 to-teal-500"
-            style={{ width: '62%' }}
-          />
-        </div>
-        <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
-          <span>62% of next quarterly payment funded</span>
-          <span className="flex items-center gap-1 text-amber-600 font-medium">
-            <DollarSign className="h-3 w-3" />
-            {formatCurrency(15_754.25)} remaining
-          </span>
+            <span className="font-semibold text-gray-900">{formatCurrency(82.90)}</span>
+          </div>
+          <div className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 p-3">
+            <div className="flex items-center gap-3">
+              <div className="h-2 w-2 rounded-full bg-purple-500" />
+              <span className="text-sm font-medium text-gray-700">FICA (Social Security & Medicare)</span>
+            </div>
+            <span className="font-semibold text-gray-900">{formatCurrency(288.48)}</span>
+          </div>
         </div>
       </div>
     </div>

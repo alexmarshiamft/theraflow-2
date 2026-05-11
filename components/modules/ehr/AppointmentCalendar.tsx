@@ -50,7 +50,7 @@ export function AppointmentCalendar() {
   const [viewingAppt, setViewingAppt] = useState<Appointment | null>(null);
   const router = useRouter();
 
-  const [currentDate, setCurrentDate] = useState(new Date('2024-05-24T12:00:00'));
+  const [currentDate, setCurrentDate] = useState(new Date());
   
   const dateString = currentDate.toISOString().split('T')[0];
   const filteredAppointments = appointments.filter(appt => appt.time.startsWith(dateString)).sort((a, b) => a.time.localeCompare(b.time));

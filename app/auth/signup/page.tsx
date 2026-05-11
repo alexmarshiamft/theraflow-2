@@ -33,37 +33,44 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8 bg-white p-10 rounded-2xl shadow-xl border border-gray-100">
-        <div className="text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-brand-100 mb-4">
-            <UserPlus className="h-6 w-6 text-brand-600" />
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8 transition-colors duration-700 relative overflow-hidden">
+      {/* Cinematic Background Glows */}
+      <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-brand-500/10 rounded-full blur-[160px] pointer-events-none animate-pulse duration-10000"></div>
+      <div className="absolute bottom-[-20%] left-[-10%] w-[60%] h-[60%] bg-teal-500/10 rounded-full blur-[160px] pointer-events-none animate-pulse duration-7000"></div>
+      <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] mix-blend-overlay pointer-events-none"></div>
+
+      <div className="w-full max-w-md space-y-8 bg-card/60 backdrop-blur-2xl p-10 rounded-3xl shadow-2xl border border-white/5 animate-in fade-in zoom-in-95 duration-700 relative z-10">
+        <div className="text-center relative">
+          <div className="absolute top-[-40px] inset-x-0 h-1 bg-gradient-to-r from-transparent via-brand-500 to-transparent opacity-50 blur-[2px]"></div>
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-500/10 border border-brand-500/20 shadow-inner mb-6 relative">
+             <div className="absolute inset-0 bg-brand-500/20 rounded-2xl animate-ping opacity-20"></div>
+            <UserPlus className="h-8 w-8 text-brand-500 relative z-10" />
           </div>
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900">Start Free Trial</h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground">Start Free Trial</h2>
+          <p className="mt-3 text-sm text-muted-foreground">
             Create your secure HIPAA-compliant practice account
           </p>
         </div>
         
         <form className="mt-8 space-y-6" onSubmit={handleSignup}>
-          <div className="space-y-4 rounded-md shadow-sm">
+          <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium text-gray-700">Practice Email</label>
+              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 block">Practice Email</label>
               <input
                 type="email"
                 required
-                className="mt-1 w-full rounded-lg border border-gray-200 p-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                className="w-full rounded-xl border border-border bg-background/50 backdrop-blur-sm p-4 text-foreground focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all shadow-inner placeholder:text-muted-foreground/30"
                 placeholder="doctor@theraflow.health"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-700">Password</label>
+              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 block">Password</label>
               <input
                 type="password"
                 required
-                className="mt-1 w-full rounded-lg border border-gray-200 p-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                className="w-full rounded-xl border border-border bg-background/50 backdrop-blur-sm p-4 text-foreground focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all shadow-inner placeholder:text-muted-foreground/30"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -72,56 +79,60 @@ export default function SignupPage() {
             </div>
           </div>
 
-          <div className="space-y-3">
-            <div className="flex items-start">
-              <div className="flex h-5 items-center">
+          <div className="space-y-4 bg-background/30 p-5 rounded-2xl border border-border">
+            <label className="flex items-start gap-3 cursor-pointer group">
+              <div className="relative flex items-center mt-0.5 shrink-0">
                 <input
                   id="terms"
-                  name="terms"
                   type="checkbox"
                   required
                   checked={agreeTerms}
                   onChange={(e) => setAgreeTerms(e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-600"
+                  className="peer sr-only"
                 />
+                <div className="w-5 h-5 rounded border-2 border-muted-foreground peer-checked:bg-brand-500 peer-checked:border-brand-500 transition-colors flex items-center justify-center">
+                  <div className="w-2 h-2 bg-white rounded-sm opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+                </div>
               </div>
-              <div className="ml-3 text-sm">
-                <label htmlFor="terms" className="font-medium text-gray-700">
+              <div className="text-sm">
+                <span className="font-bold text-foreground block mb-1">
                   Terms & Privacy Policy
-                </label>
-                <p className="text-gray-500">I agree to the <Link href="/legal/terms" className="text-brand-600 hover:underline">Terms of Service</Link> and Privacy Policy.</p>
+                </span>
+                <p className="text-muted-foreground text-xs leading-relaxed group-hover:text-foreground/80 transition-colors">I agree to the <Link href="/legal/terms" className="text-brand-500 hover:underline">Terms of Service</Link> and Privacy Policy.</p>
               </div>
-            </div>
+            </label>
             
-            <div className="flex items-start">
-              <div className="flex h-5 items-center">
+            <label className="flex items-start gap-3 cursor-pointer group pt-4 border-t border-white/5">
+              <div className="relative flex items-center mt-0.5 shrink-0">
                 <input
                   id="baa"
-                  name="baa"
                   type="checkbox"
                   required
                   checked={agreeBaa}
                   onChange={(e) => setAgreeBaa(e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-600"
+                  className="peer sr-only"
                 />
+                <div className="w-5 h-5 rounded border-2 border-muted-foreground peer-checked:bg-brand-500 peer-checked:border-brand-500 transition-colors flex items-center justify-center">
+                  <div className="w-2 h-2 bg-white rounded-sm opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+                </div>
               </div>
-              <div className="ml-3 text-sm">
-                <label htmlFor="baa" className="font-medium text-gray-700">
-                  Business Associate Agreement (BAA)
-                </label>
-                <p className="text-gray-500">I agree to the <Link href="/legal/baa" className="text-brand-600 hover:underline">BAA</Link> for handling Protected Health Information (PHI) and assume liability for data uploaded to this platform.</p>
+              <div className="text-sm">
+                <span className="font-bold text-foreground block mb-1">
+                  Business Associate Agreement
+                </span>
+                <p className="text-muted-foreground text-xs leading-relaxed group-hover:text-foreground/80 transition-colors">I agree to the <Link href="/legal/baa" className="text-brand-500 hover:underline">BAA</Link> for handling Protected Health Information (PHI).</p>
               </div>
-            </div>
+            </label>
           </div>
 
-          <Button type="submit" className="w-full h-11" disabled={loading}>
-            {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-            {loading ? 'Creating Account...' : 'Create Account'}
+          <Button type="submit" className="w-full h-14 text-lg font-bold shadow-[0_0_20px_rgba(14,165,233,0.3)] hover:shadow-[0_0_30px_rgba(14,165,233,0.5)] transition-all rounded-xl" disabled={loading}>
+            {loading ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : null}
+            {loading ? 'Cryptographic Key Generation...' : 'Create Secure Account'}
           </Button>
           
-          <p className="text-center text-sm text-gray-600 mt-4">
+          <p className="text-center text-sm text-muted-foreground mt-6">
             Already have an account?{' '}
-            <Link href="/auth/login" className="font-semibold text-brand-600 hover:text-brand-500">
+            <Link href="/auth/login" className="font-bold text-brand-500 hover:text-brand-400 transition-colors">
               Sign In
             </Link>
           </p>

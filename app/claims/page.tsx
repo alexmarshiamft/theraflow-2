@@ -98,8 +98,8 @@ export default function ClaimsPage() {
     <DashboardLayout>
       <div className="mb-8 flex justify-between items-start">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Insurance Clearinghouse</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-foreground">Insurance Clearinghouse</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             Manage electronic claims (837), ERAs (835), and rejections.
           </p>
         </div>
@@ -153,26 +153,26 @@ export default function ClaimsPage() {
       {/* Batch Submission Overlay Modal */}
       {isBatchModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4 sm:p-6">
-          <div className="w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-full">
+          <div className="w-full max-w-3xl bg-card rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-full">
             
             {/* Header */}
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+            <div className="p-6 border-b border-border/50 flex justify-between items-center bg-muted/50">
               <div>
-                <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
                   <Sparkles className="h-5 w-5 text-brand-600" />
                   AI Claim Audit Engine
                 </h2>
-                <p className="text-sm text-slate-500 mt-1">Verifying {signedNotes.length} signed clinical notes before clearinghouse transmission.</p>
+                <p className="text-sm text-muted-foreground mt-1">Verifying {signedNotes.length} signed clinical notes before clearinghouse transmission.</p>
               </div>
               {workflowStage !== 'scrubbing' && (
-                <Button variant="ghost" size="icon" onClick={handleCloseBatchModal} className="text-slate-400 hover:text-slate-600">
+                <Button variant="ghost" size="sm" onClick={handleCloseBatchModal} className="text-muted-foreground/80 hover:text-muted-foreground">
                   <X className="h-5 w-5" />
                 </Button>
               )}
             </div>
 
             {/* Body */}
-            <div className="p-8 flex-1 overflow-y-auto bg-white">
+            <div className="p-8 flex-1 overflow-y-auto bg-card">
               
               {workflowStage === 'review' && (
                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
@@ -184,22 +184,22 @@ export default function ClaimsPage() {
                     </div>
                   </div>
                   
-                  <div className="border border-slate-200 rounded-xl overflow-hidden">
+                  <div className="border border-border rounded-xl overflow-hidden">
                     <table className="w-full text-sm">
-                      <thead className="bg-slate-50 border-b border-slate-200">
+                      <thead className="bg-muted/50 border-b border-border">
                         <tr>
-                          <th className="px-4 py-3 text-left font-medium text-slate-500">Client</th>
-                          <th className="px-4 py-3 text-left font-medium text-slate-500">Date</th>
-                          <th className="px-4 py-3 text-left font-medium text-slate-500">Associate</th>
-                          <th className="px-4 py-3 text-right font-medium text-slate-500">Status</th>
+                          <th className="px-4 py-3 text-left font-medium text-muted-foreground">Client</th>
+                          <th className="px-4 py-3 text-left font-medium text-muted-foreground">Date</th>
+                          <th className="px-4 py-3 text-left font-medium text-muted-foreground">Associate</th>
+                          <th className="px-4 py-3 text-right font-medium text-muted-foreground">Status</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
                         {signedNotes.map(note => (
                           <tr key={note.id}>
-                            <td className="px-4 py-3 font-medium text-slate-900">{note.clientName}</td>
-                            <td className="px-4 py-3 text-slate-500">{note.date}</td>
-                            <td className="px-4 py-3 text-slate-500">{note.associateName}</td>
+                            <td className="px-4 py-3 font-medium text-foreground">{note.clientName}</td>
+                            <td className="px-4 py-3 text-muted-foreground">{note.date}</td>
+                            <td className="px-4 py-3 text-muted-foreground">{note.associateName}</td>
                             <td className="px-4 py-3 text-right">
                               <Badge variant="success" className="bg-emerald-100 text-emerald-700">Signed & Locked</Badge>
                             </td>
@@ -228,10 +228,10 @@ export default function ClaimsPage() {
                          <Sparkles className="h-8 w-8 text-indigo-600 animate-pulse" />
                       )}
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900">
+                    <h3 className="text-xl font-bold text-foreground">
                       {workflowStage === 'ready' ? 'All Systems Go' : 'Scrubbing Claims...'}
                     </h3>
-                    <p className="text-slate-500">
+                    <p className="text-muted-foreground">
                       {workflowStage === 'ready' ? '100% of claims passed pre-submission validation.' : 'Analyzing against 50+ common rejection rules.'}
                     </p>
                   </div>
@@ -242,16 +242,16 @@ export default function ClaimsPage() {
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-colors duration-300 ${
                           step.status === 'passed' ? 'bg-emerald-100 text-emerald-600' :
                           step.status === 'scanning' ? 'bg-indigo-100 text-indigo-600' :
-                          'bg-slate-100 text-slate-400'
+                          'bg-muted text-muted-foreground/80'
                         }`}>
                           {step.status === 'passed' ? <CheckCircle2 className="h-5 w-5" /> : 
                            step.status === 'scanning' ? <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" /> :
                            <div className="w-2 h-2 rounded-full bg-slate-300" />}
                         </div>
                         <div className={`font-medium transition-colors duration-300 ${
-                          step.status === 'passed' ? 'text-slate-900' :
+                          step.status === 'passed' ? 'text-foreground' :
                           step.status === 'scanning' ? 'text-indigo-900' :
-                          'text-slate-400'
+                          'text-muted-foreground/80'
                         }`}>
                           {step.label}
                         </div>
@@ -276,36 +276,36 @@ export default function ClaimsPage() {
                   </div>
                   
                   <div>
-                    <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Successfully Delivered</h2>
-                    <p className="text-lg text-slate-600 mt-2">
+                    <h2 className="text-3xl font-extrabold text-foreground tracking-tight">Successfully Delivered</h2>
+                    <p className="text-lg text-muted-foreground mt-2">
                       {signedNotes.length} claims have been securely transmitted via 837 EDI.
                     </p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 text-left">
-                    <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 space-y-2">
-                      <h4 className="font-semibold text-slate-900 flex items-center gap-2">
+                    <div className="bg-muted/50 rounded-2xl p-6 border border-border/50 space-y-2">
+                      <h4 className="font-semibold text-foreground flex items-center gap-2">
                         <DollarSign className="h-5 w-5 text-emerald-500" />
                         Total Expected
                       </h4>
-                      <p className="text-sm text-slate-600">
+                      <p className="text-sm text-muted-foreground">
                         {signedNotes.length} claims × {formatCurrency(rate)} (90834)
                       </p>
                       <div className="text-2xl font-bold text-emerald-600">{formatCurrency(payoutAmount)}</div>
                     </div>
                     
-                    <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 space-y-2">
-                      <h4 className="font-semibold text-slate-900 flex items-center gap-2">
+                    <div className="bg-muted/50 rounded-2xl p-6 border border-border/50 space-y-2">
+                      <h4 className="font-semibold text-foreground flex items-center gap-2">
                         <Building className="h-5 w-5 text-brand-500" />
                         50/50 Revenue Split
                       </h4>
-                      <div className="text-sm text-slate-600 flex justify-between">
+                      <div className="text-sm text-muted-foreground flex justify-between">
                         <span>Practice Net:</span>
-                        <span className="font-semibold text-slate-900">{formatCurrency(practiceNet)}</span>
+                        <span className="font-semibold text-foreground">{formatCurrency(practiceNet)}</span>
                       </div>
-                      <div className="text-sm text-slate-600 flex justify-between">
+                      <div className="text-sm text-muted-foreground flex justify-between">
                         <span>Associate Net:</span>
-                        <span className="font-semibold text-slate-900">{formatCurrency(associateNet)}</span>
+                        <span className="font-semibold text-foreground">{formatCurrency(associateNet)}</span>
                       </div>
                     </div>
                   </div>
@@ -335,9 +335,9 @@ export default function ClaimsPage() {
                           <CheckCircle2 className="h-5 w-5 text-brand-600" />
                           Messages Dispatched Successfully
                         </h4>
-                        <div className="bg-white rounded-lg p-3 border border-brand-100 text-sm shadow-sm space-y-2 relative">
-                          <div className="absolute -top-2 left-4 w-4 h-4 bg-white border-t border-l border-brand-100 transform rotate-45" />
-                          <p className="text-slate-700 relative z-10">
+                        <div className="bg-card rounded-lg p-3 border border-brand-100 text-sm shadow-sm space-y-2 relative">
+                          <div className="absolute -top-2 left-4 w-4 h-4 bg-card border-t border-l border-brand-100 transform rotate-45" />
+                          <p className="text-foreground/80 relative z-10">
                             <strong>Message sent to 6 Associates:</strong><br/>
                             "Incredible work today! 🎉 You completed <strong>10 sessions</strong>, logging <strong>7.5 direct clinical hours (3.5 CFC)</strong> and <strong>0.5 non-clinical hours</strong> toward your licensure. Your daily earnings of <strong>{formatCurrency(associateNet / 6)}</strong> have been approved and are headed to your bank account."
                           </p>

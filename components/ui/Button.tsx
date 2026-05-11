@@ -3,7 +3,7 @@ import { ButtonHTMLAttributes, forwardRef } from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'icon';
 }
 
 const variantClasses: Record<NonNullable<ButtonProps['variant']>, string> = {
@@ -12,8 +12,8 @@ const variantClasses: Record<NonNullable<ButtonProps['variant']>, string> = {
   secondary:
     'bg-teal-600 text-white hover:bg-teal-700 focus:ring-teal-500 shadow-sm',
   outline:
-    'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-brand-500',
-  ghost: 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:ring-gray-300',
+    'border border-border bg-card text-foreground hover:bg-muted focus:ring-brand-500',
+  ghost: 'text-muted-foreground hover:bg-muted hover:text-foreground focus:ring-brand-500',
   danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm',
 };
 
@@ -21,6 +21,7 @@ const sizeClasses: Record<NonNullable<ButtonProps['size']>, string> = {
   sm: 'px-3 py-1.5 text-xs rounded-lg',
   md: 'px-4 py-2 text-sm rounded-lg',
   lg: 'px-6 py-2.5 text-base rounded-xl',
+  icon: 'h-9 w-9 flex items-center justify-center p-0 rounded-lg',
 };
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(

@@ -1,13 +1,101 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isUser(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isRole(role) {
+      return isAuthenticated() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role;
+    }
+
+    function isAdmin() {
+      return isRole('admin');
+    }
+
+    function isClinician() {
+      return isRole('clinician') || isAdmin();
+    }
+
+    // 1. Users Collection
+    match /users/{userId} {
+      // Users can read their own profile, Clinicians/Admins can read all
+      allow read: if isUser(userId) || isClinician();
+      // Users can update their own non-role fields
+      allow update: if isUser(userId) 
+        && (!request.resource.data.keys().hasAny(['role', 'permissions']) 
+            || request.resource.data.role == resource.data.role);
+      allow create: if isUser(userId);
+      // Only admins can delete
+      allow delete: if isAdmin();
+    }
+
+    // 2. Patients / Clients (PHI Data)
+    match /patients/{patientId} {
+      // Patient can read their own record, assigned clinician or admin can read
+      allow read: if isUser(patientId) || isClinician();
+      // Patient can create their initial intake (if onboarding)
+      allow create: if isUser(patientId);
+      // Patient can update basic info, clinicians can update clinical data
+      allow update: if isUser(patientId) || isClinician();
+      allow delete: if isAdmin();
+    }
+
+    // 3. Clinical Notes & Records (Strict PHI)
+    match /clinical_notes/{noteId} {
+      // Only clinicians and admins can read/write clinical notes
+      // Patients CANNOT access internal clinical notes directly (unless explicitly shared)
+      allow read, write: if isClinician();
+    }
+
+    // 4. Financial / Billing & Payroll
+    match /financial_transactions/{txId} {
+      // Patients can see their own payments
+      allow read: if isUser(resource.data.userId) || isClinician();
+      // System/Clinicians process transactions
+      allow create: if isClinician() || isUser(request.resource.data.userId);
+      allow update: if isClinician();
+      // Transactions are immutable once finalized (only soft deletes/voids via update)
+      allow delete: if false; 
+    }
+
+    match /payroll_logs/{logId} {
+      // Only admins and the specific clinician can see their payroll
+      allow read: if isAdmin() || isUser(resource.data.clinicianId);
+      allow create, update: if isAdmin();
+      allow delete: if false; // Payroll logs must be immutable
+    }
+
+    // 5. Audit Logs
+    match /audit_logs/{logId} {
+      // Audit logs are append-only and strictly for Admins
+      allow read: if isAdmin();
+      allow create: if isAuthenticated(); // Any authenticated user action can trigger a log creation
+      allow update, delete: if false; // IMMUTABLE
+    }
+
+    // 6. Secure Messaging
+    match /messages/{messageId} {
+      // Users can read messages where they are the sender or in the recipient list
+      allow read: if isAuthenticated() && (
+        resource.data.senderId == request.auth.uid ||
+        request.auth.uid in resource.data.participantIds
+      );
+      // Users can send messages
+      allow create: if isAuthenticated() && request.resource.data.senderId == request.auth.uid;
+      allow update: if isAuthenticated() && resource.data.senderId == request.auth.uid;
+      allow delete: if isAdmin();
+    }
+
+    // Default deny
     match /{document=**} {
-      // For multi-tenancy MVP: Ensure the user is logged in
-      // and they are only accessing documents tagged with their userId
-      allow read, write: if request.auth != null && resource.data.userId == request.auth.uid;
-      
-      // Allow creation if they are setting the userId to their own uid
-      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow read, write: if false;
     }
   }
 }

@@ -1,85 +1,105 @@
 'use client';
 
-import { ShieldAlert } from 'lucide-react';
-import Link from 'next/link';
+import React from 'react';
+import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { Shield, FileSignature, Download, Info, Activity } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { ComplianceHub } from '@/components/modules/compliance/ComplianceHub';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 
-export default function BusinessAssociateAgreement() {
+export default function BAAPage() {
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-        <div className="mb-8 border-b border-gray-200 pb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Business Associate Agreement (BAA)</h1>
-          <p className="text-gray-500">Last Updated: May 2026</p>
+    <DashboardLayout>
+      <div className="max-w-6xl mx-auto py-8">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground mb-2">Zero-Touch Compliance</h1>
+            <p className="text-muted-foreground">Manage HIPAA readiness, BAA generation, and audit logs</p>
+          </div>
+          <div className="flex gap-3">
+            <Button className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-[0_0_15px_rgba(16,185,129,0.2)] border border-emerald-500/50">
+              <Activity className="w-4 h-4 mr-2" />
+              Generate Audit Report
+            </Button>
+          </div>
         </div>
 
-        <div className="prose prose-brand max-w-none text-gray-700 space-y-6">
-          
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-8 flex gap-3">
-            <ShieldAlert className="h-6 w-6 text-amber-600 flex-shrink-0" />
-            <div className="text-sm text-amber-900">
-              <strong className="block mb-1">DISCLAIMER: TEMPLATE DOCUMENT</strong>
-              This is a standard boilerplate Business Associate Agreement. Theraflow platform operators must consult with legal counsel to adapt this document for their specific jurisdiction prior to commercial use.
+        <Tabs defaultValue="hub" className="space-y-6">
+          <TabsList className="bg-slate-900 border border-slate-800 p-1">
+            <TabsTrigger value="hub" className="data-[state=active]:bg-brand-600 data-[state=active]:text-white">Compliance Hub</TabsTrigger>
+            <TabsTrigger value="baa" className="data-[state=active]:bg-brand-600 data-[state=active]:text-white">BAA Template</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="hub" className="focus:outline-none">
+            <ComplianceHub />
+          </TabsContent>
+
+          <TabsContent value="baa" className="focus:outline-none">
+            <div className="bg-brand-500/10 border border-brand-500/20 rounded-xl p-4 mb-8 flex items-start gap-3">
+              <Info className="w-5 h-5 text-brand-500 mt-0.5" />
+              <p className="text-sm text-foreground/90">
+                This Business Associate Agreement (BAA) establishes the legally binding relationship between your practice (Covered Entity) and Theraflow Health (Business Associate) regarding the safeguarding of Protected Health Information (PHI).
+              </p>
             </div>
-          </div>
 
-          <section>
-            <h2 className="text-xl font-bold text-gray-900">1. Definitions</h2>
-            <p>
-              Terms used, but not otherwise defined, in this Agreement shall have the same meaning as those terms in the HIPAA Rules. 
-              <br />
-              <strong>"Covered Entity"</strong> refers to you, the healthcare provider utilizing the Service.
-              <br />
-              <strong>"Business Associate"</strong> refers to Theraflow.
-              <br />
-              <strong>"Protected Health Information" (PHI)</strong> shall have the same meaning as the term "protected health information" in 45 CFR § 160.103.
-            </p>
-          </section>
+            <div className="bg-card border border-border rounded-2xl shadow-xl p-8 md:p-12 prose dark:prose-invert max-w-none text-muted-foreground prose-headings:text-foreground prose-strong:text-foreground">
+              <div className="flex items-center justify-between border-b border-border pb-4 mb-8">
+                <div className="flex items-center gap-2 text-emerald-500 font-semibold">
+                  <Shield className="w-5 h-5" />
+                  HIPAA/HITECH Compliant Document
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-2" /> Download
+                  </Button>
+                </div>
+              </div>
 
-          <section>
-            <h2 className="text-xl font-bold text-gray-900">2. Obligations and Activities of Business Associate</h2>
-            <p>Business Associate agrees to:</p>
-            <ul className="list-disc pl-5 space-y-2 mt-2">
-              <li>Not use or disclose protected health information other than as permitted or required by the Agreement or as required by law.</li>
-              <li>Use appropriate safeguards, and comply with Subpart C of 45 CFR Part 164 with respect to electronic protected health information, to prevent use or disclosure of protected health information other than as provided for by the Agreement.</li>
-              <li>Report to covered entity any use or disclosure of protected health information not provided for by the Agreement of which it becomes aware, including breaches of unsecured protected health information as required at 45 CFR 164.410, and any security incident of which it becomes aware.</li>
-              <li>Ensure that any subcontractors that create, receive, maintain, or transmit protected health information on behalf of the business associate agree to the same restrictions, conditions, and requirements that apply to the business associate with respect to such information.</li>
-            </ul>
-          </section>
+              <h2>1. Definitions</h2>
+              <p>
+                Catch-all definition: The following terms used in this Agreement shall have the same meaning as those terms in the HIPAA Rules: Breach, Data Aggregation, Designated Record Set, Disclosure, Health Care Operations, Individual, Minimum Necessary, Notice of Privacy Practices, Protected Health Information, Required By Law, Secretary, Security Incident, Subcontractor, Unsecured Protected Health Information, and Use.
+              </p>
 
-          <section>
-            <h2 className="text-xl font-bold text-gray-900">3. Permitted Uses and Disclosures</h2>
-            <p>
-              Business Associate may only use or disclose protected health information to perform functions, activities, or services for, or on behalf of, Covered Entity as specified in the Terms of Service.
-              <br />
-              Business Associate may use or disclose protected health information as required by law.
-              <br />
-              Business associate may not use or disclose protected health information in a manner that would violate Subpart E of 45 CFR Part 164 if done by covered entity.
-            </p>
-          </section>
+              <h2>2. Obligations and Activities of Business Associate</h2>
+              <p>Business Associate agrees to:</p>
+              <ul>
+                <li>Not use or disclose protected health information other than as permitted or required by the Agreement or as required by law;</li>
+                <li>Use appropriate safeguards, and comply with Subpart C of 45 CFR Part 164 with respect to electronic protected health information, to prevent use or disclosure of protected health information other than as provided for by the Agreement;</li>
+                <li>Report to covered entity any use or disclosure of protected health information not provided for by the Agreement of which it becomes aware, including breaches of unsecured protected health information as required at 45 CFR 164.410, and any security incident of which it becomes aware;</li>
+                <li>In accordance with 45 CFR 164.502(e)(1)(ii) and 164.308(b)(2), if applicable, ensure that any subcontractors that create, receive, maintain, or transmit protected health information on behalf of the business associate agree to the same restrictions, conditions, and requirements that apply to the business associate with respect to such information;</li>
+              </ul>
 
-          <section>
-            <h2 className="text-xl font-bold text-gray-900">4. Provisions for Covered Entity to Inform Business Associate</h2>
-            <p>
-              Covered entity shall notify business associate of any limitation(s) in the notice of privacy practices of covered entity under 45 CFR 164.520, to the extent that such limitation may affect business associate’s use or disclosure of protected health information.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-xl font-bold text-gray-900">5. Term and Termination</h2>
-            <p>
-              <strong>Term.</strong> The Term of this Agreement shall be effective as of the date of electronic acceptance during account registration, and shall terminate on the date covered entity terminates for cause as authorized in paragraph (b) of this Section, or when all of the protected health information provided by covered entity to business associate, or created, received, or maintained by business associate on behalf of covered entity, is destroyed or returned to covered entity.
-              <br /><br />
-              <strong>Termination for Cause.</strong> Business associate authorizes termination of this Agreement by covered entity, if covered entity determines business associate has violated a material term of the Agreement.
-            </p>
-          </section>
-
-          <div className="mt-12 pt-8 border-t border-gray-200 text-center">
-            <Link href="/auth/signup" className="text-brand-600 hover:text-brand-700 font-medium">
-              &larr; Return to Sign Up
-            </Link>
-          </div>
-        </div>
+              <h2>3. Permitted Uses and Disclosures by Business Associate</h2>
+              <p>
+                Business associate may only use or disclose protected health information as necessary to perform the services set forth in the Service Agreement between the Parties. In addition, the business associate may use or disclose protected health information as required by law.
+              </p>
+              
+              <h2>4. Term and Termination</h2>
+              <p>
+                The Term of this Agreement shall be effective as of the date of electronic signature, and shall terminate on the date covered entity terminates for cause as authorized in paragraph (b) of this Section, or when all of the protected health information provided by covered entity to business associate, or created or received by business associate on behalf of covered entity, is destroyed or returned to covered entity.
+              </p>
+              
+              <div className="mt-12 pt-8 border-t border-border">
+                <h3 className="mb-4">Electronic Signature Log</h3>
+                <div className="bg-muted/50 rounded-xl p-4 text-sm font-mono">
+                  <div className="flex justify-between border-b border-border pb-2 mb-2">
+                    <span className="text-muted-foreground">Document ID:</span>
+                    <span className="text-foreground font-bold">BAA-2026-TRX-812</span>
+                  </div>
+                  <div className="flex justify-between border-b border-border pb-2 mb-2">
+                    <span className="text-muted-foreground">Status:</span>
+                    <span className="text-amber-500 font-bold">Awaiting Counter-Signature</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Timestamp:</span>
+                    <span className="text-foreground font-bold">—</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

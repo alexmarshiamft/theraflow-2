@@ -25,7 +25,17 @@ export async function POST(req: Request) {
     let finalPrompt = `SYSTEM INSTRUCTION: You are a secure, HIPAA-compliant AI assistant for a mental health practice. You must strictly adhere to California Board of Behavioral Sciences (BBS) guidelines, federal HIPAA regulations, and ethical standards of psychotherapy in all of your analyses and generated content.\n\nUser Request:\n${prompt}`;
     
     if (context) {
-      finalPrompt = `SYSTEM INSTRUCTION: You are a secure, HIPAA-compliant AI assistant for a mental health practice. You must strictly adhere to California Board of Behavioral Sciences (BBS) guidelines, federal HIPAA regulations, and ethical standards of psychotherapy in all of your analyses and generated content.\n\nContext:\n${JSON.stringify(context, null, 2)}\n\nUser Request:\n${prompt}`;
+      let contextString = '';
+      
+      if (context.uploadedFile) {
+        contextString += `\n--- ATTACHED FILE DATA: ${context.uploadedFile.name} ---\n${context.uploadedFile.content}\n-----------------------------------\n\n`;
+        // Remove uploaded file from stringified context to avoid duplication
+        delete context.uploadedFile;
+      }
+      
+      contextString += `System State Context:\n${JSON.stringify(context, null, 2)}`;
+      
+      finalPrompt = `SYSTEM INSTRUCTION: You are a secure, HIPAA-compliant AI assistant for a mental health practice. You must strictly adhere to California Board of Behavioral Sciences (BBS) guidelines, federal HIPAA regulations, and ethical standards of psychotherapy in all of your analyses and generated content.\n\nContext:\n${contextString}\n\nUser Request:\n${prompt}`;
     }
 
     const config: any = {};

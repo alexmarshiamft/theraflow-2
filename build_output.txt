@@ -1,0 +1,63 @@
+
+> theraflow@0.1.0 build
+> next build
+
+   ▲ Next.js 15.5.15
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 6.2s
+   Skipping linting
+   Checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/33) ...
+   Generating static pages (8/33) 
+   Generating static pages (16/33) 
+   Generating static pages (24/33) 
+ ✓ Generating static pages (33/33)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                         Size  First Load JS
+┌ ○ /                                              166 B         105 kB
+├ ○ /_not-found                                     1 kB         103 kB
+├ ƒ /api/chime/end                                 149 B         102 kB
+├ ƒ /api/chime/join                                149 B         102 kB
+├ ƒ /api/fhir/r4/Patient/[clientId]/$everything    149 B         102 kB
+├ ƒ /api/gemini                                    149 B         102 kB
+├ ƒ /api/scribe                                    149 B         102 kB
+├ ƒ /api/twilio/token                              149 B         102 kB
+├ ○ /auth/login                                  3.29 kB         228 kB
+├ ○ /auth/signup                                 3.46 kB         228 kB
+├ ○ /banking                                      111 kB         358 kB
+├ ○ /claims                                      9.49 kB         256 kB
+├ ○ /compliance                                  6.81 kB         237 kB
+├ ○ /dashboard                                   10.8 kB         258 kB
+├ ○ /earnings                                    3.43 kB         233 kB
+├ ○ /ehr                                         8.83 kB         256 kB
+├ ○ /ehr/notes                                   3.84 kB         251 kB
+├ ○ /ehr/roadmap                                 3.34 kB         250 kB
+├ ○ /features                                      149 B         102 kB
+├ ○ /hours                                       5.05 kB         235 kB
+├ ○ /intelligence                                4.26 kB         106 kB
+├ ○ /intelligence/churn                          3.37 kB         250 kB
+├ ○ /legal/baa                                     195 B         247 kB
+├ ○ /legal/terms                                   195 B         247 kB
+├ ○ /licensure                                   4.56 kB         251 kB
+├ ○ /mail                                        5.23 kB         235 kB
+├ ○ /messages                                    3.04 kB         250 kB
+├ ○ /payroll                                     6.08 kB         253 kB
+├ ○ /platform                                     4.5 kB         106 kB
+├ ○ /portal                                      7.79 kB         117 kB
+├ ○ /supervision                                 6.42 kB         236 kB
+├ ○ /tax                                          4.5 kB         251 kB
+└ ƒ /telehealth/[id]                              321 kB         553 kB
++ First Load JS shared by all                     102 kB
+  ├ chunks/1255-55f5611cfd370a3f.js              45.7 kB
+  ├ chunks/4bd1b696-100b9d70ed4e49c1.js          54.2 kB
+  └ other shared chunks (total)                  1.98 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

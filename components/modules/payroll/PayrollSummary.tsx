@@ -19,11 +19,24 @@ interface PayrollRun {
   status: 'draft' | 'processing' | 'completed' | 'scheduled';
 }
 
+const currentYear = new Date().getFullYear();
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const currentMonthIndex = new Date().getMonth();
+const prevMonthIndex = currentMonthIndex === 0 ? 11 : currentMonthIndex - 1;
+const prevPrevMonthIndex = prevMonthIndex === 0 ? 11 : prevMonthIndex - 1;
+const currentMonth = monthNames[currentMonthIndex];
+const prevMonth = monthNames[prevMonthIndex];
+const prevPrevMonth = monthNames[prevPrevMonthIndex];
+const nextMonth = monthNames[(currentMonthIndex + 1) % 12];
+const nextMonthNum = ((currentMonthIndex + 1) % 12 + 1).toString().padStart(2, '0');
+const currentMonthNum = (currentMonthIndex + 1).toString().padStart(2, '0');
+const prevMonthNum = (prevMonthIndex + 1).toString().padStart(2, '0');
+
 const payrollRuns: PayrollRun[] = [
   {
     id: 'PR001',
-    period: 'May 16–31, 2024',
-    payDate: '2024-06-01',
+    period: `${currentMonth} 16–31, ${currentYear}`,
+    payDate: `${currentYear}-${nextMonthNum}-01`,
     employees: 12,
     grossPay: 38_400.00,
     netPay: 28_650.00,
@@ -32,8 +45,8 @@ const payrollRuns: PayrollRun[] = [
   },
   {
     id: 'PR002',
-    period: 'May 1–15, 2024',
-    payDate: '2024-05-17',
+    period: `${currentMonth} 1–15, ${currentYear}`,
+    payDate: `${currentYear}-${currentMonthNum}-17`,
     employees: 12,
     grossPay: 37_800.00,
     netPay: 28_150.00,
@@ -42,8 +55,8 @@ const payrollRuns: PayrollRun[] = [
   },
   {
     id: 'PR003',
-    period: 'Apr 16–30, 2024',
-    payDate: '2024-05-01',
+    period: `${prevMonth} 16–30, ${currentYear}`,
+    payDate: `${currentYear}-${currentMonthNum}-01`,
     employees: 11,
     grossPay: 35_200.00,
     netPay: 26_300.00,
@@ -52,8 +65,8 @@ const payrollRuns: PayrollRun[] = [
   },
   {
     id: 'PR004',
-    period: 'Apr 1–15, 2024',
-    payDate: '2024-04-17',
+    period: `${prevMonth} 1–15, ${currentYear}`,
+    payDate: `${currentYear}-${prevMonthNum}-17`,
     employees: 11,
     grossPay: 34_900.00,
     netPay: 26_100.00,
@@ -80,63 +93,63 @@ export function PayrollSummary() {
     <div className="space-y-4">
       {/* YTD Summary */}
       <div className="section-card p-5">
-        <h3 className="mb-4 text-base font-semibold text-gray-900">Year-to-Date Summary</h3>
+        <h3 className="mb-4 text-base font-semibold text-foreground">Year-to-Date Summary</h3>
         <div className="grid grid-cols-3 gap-4">
-          <div className="rounded-xl bg-gray-50 p-4 text-center">
-            <p className="text-xs font-medium text-gray-500">Gross Pay</p>
-            <p className="mt-1 text-xl font-bold text-gray-900">{formatCurrency(ytdGross)}</p>
+          <div className="rounded-xl bg-muted/50 p-4 text-center border border-border/50">
+            <p className="text-xs font-medium text-muted-foreground">Gross Pay</p>
+            <p className="mt-1 text-xl font-bold text-foreground">{formatCurrency(ytdGross)}</p>
           </div>
-          <div className="rounded-xl bg-red-50 p-4 text-center">
-            <p className="text-xs font-medium text-red-600">Taxes Withheld</p>
-            <p className="mt-1 text-xl font-bold text-red-700">{formatCurrency(ytdTaxes)}</p>
+          <div className="rounded-xl bg-red-500/5 p-4 text-center border border-red-500/10">
+            <p className="text-xs font-medium text-red-500">Taxes Withheld</p>
+            <p className="mt-1 text-xl font-bold text-red-500">{formatCurrency(ytdTaxes)}</p>
           </div>
-          <div className="rounded-xl bg-emerald-50 p-4 text-center">
-            <p className="text-xs font-medium text-emerald-600">Net Paid</p>
-            <p className="mt-1 text-xl font-bold text-emerald-700">{formatCurrency(ytdNet)}</p>
+          <div className="rounded-xl bg-emerald-500/5 p-4 text-center border border-emerald-500/10">
+            <p className="text-xs font-medium text-emerald-500">Net Paid</p>
+            <p className="mt-1 text-xl font-bold text-emerald-500">{formatCurrency(ytdNet)}</p>
           </div>
         </div>
-        <div className="mt-4 flex items-center gap-2 rounded-lg bg-brand-50 p-3">
-          <Users className="h-4 w-4 text-brand-600 flex-shrink-0" />
-          <p className="text-sm text-brand-700">
+        <div className="mt-4 flex items-center gap-2 rounded-lg bg-brand-500/10 border border-brand-500/20 p-3">
+          <Users className="h-4 w-4 text-brand-500 flex-shrink-0" />
+          <p className="text-sm text-brand-500">
             <span className="font-semibold">12 active employees</span> · Next payroll due{' '}
-            <span className="font-semibold">Jun 1, 2024</span>
+            <span className="font-semibold">{nextMonth} 1, {currentYear}</span>
           </p>
         </div>
       </div>
 
       {/* Payroll Runs */}
-      <div className="section-card overflow-hidden">
-        <div className="flex items-center justify-between border-b border-gray-100 p-5">
-          <h3 className="text-base font-semibold text-gray-900">Payroll Runs</h3>
+      <div className="section-card overflow-hidden border border-border">
+        <div className="flex items-center justify-between border-b border-border p-5">
+          <h3 className="text-base font-semibold text-foreground">Payroll Runs</h3>
           <Button size="sm" onClick={() => setIsModalOpen(true)} className="bg-brand-600 hover:bg-brand-700">
             <Play className="h-3.5 w-3.5 mr-1.5" /> Run Payroll (AI Audit)
           </Button>
         </div>
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-border">
           {payrollRuns.map((run) => {
             const { variant, label } = statusConfig[run.status];
             return (
-              <div key={run.id} className="flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors">
+              <div key={run.id} className="flex items-center gap-4 px-5 py-4 hover:bg-muted/50 transition-colors">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="font-medium text-gray-900">{run.period}</p>
+                    <p className="font-medium text-foreground">{run.period}</p>
                     <Badge variant={variant}>{label}</Badge>
                   </div>
-                  <p className="mt-0.5 text-xs text-gray-500">
+                  <p className="mt-0.5 text-xs text-muted-foreground">
                     Pay date: {formatDate(run.payDate)} · {run.employees} employees
                   </p>
                 </div>
                 <div className="hidden text-right sm:block">
-                  <p className="text-xs text-gray-500">Gross</p>
-                  <p className="font-semibold text-gray-800">{formatCurrency(run.grossPay)}</p>
+                  <p className="text-xs text-muted-foreground">Gross</p>
+                  <p className="font-semibold text-foreground/90">{formatCurrency(run.grossPay)}</p>
                 </div>
                 <div className="hidden text-right md:block">
-                  <p className="text-xs text-gray-500">Taxes</p>
-                  <p className="font-semibold text-red-600">{formatCurrency(run.taxes)}</p>
+                  <p className="text-xs text-muted-foreground">Taxes</p>
+                  <p className="font-semibold text-red-500">{formatCurrency(run.taxes)}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-gray-500">Net Pay</p>
-                  <p className="font-semibold text-emerald-600">{formatCurrency(run.netPay)}</p>
+                  <p className="text-xs text-muted-foreground">Net Pay</p>
+                  <p className="font-semibold text-emerald-500">{formatCurrency(run.netPay)}</p>
                 </div>
                 {run.status === 'draft' && (
                   <Button size="sm" variant="outline" onClick={() => setIsModalOpen(true)}>
@@ -152,7 +165,7 @@ export function PayrollSummary() {
       <RunPayrollModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
-        period="May 16–31, 2024"
+        period={`${currentMonth} 16–31, ${currentYear}`}
       />
     </div>
   );

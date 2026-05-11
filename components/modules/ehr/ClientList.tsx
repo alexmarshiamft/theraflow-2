@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Plus, Filter, MoreHorizontal, Phone, Mail, AlertCircle } from 'lucide-react';
+import { Search, Plus, Filter, MoreHorizontal, Phone, Mail, AlertCircle, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { getInitials, formatDate } from '@/lib/utils';
@@ -154,13 +154,15 @@ export function ClientList() {
                     </a>
                     <button 
                       onClick={() => {
-                        deleteClient(client.id);
-                        showToast(`Deleted ${client.name}`, 'warning');
+                        if (window.confirm(`Are you sure you want to delete ${client.name}?`)) {
+                          deleteClient(client.id);
+                          showToast(`Deleted ${client.name}`, 'warning');
+                        }
                       }}
                       className="rounded p-1 text-gray-400 hover:text-red-600 hover:bg-red-50"
                       aria-label="Delete Client"
                     >
-                      <AlertCircle className="h-3.5 w-3.5" />
+                      <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>
                 </td>
