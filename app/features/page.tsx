@@ -1,5 +1,21 @@
 import { Sparkles, BrainCircuit, Video, Wallet, Shield, Calendar, Users, FileText, Zap, Lock, BarChart3, Clock, Database, Globe, Layers, Command } from 'lucide-react';
 
+const UNIQUE_FEATURES = [
+  "Autonomous Clinical Scribe",
+  "BBS Hours Simulator & Projection",
+  "Predictive Churn Radar",
+  "Supervision Copilot",
+  "Flash Audit Defender",
+  "VisionOS-Style Floating Controls",
+  "In-Session Ambient Lighting",
+  "Eye-Contact Correction AI",
+  "Live CPT Auto-Recoding AI",
+  "Multi-Tier Staff Commission Splitting",
+  "Financial Forecasting Models",
+  "Biometric Zero-Trust Auto-Lock",
+  "Immutable Audit Ledger"
+];
+
 const FEATURE_CATEGORIES = [
   {
     id: 'ai-clinical',
@@ -18,11 +34,11 @@ const FEATURE_CATEGORIES = [
       "Client Progress Trajectory Mapping",
       "Therapeutic Alliance Scoring",
       "Automated Session Summaries",
-      "Supervision Prep & Prompting",
+      "Supervision Copilot",
       "Intervention Effectiveness Tracking",
-      "No-Show Probability Forecasting",
+      "Predictive Churn Radar",
       "Burnout Detection Analytics",
-      "Clinical Documentation Auditing",
+      "Flash Audit Defender",
       "Automated Psychoeducation Handouts",
       "Client Homework Generation",
       "Crisis Protocol Activation",
@@ -63,7 +79,7 @@ const FEATURE_CATEGORIES = [
     icon: <Wallet className="h-6 w-6 text-emerald-400" />,
     color: 'border-emerald-500/30 bg-emerald-500/5',
     features: [
-      "Zero-Touch Auto-Billing",
+      "Live CPT Auto-Recoding AI",
       "Clearinghouse Integration (EDI 837/835)",
       "Real-Time Eligibility Verification",
       "Dynamic W-2 / 1099 Payroll Routing",
@@ -183,24 +199,45 @@ export default function FeaturesPage() {
 
               {/* Feature Grid */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {category.features.map((feature, idx) => (
-                  <div 
-                    key={idx} 
-                    className="group relative overflow-hidden rounded-xl border border-slate-800 bg-slate-900/50 p-5 transition-all duration-300 hover:-translate-y-1 hover:border-slate-600 hover:bg-slate-800/80 hover:shadow-[0_0_30px_rgba(255,255,255,0.03)]"
-                  >
-                    {/* Shimmer Hover Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none" />
-                    
-                    <div className="flex items-start gap-3 relative z-10">
-                      <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-800 border border-slate-700 text-xs font-mono text-slate-400 group-hover:text-white transition-colors">
-                        {(idx + 1).toString().padStart(2, '0')}
+                {category.features.map((feature, idx) => {
+                  const isUnique = UNIQUE_FEATURES.includes(feature);
+                  
+                  return (
+                    <div 
+                      key={idx} 
+                      className={`group relative overflow-hidden rounded-xl border transition-all duration-300 p-5 ${
+                        isUnique 
+                          ? 'border-brand-500/50 bg-gradient-to-br from-brand-900/20 to-slate-900 shadow-[0_0_15px_rgba(14,165,233,0.15)] hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(14,165,233,0.3)]' 
+                          : 'border-slate-800 bg-slate-900/50 hover:-translate-y-1 hover:border-slate-600 hover:bg-slate-800/80 hover:shadow-[0_0_30px_rgba(255,255,255,0.03)]'
+                      }`}
+                    >
+                      {/* Shimmer Hover Effect */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none" />
+                      
+                      {isUnique && (
+                        <div className="absolute -right-6 -top-6 h-16 w-16 rounded-full bg-brand-500/20 blur-xl pointer-events-none" />
+                      )}
+
+                      <div className="flex items-start gap-3 relative z-10">
+                        <div className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-xs font-mono transition-colors ${
+                          isUnique 
+                            ? 'bg-brand-500/20 border-brand-400/50 text-brand-300 group-hover:bg-brand-500 group-hover:text-white group-hover:border-brand-500' 
+                            : 'bg-slate-800 border-slate-700 text-slate-400 group-hover:text-white'
+                        }`}>
+                          {isUnique ? <Sparkles className="h-3 w-3" /> : (idx + 1).toString().padStart(2, '0')}
+                        </div>
+                        <div>
+                          <p className={`text-sm font-medium transition-colors ${isUnique ? 'text-white' : 'text-slate-300 group-hover:text-white'}`}>
+                            {feature}
+                          </p>
+                          {isUnique && (
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-brand-400 mt-1">Exclusive to Theraflow</p>
+                          )}
+                        </div>
                       </div>
-                      <p className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
-                        {feature}
-                      </p>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
             </div>
