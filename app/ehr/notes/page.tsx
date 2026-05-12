@@ -16,6 +16,42 @@ export default function SmartNotesPage() {
   const [showCopilotMenu, setShowCopilotMenu] = useState(false);
   const [isFixed, setIsFixed] = useState(false);
   const [editorMode, setEditorMode] = useState<'edit' | 'review'>('edit');
+  const [isGeneratingSoap, setIsGeneratingSoap] = useState(false);
+
+  useEffect(() => {
+    const transcript = localStorage.getItem('latestTelehealthTranscript');
+    if (transcript) {
+      setIsGeneratingSoap(true);
+      
+      const generateSoap = async () => {
+        try {
+          const response = await fetch('/api/gemini', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              prompt: `Please convert this clinical session transcript into a professional SOAP note:\n\n${transcript}`,
+              responseFormat: 'text',
+              context: {
+                systemInstruction: `You are an expert clinical psychologist AI. Convert the provided telehealth session transcript into a highly professional, clinical SOAP note (Subjective, Objective, Assessment, Plan). Do NOT use any subjective or biased language. Keep it objective, BBS-compliant, and formatted clearly with headings.`
+              }
+            })
+          });
+
+          const data = await response.json();
+          if (response.ok && data.text) {
+             setNoteContent(data.text);
+          }
+        } catch (error) {
+           console.error('Failed to generate SOAP from transcript', error);
+        } finally {
+           setIsGeneratingSoap(false);
+           localStorage.removeItem('latestTelehealthTranscript');
+        }
+      };
+      
+      generateSoap();
+    }
+  }, []);
 
   const handleRunAudit = async () => {
     if (!noteContent.trim() || isAnalyzing) return;
@@ -150,7 +186,12 @@ If no issues are found, return {"problematicPhrase": null}.`
               <CardContent className="p-6 relative">
                 
                 {/* Editor Area */}
-                {editorMode === 'edit' ? (
+                {isGeneratingSoap ? (
+                  <div className="w-full min-h-[300px] flex flex-col items-center justify-center gap-4 text-brand-400">
+                    <RefreshCw className="w-8 h-8 animate-spin" />
+                    <p className="font-bold animate-pulse">AI is formulating clinical SOAP note from session transcript...</p>
+                  </div>
+                ) : editorMode === 'edit' ? (
                   <textarea
                     value={noteContent}
                     onChange={(e) => setNoteContent(e.target.value)}

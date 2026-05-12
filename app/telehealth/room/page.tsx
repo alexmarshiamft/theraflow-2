@@ -192,6 +192,14 @@ export default function TelehealthRoomPage() {
     }
   };
 
+  const handleEndCall = () => {
+    const combinedTranscript = scribeLogs.map(log => log.text).join(' ');
+    if (combinedTranscript) {
+      localStorage.setItem('latestTelehealthTranscript', combinedTranscript);
+    }
+    router.push('/ehr/notes');
+  };
+
   // Intelligent AI Sentiment Analysis based on real speech
   useEffect(() => {
     if (!currentTranscript) return;
@@ -403,13 +411,13 @@ export default function TelehealthRoomPage() {
 
             <div className="mt-4 pt-4 border-t border-white/10 flex gap-2">
               <button 
-                onClick={() => router.push('/ehr/notes')}
+                onClick={handleEndCall}
                 className="flex-1 bg-white/5 hover:bg-white/10 transition-colors py-2 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2 border border-white/10"
               >
                 <LayoutTemplate className="w-4 h-4" /> Formulate SOAP
               </button>
               <button 
-                onClick={() => router.push('/ehr/notes')}
+                onClick={handleEndCall}
                 className="flex-1 bg-white/5 hover:bg-white/10 transition-colors py-2 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2 border border-white/10"
               >
                 <LayoutTemplate className="w-4 h-4" /> Formulate DAP
@@ -454,7 +462,7 @@ export default function TelehealthRoomPage() {
           <div className="w-px h-8 bg-white/20 mx-2" />
 
           <button 
-            onClick={() => router.push('/ehr/notes')}
+            onClick={handleEndCall}
             className="w-16 h-16 rounded-[1.5rem] bg-rose-500 hover:bg-rose-600 transition-colors flex items-center justify-center shadow-lg shadow-rose-500/20 group border border-rose-400/50 mx-1"
           >
             <PhoneOff className="w-7 h-7 text-white group-hover:scale-110 transition-transform" />
