@@ -21,19 +21,16 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const router = useRouter();
 
   useEffect(() => {
-    // Bypass auth for Puppeteer
-    setLoading(false);
-    
-    // const unsubscribe = onAuthStateChanged(auth, (user) => {
-    //   if (user) {
-    //     initFirebaseSync();
-    //     setLoading(false);
-    //   } else {
-    //     useStore.setState({ clients: [], appointments: [], claims: [] });
-    //     router.push('/auth/login');
-    //   }
-    // });
-    // return () => unsubscribe();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        initFirebaseSync();
+        setLoading(false);
+      } else {
+        useStore.setState({ clients: [], appointments: [], claims: [] });
+        router.push('/auth/login');
+      }
+    });
+    return () => unsubscribe();
   }, [router]);
 
   if (loading) {

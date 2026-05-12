@@ -32,7 +32,7 @@ export default function ClaimsPage() {
   ]);
 
   // Derived data
-  const signedNotes = clinicalNotes.filter(n => n.status === 'signed');
+  const signedNotes = clinicalNotes.filter((n: any) => n.status === 'signed');
   const totalClaims = claims.length;
   const pendingCount = claims.filter(c => c.status === 'submitted').length;
   const rejectedCount = claims.filter(c => c.status === 'rejected' || c.status === 'denied').length;

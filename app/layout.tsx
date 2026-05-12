@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import { CommandPalette } from '@/components/ui/CommandPalette';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://theraflow.com'),
   title: 'Theraflow — The Enterprise-Grade Practice Management Platform',
   description: 'HIPAA-compliant platform unifying EHR, predictive AI retention, autonomous billing, and tiered compensation management for modern clinical practices.',
   openGraph: {

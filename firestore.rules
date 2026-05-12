@@ -76,8 +76,8 @@ service cloud.firestore {
     match /auditLogs/{logId} {
       // Audit logs are append-only. 
       // For production webhooks, we allow true to support unauthenticated API writes.
-      allow read: if isAdmin();
-      allow create: if true; 
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated(); 
       allow update, delete: if false; // IMMUTABLE
     }
     

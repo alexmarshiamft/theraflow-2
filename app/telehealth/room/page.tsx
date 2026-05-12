@@ -102,6 +102,7 @@ export default function TelehealthRoomPage() {
     return () => {
       meetingSession?.audioVideo.stop();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Initialize Real Speech Recognition
@@ -258,15 +259,25 @@ export default function TelehealthRoomPage() {
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay z-20 pointer-events-none"></div>
         
         {/* Therapist PIP (Picture in Picture) */}
-        <div className="absolute bottom-24 right-8 w-64 h-40 bg-slate-800 rounded-2xl border border-white/10 shadow-2xl overflow-hidden backdrop-blur-md z-30">
-          <div className="w-full h-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center">
-            {/* If we had a second stream we'd put it here. For now, it's a simulated PIP */}
-            <div className="w-16 h-16 rounded-full bg-slate-600 flex items-center justify-center">
-              <span className="text-xl font-bold text-slate-400">Dr. S</span>
+        <div className={`absolute bottom-32 right-8 w-64 h-40 rounded-2xl overflow-hidden backdrop-blur-2xl z-30 transition-all duration-700 ease-out shadow-[0_20px_40px_rgba(0,0,0,0.4)] ${isMicActive ? 'border-2 border-brand-500 shadow-[0_0_20px_rgba(16,185,129,0.3)]' : 'border border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]'}`}>
+          <div className="w-full h-full bg-slate-900/80 flex items-center justify-center relative">
+            <div className="absolute inset-0 bg-gradient-to-tr from-brand-500/10 to-transparent opacity-50" />
+            <div className="w-16 h-16 rounded-full bg-slate-800 border border-white/5 flex items-center justify-center shadow-inner relative z-10">
+              <span className="text-xl font-bold text-slate-300">Dr. S</span>
             </div>
+            {isMicActive && (
+              <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-black/60 px-2 py-1 rounded-full backdrop-blur-md border border-white/10">
+                <Mic className="w-3 h-3 text-brand-400" />
+                <div className="flex gap-0.5">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="w-0.5 h-2 bg-brand-400 rounded-full animate-pulse" style={{ animationDelay: `${i * 150}ms` }} />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-          <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/50 rounded-md backdrop-blur-sm text-xs font-medium text-white">
-            You (Dr. Sarah)
+          <div className="absolute bottom-2 left-2 px-2.5 py-1 bg-black/60 rounded-lg backdrop-blur-md text-xs font-medium text-white/90 border border-white/5">
+            You
           </div>
         </div>
       </div>
@@ -274,15 +285,15 @@ export default function TelehealthRoomPage() {
       {/* Top Navigation Overlay */}
       <div className="relative z-30 w-full p-6 flex justify-between items-start pointer-events-none">
         {/* Client Info */}
-        <div className="flex items-center gap-4 bg-black/40 p-2 pr-6 rounded-full border border-white/10 backdrop-blur-xl pointer-events-auto shadow-lg">
-          <div className="w-12 h-12 bg-gradient-to-br from-brand-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold border-2 border-black">
+        <div className="flex items-center gap-4 bg-slate-900/40 p-2 pr-6 rounded-[2rem] border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-3xl pointer-events-auto shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
+          <div className="w-12 h-12 bg-gradient-to-br from-brand-500 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold border border-white/20 shadow-inner">
             MK
           </div>
           <div>
-            <h2 className="text-white font-bold text-lg leading-tight">Michael Kingston (Live Webcam)</h2>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <p className="text-emerald-400 text-xs font-mono font-medium">{formatTime(sessionTime)}</p>
+            <h2 className="text-white font-bold text-[15px] tracking-wide leading-tight drop-shadow-md">Michael Kingston</h2>
+            <div className="flex items-center gap-2 mt-0.5">
+              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.8)]"></span>
+              <p className="text-white/80 text-xs font-mono font-medium tracking-widest">{formatTime(sessionTime)}</p>
             </div>
           </div>
         </div>
@@ -290,16 +301,16 @@ export default function TelehealthRoomPage() {
         {/* Security & Network Badges */}
         <div className="flex gap-3 pointer-events-auto">
           {isConnecting ? (
-            <div className="flex items-center gap-2 bg-black/40 px-4 py-2 rounded-full border border-brand-500/30 backdrop-blur-xl text-xs font-medium text-brand-400">
-              <Loader2 className="w-3 h-3 animate-spin" /> Connecting to AWS Chime...
+            <div className="flex items-center gap-2 bg-slate-900/40 px-4 py-2.5 rounded-full border border-brand-500/30 backdrop-blur-3xl text-xs font-bold uppercase tracking-wider text-brand-400 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+              <Loader2 className="w-3.5 h-3.5 animate-spin" /> Connecting to AWS Chime
             </div>
           ) : (
             <>
-              <div className="flex items-center gap-2 bg-black/40 px-4 py-2 rounded-full border border-emerald-500/30 backdrop-blur-xl text-xs font-medium text-emerald-400">
-                <Lock className="w-3 h-3" /> AWS WebRTC Secure
+              <div className="flex items-center gap-2 bg-slate-900/40 px-4 py-2.5 rounded-full border border-emerald-500/30 backdrop-blur-3xl text-xs font-bold uppercase tracking-wider text-emerald-400 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+                <Lock className="w-3 h-3" /> E2E Secure
               </div>
-              <div className="flex items-center gap-2 bg-black/40 px-4 py-2 rounded-full border border-white/10 backdrop-blur-xl text-xs font-medium text-slate-300">
-                <Activity className="w-3 h-3 text-brand-400" /> Latency: 14ms
+              <div className="flex items-center gap-2 bg-slate-900/40 px-4 py-2.5 rounded-full border border-white/10 backdrop-blur-3xl text-xs font-bold uppercase tracking-wider text-slate-300 shadow-[0_8px_32px_rgba(0,0,0,0.5)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
+                <Activity className="w-3 h-3 text-brand-400" /> 14ms
               </div>
             </>
           )}
@@ -311,11 +322,11 @@ export default function TelehealthRoomPage() {
         
         {/* Left: AI Sentiment Radar */}
         <div className="w-80 flex flex-col justify-start">
-          <div className="bg-black/40 border border-white/10 rounded-3xl p-5 backdrop-blur-xl pointer-events-auto shadow-2xl transition-all duration-500 group hover:bg-black/60">
-            <div className="flex items-center justify-between mb-4">
+          <div className="bg-slate-900/40 border border-white/10 rounded-[2rem] p-6 backdrop-blur-3xl pointer-events-auto shadow-[0_20px_60px_rgba(0,0,0,0.6)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] transition-all duration-700 hover:bg-slate-900/50">
+            <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2 text-white">
                 <BrainCircuit className="w-5 h-5 text-indigo-400" />
-                <h3 className="font-bold text-sm uppercase tracking-wider text-indigo-100">Live Clinical Radar</h3>
+                <h3 className="font-bold text-[11px] uppercase tracking-[0.2em] text-indigo-100/80">Clinical Radar</h3>
               </div>
               <Sparkles className="w-4 h-4 text-indigo-500/50" />
             </div>
@@ -323,50 +334,54 @@ export default function TelehealthRoomPage() {
             <div className="space-y-6">
               {/* Primary Sentiment */}
               <div>
-                <p className="text-xs text-slate-400 font-medium mb-1">Acoustic & Micro-Expression Analysis</p>
+                <p className="text-[10px] text-white/40 uppercase font-bold tracking-widest mb-2">Acoustic Analysis</p>
                 <div className="flex items-end gap-3">
-                  <span className={`text-xl font-bold transition-colors duration-500 ${sentiment.color}`}>
+                  <span className={`text-xl font-bold tracking-tight transition-colors duration-500 ${sentiment.color} drop-shadow-md`}>
                     {sentiment.label}
                   </span>
                 </div>
                 
-                {/* Simulated Audio Waveform matching sentiment */}
-                <div className="flex items-center gap-1 mt-3 h-8" suppressHydrationWarning>
-                  {[...Array(12)].map((_, i) => (
-                    <div 
-                      key={i} 
-                      suppressHydrationWarning
-                      className={`w-1.5 rounded-full transition-all duration-300 ease-in-out ${sentiment.color.replace('text-', 'bg-')}`}
-                      style={{ 
-                        height: `${Math.max(20, Math.random() * (sentiment.score))}px`,
-                        opacity: 0.6 + (Math.random() * 0.4)
-                      }}
-                    />
-                  ))}
+                {/* Cinematic Waveform */}
+                <div className="flex items-end gap-1 mt-4 h-10 w-full overflow-hidden" suppressHydrationWarning>
+                  {[...Array(24)].map((_, i) => {
+                    const height = Math.max(10, (Math.sin(i + (sessionTime * 2)) * 15) + (Math.random() * (sentiment.score / 2)));
+                    return (
+                      <div 
+                        key={i} 
+                        suppressHydrationWarning
+                        className={`w-2 rounded-t-sm transition-all duration-300 ease-in-out ${sentiment.color.replace('text-', 'bg-')}`}
+                        style={{ 
+                          height: `${height}px`,
+                          opacity: 0.3 + (Math.random() * 0.7),
+                          boxShadow: `0 0 10px var(--tw-color-${sentiment.color.split('-')[1]}-500)`
+                        }}
+                      />
+                    );
+                  })}
                 </div>
               </div>
 
-              <div className="h-px bg-white/10 w-full" />
+              <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent w-full my-6" />
 
               {/* Biomarkers */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white/5 rounded-xl p-3 border border-white/5">
-                  <p className="text-[10px] text-slate-400 uppercase font-bold mb-1">Speech Rate</p>
-                  <p className="text-sm text-white font-mono">142 wpm</p>
-                  <p className="text-[10px] text-emerald-400 mt-0.5">Baseline</p>
+                <div className="bg-black/20 rounded-2xl p-4 border border-white/5 shadow-inner">
+                  <p className="text-[9px] text-white/40 uppercase font-bold tracking-widest mb-1.5">Speech Rate</p>
+                  <p className="text-sm text-white font-mono tracking-wider drop-shadow-sm">142 wpm</p>
+                  <p className="text-[10px] text-emerald-400 mt-1 font-medium">Baseline</p>
                 </div>
-                <div className="bg-white/5 rounded-xl p-3 border border-white/5">
-                  <p className="text-[10px] text-slate-400 uppercase font-bold mb-1">Pitch Variance</p>
-                  <p className="text-sm text-white font-mono">High</p>
-                  <p className="text-[10px] text-amber-400 mt-0.5">Elevated</p>
+                <div className="bg-black/20 rounded-2xl p-4 border border-white/5 shadow-inner">
+                  <p className="text-[9px] text-white/40 uppercase font-bold tracking-widest mb-1.5">Pitch Variance</p>
+                  <p className="text-sm text-white font-mono tracking-wider drop-shadow-sm">High</p>
+                  <p className="text-[10px] text-amber-400 mt-1 font-medium">Elevated</p>
                 </div>
               </div>
 
               {/* Actionable Prompt */}
               {sentiment.label === 'Elevated Anxiety' && (
-                <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 flex gap-3 animate-in fade-in slide-in-from-left-4">
-                  <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                  <p className="text-xs text-amber-200/90 leading-relaxed">Consider grounding exercises. Client's speech rate and pitch have sharply elevated over the last 2 mins.</p>
+                <div className="bg-gradient-to-br from-amber-500/20 to-orange-600/10 border border-amber-500/30 rounded-2xl p-4 flex gap-3 mt-4">
+                  <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5 drop-shadow-md" />
+                  <p className="text-xs text-amber-100/90 leading-relaxed font-medium">Consider grounding exercises. Client's speech rate and pitch have sharply elevated.</p>
                 </div>
               )}
             </div>
@@ -375,56 +390,55 @@ export default function TelehealthRoomPage() {
 
         {/* Right: Passive Scribe Log */}
         <div className="w-96 flex flex-col justify-end">
-          <div className="bg-black/40 border border-white/10 rounded-3xl p-5 backdrop-blur-xl pointer-events-auto shadow-2xl flex flex-col h-[500px]">
-            <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/10">
+          <div className="bg-slate-900/40 border border-white/10 rounded-[2rem] p-6 backdrop-blur-3xl pointer-events-auto shadow-[0_20px_60px_rgba(0,0,0,0.6)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] flex flex-col h-[500px]">
+            <div className="flex items-center justify-between mb-2 pb-4 border-b border-white/10 relative z-10">
               <div className="flex items-center gap-2 text-white">
-                <PenTool className="w-5 h-5 text-brand-400" />
-                <h3 className="font-bold text-sm uppercase tracking-wider text-brand-100">Live AI Scribe</h3>
+                <PenTool className="w-5 h-5 text-brand-400 drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                <h3 className="font-bold text-[11px] uppercase tracking-[0.2em] text-brand-100">AI Scribe</h3>
               </div>
-              <div className="flex items-center gap-2">
-                <div className={`w-2 h-2 rounded-full ${isListening ? 'bg-brand-500 animate-pulse' : 'bg-slate-500'}`} />
-                <span className="text-xs font-bold text-brand-400 uppercase tracking-widest">
-                  {isListening ? 'Transcribing' : 'Paused'}
+              <div className="flex items-center gap-2 bg-black/30 px-2 py-1 rounded-full border border-white/5">
+                <div className={`w-1.5 h-1.5 rounded-full ${isListening ? 'bg-brand-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,1)]' : 'bg-slate-600'}`} />
+                <span className="text-[10px] font-bold text-white/70 uppercase tracking-widest">
+                  {isListening ? 'Active' : 'Paused'}
                 </span>
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto relative flex flex-col-reverse custom-scrollbar">
+            <div className="flex-1 overflow-y-auto relative flex flex-col-reverse custom-scrollbar pr-2 [mask-image:linear-gradient(to_bottom,transparent,black_15%,black)]">
               
               <div className="mt-4 pt-4 border-t border-white/5 space-y-2 relative">
                 {currentTranscript && (
-                  <p className="text-slate-300 text-sm animate-pulse">
-                    <strong className="text-brand-400 font-medium">Listening:</strong> {currentTranscript}
+                  <p className="text-white/90 text-sm animate-pulse leading-relaxed font-medium">
+                    <strong className="text-brand-400 font-bold mr-2 drop-shadow-md">•</strong>{currentTranscript}
                   </p>
                 )}
               </div>
               
               <div className="space-y-4 text-sm pb-4">
                 {scribeLogs.map(log => (
-                  <p key={log.id} className="text-slate-200 animate-in fade-in slide-in-from-bottom-2">
-                    <strong className="text-slate-400 capitalize">{log.type}:</strong> {log.text}
-                  </p>
+                  <div key={log.id} className="animate-in fade-in slide-in-from-bottom-2 bg-black/20 p-3 rounded-xl border border-white/5">
+                    <p className="text-white/80 leading-relaxed">
+                      <strong className={`text-[10px] uppercase tracking-widest block mb-1 font-bold ${log.type === 'data' ? 'text-indigo-400' : 'text-emerald-400'}`}>{log.type}</strong>
+                      {log.text}
+                    </p>
+                  </div>
                 ))}
                 
                 {scribeLogs.length === 0 && (
-                  <p className="text-slate-500 text-center italic mt-10">Speak into your microphone to see the real-time transcription.</p>
+                  <div className="flex flex-col items-center justify-center h-40 text-center opacity-50">
+                    <PenTool className="w-8 h-8 text-white/20 mb-3" />
+                    <p className="text-white/50 text-xs tracking-wider uppercase font-bold">Awaiting Transcription</p>
+                  </div>
                 )}
               </div>
-
             </div>
 
-            <div className="mt-4 pt-4 border-t border-white/10 flex gap-2">
+            <div className="mt-4 pt-4 border-t border-white/10 flex gap-3 relative z-10">
               <button 
                 onClick={handleEndCall}
-                className="flex-1 bg-white/5 hover:bg-white/10 transition-colors py-2 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2 border border-white/10"
+                className="flex-1 bg-gradient-to-b from-white/10 to-white/5 hover:from-white/15 hover:to-white/10 transition-colors py-2.5 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2 border border-white/10 shadow-lg"
               >
-                <LayoutTemplate className="w-4 h-4" /> Formulate SOAP
-              </button>
-              <button 
-                onClick={handleEndCall}
-                className="flex-1 bg-white/5 hover:bg-white/10 transition-colors py-2 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2 border border-white/10"
-              >
-                <LayoutTemplate className="w-4 h-4" /> Formulate DAP
+                <LayoutTemplate className="w-4 h-4 text-white/70" /> Formulate SOAP
               </button>
             </div>
           </div>
@@ -434,42 +448,43 @@ export default function TelehealthRoomPage() {
 
       {/* Bottom Floating Control Dock (VisionOS Style) */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-40 pointer-events-auto">
-        <div className="flex items-center gap-2 bg-black/60 p-2 rounded-[2rem] border border-white/20 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+        <div className="flex items-center gap-2 bg-slate-900/60 px-4 py-3 rounded-[2.5rem] border border-white/10 backdrop-blur-3xl shadow-[0_30px_60px_rgba(0,0,0,0.7)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] group/dock transition-all duration-500 hover:bg-slate-900/70 hover:shadow-[0_40px_80px_rgba(0,0,0,0.8)]">
           <button 
             onClick={toggleMic}
-            className={`w-14 h-14 rounded-full transition-colors flex items-center justify-center group relative border ${isMicActive ? 'bg-white/10 hover:bg-white/20 border-white/5' : 'bg-rose-500 hover:bg-rose-600 border-rose-400'}`}
+            className={`w-[60px] h-[60px] rounded-full transition-all duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] flex items-center justify-center group relative border shadow-lg ${isMicActive ? 'bg-white/10 hover:bg-white/20 border-white/5 hover:scale-110' : 'bg-gradient-to-b from-rose-500 to-rose-600 hover:from-rose-400 hover:to-rose-500 border-rose-400 shadow-[0_0_20px_rgba(244,63,94,0.4)] hover:scale-110'}`}
           >
-            {isMicActive ? <Mic className="w-6 h-6 text-white group-hover:scale-110 transition-transform" /> : <MicOff className="w-6 h-6 text-white" />}
-            <div className="absolute -bottom-8 opacity-0 group-hover:opacity-100 transition-opacity text-xs font-bold text-white bg-black/80 px-2 py-1 rounded">Mute</div>
+            {isMicActive ? <Mic className="w-6 h-6 text-white drop-shadow-md" /> : <MicOff className="w-6 h-6 text-white drop-shadow-md" />}
+            <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-opacity text-[10px] uppercase font-bold tracking-widest text-white bg-black/80 px-3 py-1.5 rounded-lg backdrop-blur-md border border-white/10 shadow-xl pointer-events-none">Mute</div>
           </button>
           
           <button 
             onClick={toggleVideo}
-            className={`w-14 h-14 rounded-full transition-colors flex items-center justify-center group relative border ${isVideoActive ? 'bg-white/10 hover:bg-white/20 border-white/5' : 'bg-rose-500 hover:bg-rose-600 border-rose-400'}`}
+            className={`w-[60px] h-[60px] rounded-full transition-all duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] flex items-center justify-center group relative border shadow-lg ${isVideoActive ? 'bg-white/10 hover:bg-white/20 border-white/5 hover:scale-110' : 'bg-gradient-to-b from-rose-500 to-rose-600 hover:from-rose-400 hover:to-rose-500 border-rose-400 shadow-[0_0_20px_rgba(244,63,94,0.4)] hover:scale-110'}`}
           >
-            {isVideoActive ? <Video className="w-6 h-6 text-white group-hover:scale-110 transition-transform" /> : <VideoOff className="w-6 h-6 text-white" />}
-            <div className="absolute -bottom-8 opacity-0 group-hover:opacity-100 transition-opacity text-xs font-bold text-white bg-black/80 px-2 py-1 rounded">Video</div>
+            {isVideoActive ? <Video className="w-6 h-6 text-white drop-shadow-md" /> : <VideoOff className="w-6 h-6 text-white drop-shadow-md" />}
+            <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-opacity text-[10px] uppercase font-bold tracking-widest text-white bg-black/80 px-3 py-1.5 rounded-lg backdrop-blur-md border border-white/10 shadow-xl pointer-events-none">Video</div>
           </button>
           
-          <div className="w-px h-8 bg-white/20 mx-2" />
+          <div className="w-px h-10 bg-white/10 mx-2" />
           
-          <button className="w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center group relative border border-white/5">
-            <MonitorUp className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
-            <div className="absolute -bottom-8 opacity-0 group-hover:opacity-100 transition-opacity text-xs font-bold text-white bg-black/80 px-2 py-1 rounded">Share</div>
+          <button className="w-[60px] h-[60px] rounded-full bg-white/5 hover:bg-white/15 transition-all duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] hover:scale-110 flex items-center justify-center group relative border border-white/5 shadow-lg">
+            <MonitorUp className="w-6 h-6 text-white drop-shadow-md" />
+            <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-opacity text-[10px] uppercase font-bold tracking-widest text-white bg-black/80 px-3 py-1.5 rounded-lg backdrop-blur-md border border-white/10 shadow-xl pointer-events-none">Share</div>
           </button>
 
-          <button className="w-14 h-14 rounded-full bg-brand-500/20 hover:bg-brand-500/30 transition-colors flex items-center justify-center group relative border border-brand-500/30">
-            <Waves className="w-6 h-6 text-brand-400 group-hover:scale-110 transition-transform" />
-            <div className="absolute -bottom-8 opacity-0 group-hover:opacity-100 transition-opacity text-xs font-bold text-white bg-black/80 px-2 py-1 rounded">Whiteboard</div>
+          <button className="w-[60px] h-[60px] rounded-full bg-brand-500/10 hover:bg-brand-500/30 transition-all duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] hover:scale-110 flex items-center justify-center group relative border border-brand-500/30 shadow-lg hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+            <Waves className="w-6 h-6 text-brand-400 drop-shadow-md" />
+            <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-opacity text-[10px] uppercase font-bold tracking-widest text-white bg-black/80 px-3 py-1.5 rounded-lg backdrop-blur-md border border-white/10 shadow-xl pointer-events-none">Whiteboard</div>
           </button>
 
-          <div className="w-px h-8 bg-white/20 mx-2" />
+          <div className="w-px h-10 bg-white/10 mx-2" />
 
           <button 
             onClick={handleEndCall}
-            className="w-16 h-16 rounded-[1.5rem] bg-rose-500 hover:bg-rose-600 transition-colors flex items-center justify-center shadow-lg shadow-rose-500/20 group border border-rose-400/50 mx-1"
+            className="w-[72px] h-[72px] rounded-[2rem] bg-gradient-to-b from-rose-500 to-rose-600 hover:from-rose-400 hover:to-rose-500 transition-all duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] hover:scale-105 flex items-center justify-center shadow-[0_10px_30px_rgba(244,63,94,0.5)] group border border-rose-400/50 ml-1"
           >
-            <PhoneOff className="w-7 h-7 text-white group-hover:scale-110 transition-transform" />
+            <PhoneOff className="w-7 h-7 text-white drop-shadow-md" />
+            <div className="absolute -top-14 opacity-0 group-hover:opacity-100 transition-opacity text-[10px] uppercase font-bold tracking-widest text-white bg-rose-600 px-4 py-2 rounded-lg border border-rose-400 shadow-xl pointer-events-none whitespace-nowrap">End Session</div>
           </button>
         </div>
       </div>

@@ -25,7 +25,7 @@ import {
 export default function BankingPage() {
   const { transactions, userRole } = useStore();
 
-  const totalBalance = transactions.reduce((acc, t) => acc + (t.type === 'credit' ? t.amount : -t.amount), 239751); // Base offset for demo
+  const totalBalance = transactions.reduce((acc: number, t: any) => acc + (t.type === 'credit' ? t.amount : -t.amount), 239751); // Base offset for demo
   const monthlyRevenue = 105993; // Fixed to match 927 sessions * $114.34
   const monthlyExpenses = 62450; // Fixed to approximate 50% payroll + ops
   const netCashFlow = monthlyRevenue - monthlyExpenses;

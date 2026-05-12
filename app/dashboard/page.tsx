@@ -42,7 +42,7 @@ const recentActivity = [
   { icon: DollarSign, label: 'ACH payment processed — $18,200 payroll', time: '2 hr ago', color: 'text-purple-600 bg-purple-50 dark:bg-purple-500/10 dark:text-purple-400' },
   { icon: FileText, label: 'Batch of 15 claims submitted to clearinghouse', time: '1 day ago', color: 'text-amber-600 bg-amber-50 dark:bg-amber-500/10 dark:text-amber-400' },
   { icon: Users, label: 'David Foster, ASW added to payroll', time: '2 days ago', color: 'text-teal-600 bg-teal-50 dark:bg-teal-500/10 dark:text-teal-400' },
-  { icon: Building2, label: `Account reconciliation completed — ${new Date().toLocaleDateString('en-US', { month: 'long' })}`, time: '3 days ago', color: 'text-amber-600 bg-amber-50 dark:bg-amber-500/10 dark:text-amber-400' },
+  { icon: Building2, label: `Account reconciliation completed — May`, time: '3 days ago', color: 'text-amber-600 bg-amber-50 dark:bg-amber-500/10 dark:text-amber-400' },
 ];
 
 

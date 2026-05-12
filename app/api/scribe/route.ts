@@ -1,10 +1,21 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
+import { rateLimit } from '@/lib/rateLimit';
 
 export const maxDuration = 60; // Max execution time for Vercel functions (Pro plan can go higher)
 
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get('x-forwarded-for') || 'anonymous';
+    const rateLimitResult = rateLimit(ip, 5, 60000); // 5 req per minute for audio processing
+    
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: 'Rate limit exceeded for transcription. Please try again later.' },
+        { status: 429 }
+      );
+    }
+
     const { audioBase64, mimeType, context } = await req.json();
 
     if (!audioBase64) {
