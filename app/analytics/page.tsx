@@ -222,8 +222,8 @@ export default function AnalyticsPage() {
 
   const appointmentsData = isOwner
     ? [
-        { name: 'Completed', value: 200, color: '#10b981' }, // 75.2%
-        { name: 'Canceled / No-Show', value: 66, color: '#f43f5e' }, // 24.8%
+        { name: 'Completed', value: 559, color: '#10b981' }, // 80.4%
+        { name: 'Canceled / No-Show', value: 136, color: '#f43f5e' }, // 19.6%
       ]
     : [
         { name: 'Completed', value: 156, color: '#10b981' }, // 95% Show
@@ -235,17 +235,16 @@ export default function AnalyticsPage() {
 
   // Associate Retention Leaderboard Data
   const retentionLeaderboard = [
-    { name: 'Alexander Marshi', comp: 41, canc: 2, ns: 1, missed: 3, total: 44, rate: 93.18, gross: 41 * 110 },
-    { name: 'Juen Marc G. Arzadon', comp: 100, canc: 7, ns: 3, missed: 10, total: 110, rate: 90.90, gross: 100 * 110 },
-    { name: 'Benjamin Raskin', comp: 63, canc: 4, ns: 6, missed: 10, total: 73, rate: 86.30, gross: 63 * 110 },
-    { name: 'Kiran Dave', comp: 26, canc: 0, ns: 4, missed: 4, total: 30, rate: 86.67, gross: 26 * 110 },
-    { name: 'Eliana Nivon', comp: 28, canc: 1, ns: 4, missed: 5, total: 33, rate: 84.85, gross: 28 * 110 },
-    { name: 'Aaron Kuyper', comp: 16, canc: 0, ns: 3, missed: 3, total: 19, rate: 84.21, gross: 16 * 110 },
-    { name: 'Iliana Canez-Gonzalez', comp: 14, canc: 1, ns: 2, missed: 3, total: 17, rate: 82.35, gross: 14 * 110 },
-    { name: 'Lisa Garratt', comp: 57, canc: 12, ns: 7, missed: 19, total: 76, rate: 75.00, gross: 57 * 110 },
-    { name: 'Kalaya Irby', comp: 104, canc: 28, ns: 20, missed: 48, total: 152, rate: 68.42, gross: 104 * 110 },
-    { name: 'Ashley Beer', comp: 55, canc: 40, ns: 25, missed: 65, total: 120, rate: 45.83, gross: 55 * 110 },
-    { name: 'Jeremy Larson', comp: 0, canc: 14, ns: 0, missed: 14, total: 14, rate: 0.00, gross: 0 },
+    { name: 'Alexander Marshi', comp: 92, canc: 3, ns: 2, missed: 5, total: 97, rate: 94.8, gross: 92 * 110 },
+    { name: 'Benjamin Raskin', comp: 65, canc: 3, ns: 2, missed: 5, total: 70, rate: 92.9, gross: 65 * 110 },
+    { name: 'Aaron Kuyper', comp: 43, canc: 5, ns: 4, missed: 9, total: 52, rate: 82.7, gross: 43 * 110 },
+    { name: 'Eliana Nivon', comp: 79, canc: 10, ns: 8, missed: 18, total: 97, rate: 81.4, gross: 79 * 110 },
+    { name: 'Kiran Dave', comp: 77, canc: 10, ns: 8, missed: 18, total: 95, rate: 81.1, gross: 77 * 110 },
+    { name: 'Lisa Garratt', comp: 36, canc: 6, ns: 3, missed: 9, total: 45, rate: 80.0, gross: 36 * 110 },
+    { name: 'Iliana Canez-Gonzalez', comp: 19, canc: 3, ns: 2, missed: 5, total: 24, rate: 79.2, gross: 19 * 110 },
+    { name: 'Juen Marc G. Arzadon', comp: 53, canc: 10, ns: 6, missed: 16, total: 69, rate: 76.8, gross: 53 * 110 },
+    { name: 'Kalaya Irby', comp: 73, canc: 18, ns: 13, missed: 31, total: 104, rate: 70.2, gross: 73 * 110 },
+    { name: 'Ashley Beer', comp: 22, canc: 12, ns: 8, missed: 20, total: 42, rate: 52.4, gross: 22 * 110 },
   ];
 
   return (
@@ -319,7 +318,7 @@ export default function AnalyticsPage() {
         />
         <StatCard
           title={isOwner ? "Practice Cancellation Rate" : "My Cancellation Rate"}
-          value={isOwner ? "24.8%" : "5.0%"}
+          value={isOwner ? "19.6%" : "5.0%"}
           change={isOwner ? "Action required" : "95% Show Rate"}
           changeType={isOwner ? "down" : "up"}
           icon={Activity}
@@ -533,12 +532,12 @@ export default function AnalyticsPage() {
                   <tfoot className="bg-slate-900/80 font-bold border-t border-slate-700 text-white shadow-inner">
                     <tr>
                       <td className="px-5 py-4 uppercase tracking-widest text-xs text-slate-400">Total / Avg</td>
-                      <td className="px-5 py-4 text-center text-emerald-400 bg-emerald-500/10 text-lg">504</td>
-                      <td className="px-5 py-4 text-center text-amber-400">109</td>
-                      <td className="px-5 py-4 text-center text-rose-400">75</td>
-                      <td className="px-5 py-4 text-center text-brand-400 bg-brand-500/10 text-lg border-l border-border/50">688</td>
-                      <td className="px-5 py-4 text-right text-emerald-400 text-lg">73.25%</td>
-                      <td className="px-5 py-4 text-right text-emerald-400 text-lg font-mono">${(504 * 110).toLocaleString()}</td>
+                      <td className="px-5 py-4 text-center text-emerald-400 bg-emerald-500/10 text-lg">559</td>
+                      <td className="px-5 py-4 text-center text-amber-400">80</td>
+                      <td className="px-5 py-4 text-center text-rose-400">56</td>
+                      <td className="px-5 py-4 text-center text-brand-400 bg-brand-500/10 text-lg border-l border-border/50">695</td>
+                      <td className="px-5 py-4 text-right text-emerald-400 text-lg">80.43%</td>
+                      <td className="px-5 py-4 text-right text-emerald-400 text-lg font-mono">${(559 * 110).toLocaleString()}</td>
                     </tr>
                   </tfoot>
                 </table>
