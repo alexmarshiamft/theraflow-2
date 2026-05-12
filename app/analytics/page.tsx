@@ -338,8 +338,8 @@ export default function AnalyticsPage() {
 
         <StatCard
           title="Note Completion Speed"
-          value="0.6 days"
-          change="82% locked within 24h"
+          value={isOwner ? "0.6 days" : "30 mins"}
+          change={isOwner ? "82% locked within 24h" : "Fastest in practice! (0.02 days)"}
           changeType="up"
           icon={Calendar}
           iconColor="text-indigo-600 dark:text-indigo-400"
