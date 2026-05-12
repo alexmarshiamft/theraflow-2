@@ -309,7 +309,7 @@ export default function DashboardPage() {
             <CancellationImpactSimulator 
               monthlyScheduledSessions={totalMonthlySessions} 
               avgSessionRate={avgSessionRate} 
-              currentCancellationRate={19.6}
+              currentCancellationRate={24.6}
             />
             {/* You can add another widget here, or let the simulator take full width if we remove grid cols */}
           </div>

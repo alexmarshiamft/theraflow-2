@@ -318,7 +318,7 @@ export default function AnalyticsPage() {
         />
         <StatCard
           title={isOwner ? "Practice Cancellation Rate" : "My Cancellation Rate"}
-          value={isOwner ? "19.6%" : "5.0%"}
+          value={isOwner ? "24.6%" : "5.0%"}
           change={isOwner ? "Action required" : "95% Show Rate"}
           changeType={isOwner ? "down" : "up"}
           icon={Activity}
