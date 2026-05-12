@@ -294,10 +294,11 @@ export default function TelehealthRoomPage() {
                 </div>
                 
                 {/* Simulated Audio Waveform matching sentiment */}
-                <div className="flex items-center gap-1 mt-3 h-8">
+                <div className="flex items-center gap-1 mt-3 h-8" suppressHydrationWarning>
                   {[...Array(12)].map((_, i) => (
                     <div 
                       key={i} 
+                      suppressHydrationWarning
                       className={`w-1.5 rounded-full transition-all duration-300 ease-in-out ${sentiment.color.replace('text-', 'bg-')}`}
                       style={{ 
                         height: `${Math.max(20, Math.random() * (sentiment.score))}px`,
