@@ -110,7 +110,7 @@ If no issues are found, return {"problematicPhrase": null}.`
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col h-full bg-slate-950 font-sans">
+      <div className="flex flex-col min-h-screen bg-slate-950 font-sans pb-20">
         
         {/* Header */}
         <div className="px-8 py-6 border-b border-white/5 bg-slate-900/50 backdrop-blur-xl flex items-center justify-between">
