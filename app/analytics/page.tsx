@@ -771,7 +771,7 @@ export default function AnalyticsPage() {
                     <p className="mt-2"><strong className="text-rose-500">Autonomous Execution:</strong> Auto-drafted a <strong className="text-white">30-Day Performance Improvement Plan (PIP)</strong>, temporarily locked her SimplePractice intake calendar, and restricted her active caseload to 15 clients until retention improves above 75%.</p>
                   </div>
                   <div className="mt-4 flex gap-2">
-                    <Button size="sm" variant="destructive" className="w-full">Execute PIP & Lock Calendar</Button>
+                    <Button size="sm" variant="danger" className="w-full">Execute PIP & Lock Calendar</Button>
                   </div>
                 </div>
 
