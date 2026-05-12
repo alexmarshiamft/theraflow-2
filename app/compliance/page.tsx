@@ -6,6 +6,7 @@ import { useStore } from '@/lib/store';
 import { formatDate, formatTime } from '@/lib/utils';
 import { Badge } from '@/components/ui/Badge';
 import { AuditSimulator } from '@/components/modules/compliance/AuditSimulator';
+import { AILegalCounsel } from '@/components/modules/intelligence/AILegalCounsel';
 
 export default function CompliancePage() {
   const { auditLogs } = useStore();
@@ -71,6 +72,11 @@ export default function CompliancePage() {
              <Server className="h-3 w-3" /> US-WEST-1
            </div>
         </div>
+      </div>
+
+      {/* AI Legal Counsel */}
+      <div className="mb-8">
+        <AILegalCounsel />
       </div>
 
       {/* Flash Audit Simulator */}
