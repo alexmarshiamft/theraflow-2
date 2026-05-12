@@ -226,8 +226,8 @@ export default function AnalyticsPage() {
         { name: 'Canceled / No-Show', value: 66, color: '#f43f5e' }, // 24.8%
       ]
     : [
-        { name: 'Completed', value: 33, color: '#10b981' },
-        { name: 'Canceled / No-Show', value: 3, color: '#f43f5e' },
+        { name: 'Completed', value: 156, color: '#10b981' }, // 95% Show
+        { name: 'Canceled / No-Show', value: 8, color: '#f43f5e' }, // 5% Canceled
       ];
 
   const totalAppointments = appointmentsData.reduce((acc, curr) => acc + curr.value, 0);
@@ -318,23 +318,24 @@ export default function AnalyticsPage() {
           iconBg="bg-emerald-50 dark:bg-emerald-500/10"
         />
         <StatCard
-          title="Outstanding Balances"
-          value="$9,350"
-          change="$8,675 Ins. | $675 Client"
-          changeType="neutral"
+          title={isOwner ? "Practice Cancellation Rate" : "My Cancellation Rate"}
+          value={isOwner ? "24.8%" : "5.0%"}
+          change={isOwner ? "Action required" : "95% Show Rate"}
+          changeType={isOwner ? "down" : "up"}
           icon={Activity}
           iconColor="text-rose-600 dark:text-rose-400"
           iconBg="bg-rose-50 dark:bg-rose-500/10"
         />
         <StatCard
-          title={isOwner ? "Net Practice Income" : "Your Net Earnings"}
-          value={formatCurrency(currentData.net)}
-          change={isOwner ? "After splits & adjustments" : "After practice split"}
-          changeType="up"
+          title="Outstanding Balances"
+          value="$10,100"
+          change="$9,425 Ins. | $675 Client"
+          changeType="neutral"
           icon={DollarSign}
-          iconColor="text-brand-600 dark:text-brand-400"
-          iconBg="bg-brand-50 dark:bg-brand-500/10"
+          iconColor="text-amber-600 dark:text-amber-400"
+          iconBg="bg-amber-50 dark:bg-amber-500/10"
         />
+
         <StatCard
           title="Note Completion Speed"
           value="0.6 days"
