@@ -65,7 +65,7 @@ export default function DashboardPage() {
     return acc + (emp.payType === 'salary' ? emp.salary / 24 : emp.salary * 80);
   }, 0);
 
-  const totalMonthlySessions = 1285;
+  const totalMonthlySessions = 927; // Normalized to 1 month (1,285 / 6 weeks * 4.33)
   const avgSessionRate = 114.34;
   const grossVolume = totalMonthlySessions * avgSessionRate;
 
@@ -89,8 +89,8 @@ export default function DashboardPage() {
         body: JSON.stringify({
           prompt: userRole === 'owner' 
             ? `Based on the following stats: 
-                - Monthly Sessions: 1285
-                - Monthly Gross Revenue: $146,926
+                - Monthly Sessions: 927
+                - Monthly Gross Revenue: $105,993
                 - Insurance Breakdown: 84% TriWest, 16% Commercial
                 - Team Size: ${employees.length} clinicians
                 Provide a 2-sentence executive summary of the practice's health and one actionable recommendation.`
