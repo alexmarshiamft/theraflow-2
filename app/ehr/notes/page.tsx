@@ -189,7 +189,11 @@ If no issues are found, return {"problematicPhrase": null}.`
                 {isGeneratingSoap ? (
                   <div className="w-full min-h-[300px] flex flex-col items-center justify-center gap-4 text-brand-400">
                     <RefreshCw className="w-8 h-8 animate-spin" />
-                    <p className="font-bold animate-pulse">AI is formulating clinical SOAP note from session transcript...</p>
+                    <p className="font-bold animate-pulse text-lg">AI is formulating clinical SOAP note from session transcript...</p>
+                    <div className="flex items-center gap-2 mt-6 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                      <Lock className="w-4 h-4 text-emerald-500" />
+                      <span className="text-xs font-bold text-emerald-500 uppercase tracking-widest">Zero Data Retained: Session Audio & Transcripts Securely Erased</span>
+                    </div>
                   </div>
                 ) : editorMode === 'edit' ? (
                   <textarea
