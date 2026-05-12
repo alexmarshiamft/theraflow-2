@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/Button';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 
+import { IncentiveTracker } from '@/components/modules/intelligence/IncentiveTracker';
+
 export default function EarningsPage() {
   const userRole = useStore(state => state.userRole);
   const { showToast } = useToast();
@@ -44,6 +46,8 @@ export default function EarningsPage() {
             Track your compensation and download pay statements.
           </p>
         </div>
+
+        <IncentiveTracker />
 
         <div className="grid gap-6 md:grid-cols-3">
           <div className="section-card p-6 flex flex-col justify-between">

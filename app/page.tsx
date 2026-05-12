@@ -122,7 +122,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* God-Tier Bento Box */}
+      {/* Enterprise-Grade Bento Box */}
       <section id="features" className="relative z-10 py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-16 text-center">
@@ -357,7 +357,7 @@ export default function LandingPage() {
             <div className="rounded-[2.5rem] border border-brand-500/50 bg-gradient-to-b from-brand-900/20 to-black/50 p-10 relative flex flex-col backdrop-blur-md shadow-[0_0_80px_rgba(14,165,233,0.15)]">
               <div className="absolute top-0 right-10 -translate-y-1/2">
                 <span className="inline-flex rounded-full bg-brand-500 px-4 py-1.5 text-xs font-bold tracking-widest text-white uppercase shadow-lg shadow-brand-500/30">
-                  God-Tier
+                  Enterprise-Grade
                 </span>
               </div>
               <div className="mb-8">
@@ -405,7 +405,7 @@ export default function LandingPage() {
               <span className="font-bold tracking-tight text-white">Theraflow</span>
             </div>
             <p className="text-sm font-medium text-white/40">
-              © 2026 Theraflow, Inc. · The God-Tier Platform.
+              © 2026 Theraflow, Inc. · The Enterprise-Grade Platform.
             </p>
             <div className="flex items-center gap-2 text-sm font-medium text-teal-500/70">
               <Shield className="h-4 w-4" /> Military-Grade HIPAA Secure

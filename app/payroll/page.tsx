@@ -12,6 +12,7 @@ import {
   Building,
   CheckCircle2,
   Sparkles,
+  Trophy,
   Receipt,
   PieChart,
   TrendingUp,
@@ -417,6 +418,40 @@ export default function PayrollPage() {
                 <span className="font-medium">-{formatCurrency(estimatedTaxes)}</span>
               </div>
               <p className="text-xs text-rose-400 mt-1">Federal ~24% + CA State ~9.3%</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Performance Incentives ROI Card */}
+      <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden mb-8">
+        <div className="p-6 border-b border-border/50 bg-brand-500/5 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Trophy className="h-5 w-5 text-brand-600" />
+            <h3 className="font-semibold text-foreground">Performance Incentives ROI</h3>
+          </div>
+          <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-500/10 text-brand-600 border border-brand-500/20">Automated Gamification</span>
+        </div>
+        <div className="p-6">
+          <p className="text-sm text-muted-foreground mb-6 max-w-3xl">
+            Theraflow automatically tracks and payouts clinical volume bonuses. By gamifying caseloads, your associates billed <strong>42 additional hours</strong> this month.
+          </p>
+          <div className="grid sm:grid-cols-3 gap-6">
+            <div className="bg-muted/50 p-4 rounded-xl border border-border/50">
+              <p className="text-sm font-medium text-muted-foreground mb-1">Total Bonuses Paid</p>
+              <p className="text-2xl font-bold text-rose-500">-$1,250</p>
+              <p className="text-xs text-muted-foreground mt-1">3 associates hit Tier 1, 1 hit Tier 2</p>
+            </div>
+            <div className="bg-muted/50 p-4 rounded-xl border border-border/50 relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-3 opacity-10 pointer-events-none"><TrendingUp className="w-12 h-12 text-brand-500" /></div>
+              <p className="text-sm font-medium text-muted-foreground mb-1">Marginal Revenue Generated</p>
+              <p className="text-2xl font-bold text-foreground">+$6,300</p>
+              <p className="text-xs text-brand-500 font-medium mt-1">From 42 extra billed hours</p>
+            </div>
+            <div className="bg-brand-500/10 p-4 rounded-xl border border-brand-500/30 shadow-inner">
+              <p className="text-sm font-medium text-brand-700 mb-1">Net ROI on Incentives</p>
+              <p className="text-2xl font-bold text-brand-600">+$5,050</p>
+              <p className="text-xs text-brand-600/80 mt-1">504% Return on Investment</p>
             </div>
           </div>
         </div>

@@ -56,7 +56,7 @@ export default function WealthOptimizerPage() {
 
         <section>
           <h2 className="text-xl font-bold tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-brand-400 flex items-center gap-2">
-            God-Tier Optimizations
+            Enterprise-Grade Optimizations
           </h2>
           <WealthGodTierFeatures />
         </section>

@@ -45,7 +45,7 @@ Format the output cleanly in Markdown. Do NOT include extreme PHI (like social s
       : audioBase64;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash', // Flash is perfect for speedy transcription and summarization
+      model: 'gemini-3.1-flash', // Flash is perfect for speedy transcription and summarization
       contents: [
         {
           role: 'user',

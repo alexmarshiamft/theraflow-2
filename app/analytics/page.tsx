@@ -13,7 +13,14 @@ import {
   DollarSign, 
   Users, 
   Download,
-  Filter
+  Filter,
+  AlertTriangle,
+  Activity,
+  Flame,
+  BrainCircuit,
+  ArrowDownRight,
+  TrendingDown,
+  Trophy
 } from 'lucide-react';
 import { 
   AreaChart, 
@@ -31,6 +38,7 @@ import {
   Cell
 } from 'recharts';
 import { cn } from '@/lib/utils';
+import { FractionalCashflow } from '@/components/modules/intelligence/FractionalCashflow';
 
 type DateRange = 'current_pay_period' | 'last_pay_period' | 'last_30_days' | 'ytd';
 
@@ -207,25 +215,38 @@ export default function AnalyticsPage() {
     return null;
   };
 
-  // Operational Metrics Data
+  // Phase 6: True-Data Attendance & Retention (SimplePractice Aligned)
   const caseloadData = isOwner 
-    ? { total: 198, practice: 162, independent: 30, other: 6 } // 6x Alexander's numbers
-    : { total: 33, practice: 27, independent: 5, other: 1 };
+    ? { total: 266, practice: 200, independent: 66, other: 0 } 
+    : { total: 36, practice: 33, independent: 3, other: 0 };
 
   const appointmentsData = isOwner
     ? [
-        { name: 'Show', value: 882, color: '#3b82f6' }, // 147 * 6
-        { name: 'Canceled', value: 30, color: '#f59e0b' }, // 5 * 6
-        { name: 'No show', value: 18, color: '#ef4444' }, // 3 * 6
+        { name: 'Completed', value: 200, color: '#10b981' }, // 75.2%
+        { name: 'Canceled / No-Show', value: 66, color: '#f43f5e' }, // 24.8%
       ]
     : [
-        { name: 'Show', value: 147, color: '#3b82f6' },
-        { name: 'Canceled', value: 5, color: '#f59e0b' },
-        { name: 'No show', value: 3, color: '#ef4444' },
+        { name: 'Completed', value: 33, color: '#10b981' },
+        { name: 'Canceled / No-Show', value: 3, color: '#f43f5e' },
       ];
 
   const totalAppointments = appointmentsData.reduce((acc, curr) => acc + curr.value, 0);
-  const showRate = Math.round((appointmentsData[0].value / totalAppointments) * 100);
+  const showRate = Math.round((appointmentsData[0].value / totalAppointments) * 100 * 10) / 10; // 75.2
+
+  // Associate Retention Leaderboard Data
+  const retentionLeaderboard = [
+    { name: 'Alexander Marshi', comp: 33, canc: 2, ns: 1, missed: 3, total: 36, rate: 91.67, gross: 33 * 110 },
+    { name: 'Juen/Juan Marc', comp: 21, canc: 2, ns: 0, missed: 2, total: 23, rate: 91.30, gross: 21 * 110 },
+    { name: 'Benjamin Raskin', comp: 20, canc: 1, ns: 2, missed: 3, total: 23, rate: 86.96, gross: 20 * 110 },
+    { name: 'Kiran Dave', comp: 26, canc: 0, ns: 4, missed: 4, total: 30, rate: 86.67, gross: 26 * 110 },
+    { name: 'Eliana Nivon', comp: 28, canc: 1, ns: 4, missed: 5, total: 33, rate: 84.85, gross: 28 * 110 },
+    { name: 'Aaron Kuyper', comp: 16, canc: 0, ns: 3, missed: 3, total: 19, rate: 84.21, gross: 16 * 110 },
+    { name: 'Iliana Canez-Gomez', comp: 14, canc: 1, ns: 2, missed: 3, total: 17, rate: 82.35, gross: 14 * 110 },
+    { name: 'Lisa Garratt', comp: 9, canc: 1, ns: 2, missed: 3, total: 12, rate: 75.00, gross: 9 * 110 },
+    { name: 'Kalaya Irby', comp: 22, canc: 6, ns: 4, missed: 10, total: 32, rate: 68.75, gross: 22 * 110 },
+    { name: 'Ashley Beer', comp: 11, canc: 8, ns: 5, missed: 13, total: 24, rate: 45.83, gross: 11 * 110 },
+    { name: 'Jeremy Larson', comp: 0, canc: 14, ns: 0, missed: 14, total: 14, rate: 0.00, gross: 0 },
+  ];
 
   return (
     <DashboardLayout>
@@ -297,13 +318,13 @@ export default function AnalyticsPage() {
           iconBg="bg-emerald-50 dark:bg-emerald-500/10"
         />
         <StatCard
-          title={isOwner ? "Associate Splits" : "Practice Share"}
-          value={formatCurrency(currentData.splits)}
-          change={`${((currentData.splits / currentData.gross) * 100).toFixed(1)}% of gross`}
+          title="Outstanding Balances"
+          value="$9,350"
+          change="$8,675 Ins. | $675 Client"
           changeType="neutral"
-          icon={Users}
-          iconColor="text-amber-600 dark:text-amber-400"
-          iconBg="bg-amber-50 dark:bg-amber-500/10"
+          icon={Activity}
+          iconColor="text-rose-600 dark:text-rose-400"
+          iconBg="bg-rose-50 dark:bg-rose-500/10"
         />
         <StatCard
           title={isOwner ? "Net Practice Income" : "Your Net Earnings"}
@@ -315,113 +336,75 @@ export default function AnalyticsPage() {
           iconBg="bg-brand-50 dark:bg-brand-500/10"
         />
         <StatCard
-          title="Avg Revenue / Session"
-          value={formatCurrency(currentData.gross / ((currentData as any).sessions || 1))}
-          change={`${(currentData as any).sessions || 0} sessions total`}
-          changeType="neutral"
-          icon={BarChart3}
-          iconColor="text-purple-600 dark:text-purple-400"
-          iconBg="bg-purple-50 dark:bg-purple-500/10"
+          title="Note Completion Speed"
+          value="0.6 days"
+          change="82% locked within 24h"
+          changeType="up"
+          icon={Calendar}
+          iconColor="text-indigo-600 dark:text-indigo-400"
+          iconBg="bg-indigo-50 dark:bg-indigo-500/10"
         />
       </div>
 
+      {/* Fractional CFO */}
+      {isOwner && (
+        <div className="px-8 mb-6">
+          <FractionalCashflow />
+        </div>
+      )}
+
       {/* Operational Metrics */}
       <div className="px-8 grid gap-6 md:grid-cols-2 mb-6">
-        {/* Caseload Breakdown */}
+        
+        {/* Practice Attendance Overview */}
         <Card className="border-border shadow-sm">
           <CardHeader>
-            <CardTitle>Client Caseload</CardTitle>
-            <CardDescription>Total active clients and referral sources</CardDescription>
+            <CardTitle>Practice Attendance Overview</CardTitle>
+            <CardDescription>May 1 – May 10, 2026 (SimplePractice Aligned)</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="mt-2 space-y-6">
-              <div>
-                <div className="flex justify-between items-end mb-2">
-                  <span className="text-3xl font-bold text-foreground">{caseloadData.total}</span>
-                  <span className="text-sm text-muted-foreground">Active Clients</span>
-                </div>
-                {/* Horizontal Stacked Bar */}
-                <div className="w-full h-3 flex rounded-full overflow-hidden border border-border/50">
-                  <div style={{ width: `${(caseloadData.practice/caseloadData.total)*100}%` }} className="bg-emerald-500 hover:brightness-110 transition-all" title={`Practice Referred: ${caseloadData.practice}`}></div>
-                  <div style={{ width: `${(caseloadData.independent/caseloadData.total)*100}%` }} className="bg-violet-500 hover:brightness-110 transition-all" title={`Independently Referred: ${caseloadData.independent}`}></div>
-                  <div style={{ width: `${(caseloadData.other/caseloadData.total)*100}%` }} className="bg-slate-500 hover:brightness-110 transition-all" title={`Other/Transfer: ${caseloadData.other}`}></div>
-                </div>
+            <div className="grid grid-cols-2 gap-4 mt-2">
+              <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-center">
+                <span className="text-3xl font-bold text-emerald-500">{appointmentsData[0].value}</span>
+                <span className="text-xs text-emerald-600 dark:text-emerald-400 font-bold block mt-1 uppercase tracking-wider">Completed</span>
               </div>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-                    <span className="text-muted-foreground">Practice Referred</span>
-                  </div>
-                  <span className="font-medium text-foreground">{caseloadData.practice}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-violet-500"></div>
-                    <span className="text-muted-foreground">Independently Referred</span>
-                  </div>
-                  <span className="font-medium text-foreground">{caseloadData.independent}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-slate-500"></div>
-                    <span className="text-muted-foreground">Other / Transfer</span>
-                  </div>
-                  <span className="font-medium text-foreground">{caseloadData.other}</span>
-                </div>
+              <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 text-center">
+                <span className="text-3xl font-bold text-rose-500">{appointmentsData[1].value}</span>
+                <span className="text-xs text-rose-600 dark:text-rose-400 font-bold block mt-1 uppercase tracking-wider">Canceled / No-Show</span>
+              </div>
+              <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4 text-center">
+                <span className="text-3xl font-bold text-indigo-500">{totalAppointments}</span>
+                <span className="text-xs text-indigo-600 dark:text-indigo-400 font-bold block mt-1 uppercase tracking-wider">Total Outcomes</span>
+              </div>
+              <div className="bg-brand-500/10 border border-brand-500/20 rounded-xl p-4 text-center">
+                <span className="text-3xl font-bold text-brand-500">{showRate}%</span>
+                <span className="text-xs text-brand-600 dark:text-brand-400 font-bold block mt-1 uppercase tracking-wider">Retention Rate</span>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Appointments & Retention */}
-        <Card className="border-border shadow-sm">
+        {/* Top Performer Spotlight */}
+        <Card className="border-brand-500/30 bg-brand-500/5 shadow-sm shadow-brand-500/10">
           <CardHeader>
-            <CardTitle>Appointments & Retention</CardTitle>
-            <CardDescription>Session show rates and cancellations</CardDescription>
+            <CardTitle className="flex items-center gap-2 text-brand-500">
+              <Trophy className="w-5 h-5" /> Top Performer Spotlight
+            </CardTitle>
+            <CardDescription>Highest volume and highest retention</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col sm:flex-row items-center gap-8 mt-2">
-              <div className="relative h-[160px] w-[160px] shrink-0">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={appointmentsData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={80}
-                      paddingAngle={2}
-                      dataKey="value"
-                      stroke="none"
-                    >
-                      {appointmentsData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip content={<CustomPieTooltip />} />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                  <span className="text-2xl font-bold text-foreground">{showRate}%</span>
-                  <span className="text-xs text-muted-foreground font-medium text-center leading-tight mt-0.5">
-                    {appointmentsData[0].value} <br/>Show
-                  </span>
-                </div>
+            <div className="flex items-center gap-4 mt-4 bg-brand-500/10 border border-brand-500/20 p-5 rounded-2xl">
+              <div className="w-16 h-16 shrink-0 rounded-full bg-brand-500 text-white flex items-center justify-center text-2xl font-bold border-4 border-brand-500/30 shadow-[0_0_15px_rgba(14,165,233,0.5)]">
+                AM
               </div>
-              <div className="flex-1 w-full space-y-3">
-                {appointmentsData.map((item, i) => (
-                  <div key={i} className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
-                      <span className="text-muted-foreground">{item.name}</span>
-                    </div>
-                    <span className="font-medium text-foreground">{item.value}</span>
-                  </div>
-                ))}
-                <div className="pt-2 mt-2 border-t border-border flex justify-between text-sm">
-                  <span className="text-muted-foreground font-medium">Total Appointments</span>
-                  <span className="font-bold text-foreground">{totalAppointments}</span>
+              <div>
+                <h3 className="text-xl font-bold text-foreground">Alexander Marshi</h3>
+                <p className="text-muted-foreground mt-1 text-sm">
+                  <strong className="text-emerald-500">33 completed sessions</strong> with a <strong className="text-brand-500">91.67% retention rate</strong>.
+                </p>
+                <div className="flex gap-2 mt-3">
+                  <span className="text-[10px] font-bold text-brand-400 bg-brand-500/20 px-2 py-0.5 rounded-full border border-brand-500/30 uppercase tracking-wider">#1 Volume</span>
+                  <span className="text-[10px] font-bold text-brand-400 bg-brand-500/20 px-2 py-0.5 rounded-full border border-brand-500/30 uppercase tracking-wider">#1 Retention</span>
                 </div>
               </div>
             </div>
@@ -492,49 +475,312 @@ export default function AnalyticsPage() {
           </CardContent>
         </Card>
 
-        {/* Associate Performance Breakdown */}
+        {/* Associate Retention Leaderboard */}
         {isOwner && (
-          <Card className="border-border shadow-sm flex flex-col">
+          <Card className="border-border shadow-sm flex flex-col lg:col-span-3 mb-8">
             <CardHeader>
-              <CardTitle>Top Producers</CardTitle>
-              <CardDescription>By gross revenue generated</CardDescription>
+              <CardTitle>Associate Retention Leaderboard</CardTitle>
+              <CardDescription>Comprehensive breakdown by clinician (May 1 - May 10)</CardDescription>
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col justify-between">
-              <div className="space-y-6 mt-2">
-                {topAssociates.map((associate, i) => (
-                  <div key={i} className="space-y-2">
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="font-semibold text-foreground">{associate.name}</span>
-                      <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                        {formatCurrency(associate.gross)}
-                      </span>
-                    </div>
-                    <div className="relative h-2.5 w-full bg-muted rounded-full overflow-hidden">
-                      <div 
-                        className="absolute top-0 left-0 h-full bg-emerald-500 rounded-full"
-                        style={{ width: `${(associate.gross / topAssociates[0].gross) * 100}%` }}
-                      />
-                      <div 
-                        className="absolute top-0 left-0 h-full bg-amber-500/50 rounded-r-full"
-                        style={{ width: `${(associate.split / topAssociates[0].gross) * 100}%` }}
-                      />
-                    </div>
-                    <div className="flex justify-between items-center text-xs text-muted-foreground">
-                      <span>{associate.sessions} sessions</span>
-                      <span>Split: {formatCurrency(associate.split)}</span>
-                    </div>
-                  </div>
-                ))}
+            <CardContent>
+              <div className="overflow-x-auto mt-4 rounded-xl border border-border/50">
+                <table className="w-full text-sm text-left">
+                  <thead className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider bg-muted/50 border-b border-border/50">
+                    <tr>
+                      <th className="px-5 py-4">Clinician</th>
+                      <th className="px-5 py-4 text-center">Completed</th>
+                      <th className="px-5 py-4 text-center">Canceled</th>
+                      <th className="px-5 py-4 text-center">No-Show</th>
+                      <th className="px-5 py-4 text-center border-l border-border/50">Total Outcomes</th>
+                      <th className="px-5 py-4 text-right">Retention Rate</th>
+                      <th className="px-5 py-4 text-right">Generated Rev</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/50">
+                    {retentionLeaderboard.map((assoc, idx) => {
+                      const isDanger = assoc.rate < 50;
+                      const isWarning = assoc.rate >= 50 && assoc.rate < 75;
+                      
+                      const rateColor = isDanger ? 'text-rose-500' : isWarning ? 'text-amber-500' : 'text-emerald-500';
+                      
+                      return (
+                        <tr key={assoc.name} className={`hover:bg-muted/30 transition-colors ${idx === 0 ? 'bg-brand-500/5' : ''}`}>
+                          <td className="px-5 py-3 font-medium text-foreground flex items-center gap-3">
+                            <span className="w-6 h-6 rounded-full bg-slate-900 border border-slate-800 text-[10px] flex items-center justify-center text-slate-400 font-bold">{idx + 1}</span>
+                            {assoc.name}
+                            {idx === 0 && <Trophy className="w-3 h-3 text-brand-500 ml-1" />}
+                          </td>
+                          <td className="px-5 py-3 text-center text-emerald-400 font-bold bg-emerald-500/5">{assoc.comp}</td>
+                          <td className="px-5 py-3 text-center text-amber-400 font-medium">{assoc.canc}</td>
+                          <td className="px-5 py-3 text-center text-rose-400 font-medium">{assoc.ns}</td>
+                          <td className="px-5 py-3 text-center text-brand-400 font-bold bg-brand-500/5 border-l border-border/50">{assoc.total}</td>
+                          <td className="px-5 py-3 text-right">
+                            <div className="flex items-center justify-end gap-3">
+                              <div className="w-24 h-2 bg-slate-900 border border-slate-800 rounded-full overflow-hidden relative">
+                                <div className={`absolute left-0 top-0 bottom-0 ${isDanger ? 'bg-rose-500' : isWarning ? 'bg-amber-500' : 'bg-emerald-500'} transition-all`} style={{ width: `${assoc.rate}%` }}></div>
+                              </div>
+                              <span className={`font-bold w-12 ${rateColor}`}>{assoc.rate.toFixed(0)}%</span>
+                            </div>
+                          </td>
+                          <td className="px-5 py-3 text-right text-emerald-400 font-mono font-bold">
+                            {formatCurrency(assoc.gross)}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                  <tfoot className="bg-slate-900/80 font-bold border-t border-slate-700 text-white shadow-inner">
+                    <tr>
+                      <td className="px-5 py-4 uppercase tracking-widest text-xs text-slate-400">Total / Avg</td>
+                      <td className="px-5 py-4 text-center text-emerald-400 bg-emerald-500/10 text-lg">200</td>
+                      <td className="px-5 py-4 text-center text-amber-400">36</td>
+                      <td className="px-5 py-4 text-center text-rose-400">27</td>
+                      <td className="px-5 py-4 text-center text-brand-400 bg-brand-500/10 text-lg border-l border-border/50">266</td>
+                      <td className="px-5 py-4 text-right text-emerald-400 text-lg">75.19%</td>
+                      <td className="px-5 py-4 text-right text-emerald-400 text-lg font-mono">${(200 * 110).toLocaleString()}</td>
+                    </tr>
+                  </tfoot>
+                </table>
               </div>
-              
-              <Button variant="ghost" className="w-full mt-6 text-brand-600 hover:text-brand-700 hover:bg-brand-50 dark:text-brand-400 dark:hover:bg-brand-500/10">
-                View All Associates
-              </Button>
             </CardContent>
           </Card>
         )}
       </div>
 
+      {/* Phase 4: Predictive AI Intelligence (Enterprise-Grade SaaS Features) */}
+      <div className="px-8 mb-12">
+        <div className="mb-6 flex items-center gap-2">
+          <BrainCircuit className="h-5 w-5 text-indigo-400" />
+          <h2 className="text-xl font-bold text-foreground">Predictive Intelligence Engine</h2>
+        </div>
+        
+        <div className="grid gap-6 lg:grid-cols-2">
+          
+          {/* Predictive Client Churn Radar */}
+          <Card className="border-rose-500/20 shadow-lg shadow-rose-500/5 relative overflow-hidden bg-gradient-to-br from-slate-900 to-black group">
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay"></div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-rose-500/10 rounded-full blur-3xl group-hover:bg-rose-500/20 transition-colors"></div>
+            
+            <CardHeader className="relative z-10 border-b border-border/50 pb-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle className="flex items-center gap-2 text-white">
+                    <Activity className="h-5 w-5 text-rose-400" />
+                    Client Churn Radar
+                  </CardTitle>
+                  <CardDescription className="text-slate-400 mt-1">AI probability of imminent clinical drop-out</CardDescription>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-semibold text-rose-400 uppercase tracking-wider mb-1">MRR At Risk</p>
+                  <p className="text-2xl font-mono font-bold text-white">$1,850</p>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="relative z-10 pt-6">
+              <div className="space-y-4">
+                
+                {/* High Risk Item */}
+                <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 transition-colors hover:bg-rose-500/15">
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700">
+                        <span className="text-sm font-bold text-slate-300">JS</span>
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-white text-sm">John Smith</h4>
+                        <p className="text-xs text-slate-400">Therapist: Ashley Beer</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 bg-rose-500/20 px-2.5 py-1 rounded-full border border-rose-500/30">
+                      <TrendingDown className="w-3 h-3 text-rose-400" />
+                      <span className="text-xs font-bold text-rose-400">82% Churn Risk</span>
+                    </div>
+                  </div>
+                  <div className="bg-black/40 rounded-lg p-3 text-xs text-slate-300 border border-white/5 space-y-1">
+                    <p><strong className="text-slate-500">Trigger:</strong> Dropped from weekly to bi-weekly.</p>
+                    <p><strong className="text-slate-500">Velocity:</strong> Arrived 12 mins late to last 2 sessions.</p>
+                    <p><strong className="text-slate-500">AI Action:</strong> Automated "Check-in" email drafted for Ashley.</p>
+                  </div>
+                </div>
+
+                {/* Medium Risk Item */}
+                <div className="bg-amber-500/5 border border-amber-500/10 rounded-xl p-4 transition-colors hover:bg-amber-500/10">
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700">
+                        <span className="text-sm font-bold text-slate-300">MR</span>
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-white text-sm">Maria Rodriguez</h4>
+                        <p className="text-xs text-slate-400">Therapist: Kalaya Irby</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">
+                      <AlertTriangle className="w-3 h-3 text-amber-400" />
+                      <span className="text-xs font-bold text-amber-400">64% Churn Risk</span>
+                    </div>
+                  </div>
+                  <div className="bg-black/40 rounded-lg p-3 text-xs text-slate-300 border border-white/5">
+                    <p><strong className="text-slate-500">Trigger:</strong> Credit card declined + canceled last session.</p>
+                  </div>
+                </div>
+
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Clinical Burnout Prediction Index (BPI) */}
+          <Card className="border-indigo-500/20 shadow-lg shadow-indigo-500/5 relative overflow-hidden bg-gradient-to-br from-slate-900 to-black group">
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay"></div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl group-hover:bg-indigo-500/20 transition-colors"></div>
+            
+            <CardHeader className="relative z-10 border-b border-border/50 pb-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle className="flex items-center gap-2 text-white">
+                    <Flame className="h-5 w-5 text-indigo-400" />
+                    Clinical Burnout Index
+                  </CardTitle>
+                  <CardDescription className="text-slate-400 mt-1">Predictive staff retention monitoring</CardDescription>
+                </div>
+                {isOwner && (
+                  <div className="text-right">
+                    <p className="text-sm font-semibold text-indigo-400 uppercase tracking-wider mb-1">Critical Alerts</p>
+                    <p className="text-2xl font-mono font-bold text-white">1 Staff</p>
+                  </div>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent className="relative z-10 pt-6">
+              <div className="space-y-6">
+                
+                {isOwner ? (
+                  <>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-end">
+                        <div>
+                          <h4 className="font-bold text-white text-sm">Jeremy Larson</h4>
+                          <p className="text-xs text-rose-400 font-medium">85% Burnout Probability</p>
+                        </div>
+                        <span className="text-xs font-mono text-slate-400">22 hrs / week</span>
+                      </div>
+                      
+                      {/* Burnout Bar */}
+                      <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-amber-500 to-rose-500 w-[85%] relative">
+                          <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-rose-500/10 border border-rose-500/20 rounded-lg p-3 text-xs text-rose-200 mt-3">
+                        <strong className="block text-rose-400 mb-1">Intervention Required:</strong>
+                        Jeremy has 14 cancellations this week and 0 completed sessions. This 100% cancellation rate indicates severe burnout or a critical scheduling failure. Immediate clinical intervention and caseload review recommended.
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 pt-4 border-t border-border/50">
+                      <div className="flex justify-between items-end">
+                        <div>
+                          <h4 className="font-bold text-white text-sm">Ashley Beer</h4>
+                          <p className="text-xs text-amber-400 font-medium">68% Burnout Probability</p>
+                        </div>
+                        <span className="text-xs font-mono text-slate-400">18 hrs / week</span>
+                      </div>
+                      
+                      {/* Burnout Bar */}
+                      <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-emerald-500 to-amber-500 w-[68%]"></div>
+                      </div>
+                      <p className="text-[10px] text-slate-500 mt-1">13 missed sessions (8 canceled, 5 no-shows) indicates high caseload instability.</p>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-8 text-center">
+                    <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4">
+                      <Flame className="w-8 h-8 text-emerald-400" />
+                    </div>
+                    <h3 className="text-lg font-bold text-white mb-2">You are thriving!</h3>
+                    <p className="text-sm text-slate-400 max-w-[250px]">
+                      Your AI Burnout Probability is currently at <strong>12%</strong>. You've maintained a healthy 18-hour clinical schedule with steady note completion rates.
+                    </p>
+                  </div>
+                )}
+
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* AI Autonomous Management Directives (Reward / Punish) */}
+        {isOwner && (
+          <Card className="border-brand-500/30 bg-black shadow-xl shadow-brand-500/5 mt-6 relative overflow-hidden">
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay"></div>
+            <CardHeader className="relative z-10 border-b border-border/50 bg-brand-500/5">
+              <CardTitle className="flex items-center gap-2 text-white">
+                <BrainCircuit className="h-5 w-5 text-brand-400" />
+                AI Practice Manager: Autonomous Directives
+              </CardTitle>
+              <CardDescription className="text-slate-400">Algorithmic recommendations for staff compensation and corrective actions based on real-time P&L impact.</CardDescription>
+            </CardHeader>
+            <CardContent className="relative z-10 pt-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                
+                {/* Reward Section */}
+                <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-5 relative overflow-hidden group hover:bg-emerald-500/10 transition-colors">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl"></div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <Trophy className="w-5 h-5 text-emerald-400" />
+                    <h3 className="font-bold text-emerald-400 uppercase tracking-widest text-sm">Action: Reward & Retain</h3>
+                  </div>
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-300 font-bold text-lg">
+                      AM
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white text-lg">Alexander Marshi</h4>
+                      <p className="text-sm text-emerald-400 font-mono">Generated: $3,630 | Retention: 91.67%</p>
+                    </div>
+                  </div>
+                  <div className="bg-black/60 rounded-lg p-3 text-sm text-slate-300 border border-emerald-500/20">
+                    <p><strong className="text-emerald-500">AI Analysis:</strong> Operating at peak efficiency. High retention is driving maximum LTV (Life-Time Value) per client.</p>
+                    <p className="mt-2"><strong className="text-emerald-500">Autonomous Execution:</strong> Auto-drafted a <strong className="text-white">Q2 Performance Bonus of $250</strong> via Payroll integration and generated a congratulatory Slack message for your approval.</p>
+                  </div>
+                  <div className="mt-4 flex gap-2">
+                    <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white w-full">Approve Bonus</Button>
+                  </div>
+                </div>
+
+                {/* Punish Section */}
+                <div className="bg-rose-500/5 border border-rose-500/20 rounded-xl p-5 relative overflow-hidden group hover:bg-rose-500/10 transition-colors">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full blur-3xl"></div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <AlertTriangle className="w-5 h-5 text-rose-400" />
+                    <h3 className="font-bold text-rose-400 uppercase tracking-widest text-sm">Action: Corrective PIP</h3>
+                  </div>
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 rounded-full bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-300 font-bold text-lg">
+                      AB
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white text-lg">Ashley Beer</h4>
+                      <p className="text-sm text-rose-400 font-mono">Generated: $1,210 | Retention: 45.83%</p>
+                    </div>
+                  </div>
+                  <div className="bg-black/60 rounded-lg p-3 text-sm text-slate-300 border border-rose-500/20">
+                    <p><strong className="text-rose-500">AI Analysis:</strong> 45% retention rate and 13 missed sessions (8 canceled, 5 no-shows) is causing severe caseload instability and wasting marketing acquisition spend.</p>
+                    <p className="mt-2"><strong className="text-rose-500">Autonomous Execution:</strong> Auto-drafted a <strong className="text-white">30-Day Performance Improvement Plan (PIP)</strong>, temporarily locked her SimplePractice intake calendar, and restricted her active caseload to 15 clients until retention improves above 75%.</p>
+                  </div>
+                  <div className="mt-4 flex gap-2">
+                    <Button size="sm" variant="destructive" className="w-full">Execute PIP & Lock Calendar</Button>
+                  </div>
+                </div>
+
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+      
     </DashboardLayout>
   );
 }

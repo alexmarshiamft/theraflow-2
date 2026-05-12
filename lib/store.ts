@@ -182,6 +182,17 @@ export interface VaultDocument {
   data?: string;
 }
 
+export interface WebhookLog {
+  id: string;
+  userId?: string;
+  event: string;
+  endpoint: string;
+  status: number;
+  time: string;
+  payload: string;
+  timestamp: number;
+}
+
 export interface TrackedHour {
   id: string;
   associateId: string;
@@ -208,6 +219,7 @@ interface AppState {
   trackedHours: TrackedHour[];
   vaultDocuments: VaultDocument[];
   emails: EmailMessage[];
+  webhookLogs: WebhookLog[];
   
   privacyMode: boolean;
   setPrivacyMode: (enabled: boolean) => void;
@@ -684,8 +696,8 @@ const initialVAAuthorizations: VAAuthorization[] = [
     endDate: '2026-12-31',
     status: 'ACTIVE',
     notes: 'Standard individual therapy auth.',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    createdAt: '2026-05-01T00:00:00.000Z',
+    updatedAt: '2026-05-01T00:00:00.000Z'
   },
   {
     id: 'AUTH-002',
@@ -699,8 +711,8 @@ const initialVAAuthorizations: VAAuthorization[] = [
     endDate: '2026-08-31',
     status: 'EXHAUSTED',
     notes: 'Exhausted, needs renewal.',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    createdAt: '2026-05-01T00:00:00.000Z',
+    updatedAt: '2026-05-01T00:00:00.000Z'
   }
 ];
 
@@ -709,7 +721,7 @@ const initialPayrollRuns: PayrollRun[] = [];
 const initialAuditLogs: AuditLog[] = [
   {
     id: 'audit_001',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
+    timestamp: '2026-05-10T00:00:00.000Z', // 1 day ago
     userId: 'system',
     action: 'SYSTEM',
     entityType: 'Auth',
@@ -720,7 +732,7 @@ const initialAuditLogs: AuditLog[] = [
   },
   {
     id: 'audit_002',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2 hours ago
+    timestamp: '2026-05-11T15:00:00.000Z', // 2 hours ago
     userId: 'Dr. Sarah Jenkins',
     action: 'ACCESS',
     entityType: 'Client Record',
@@ -731,7 +743,7 @@ const initialAuditLogs: AuditLog[] = [
   },
   {
     id: 'audit_003',
-    timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(), // 15 mins ago
+    timestamp: '2026-05-11T16:45:00.000Z', // 15 mins ago
     userId: 'Dr. Sarah Jenkins',
     action: 'UPDATE',
     entityType: 'Appointment',
@@ -1052,38 +1064,45 @@ export const useStore = create<AppState>()(
         emails: state.emails.map(e => e.id === id ? { ...e, folder: 'trash' } : e)
       })),
 
-      updateClinicalNote: (id, data) => set((state) => {
-        const existingNote = state.clinicalNotes.find(n => n.id === id);
-        let vaAuthorizations = [...state.vaAuthorizations];
+      updateClinicalNote: async (id, data) => {
+        set((state) => {
+          const existingNote = state.clinicalNotes.find(n => n.id === id);
+          let vaAuthorizations = [...state.vaAuthorizations];
 
-        if (
-          existingNote?.vaCompliant && 
-          existingNote.authorizationNumber && 
-          data.status === 'signed' && 
-          existingNote.status !== 'signed'
-        ) {
-          vaAuthorizations = vaAuthorizations.map(auth => {
-            if (auth.authorizationNumber === existingNote.authorizationNumber) {
-              const newSessionsUsed = auth.sessionsUsed + 1;
-              return { 
-                ...auth, 
-                sessionsUsed: newSessionsUsed,
-                status: newSessionsUsed >= auth.approvedSessions ? 'EXHAUSTED' : auth.status
-              };
-            }
-            return auth;
-          });
-        }
+          if (
+            existingNote?.vaCompliant && 
+            existingNote.authorizationNumber && 
+            data.status === 'signed' && 
+            existingNote.status !== 'signed'
+          ) {
+            vaAuthorizations = vaAuthorizations.map(auth => {
+              if (auth.authorizationNumber === existingNote.authorizationNumber) {
+                const newSessionsUsed = auth.sessionsUsed + 1;
+                return { 
+                  ...auth, 
+                  sessionsUsed: newSessionsUsed,
+                  status: newSessionsUsed >= auth.approvedSessions ? 'EXHAUSTED' : auth.status
+                };
+              }
+              return auth;
+            });
+          }
 
-        return {
-          clinicalNotes: state.clinicalNotes.map(n => n.id === id ? { ...n, ...data } : n),
-          vaAuthorizations
-        };
-      }),
+          return {
+            clinicalNotes: state.clinicalNotes.map(n => n.id === id ? { ...n, ...data } : n),
+            vaAuthorizations
+          };
+        });
+        
+        try { await updateDoc(doc(db, "clinicalNotes", id), data); } catch (e) { console.error(e); }
+      },
 
-      addClinicalNote: (note) => set((state) => ({
-        clinicalNotes: [note, ...state.clinicalNotes]
-      })),
+      addClinicalNote: async (note) => {
+        set((state) => ({
+          clinicalNotes: [note, ...state.clinicalNotes]
+        }));
+        try { await setDoc(doc(db, "clinicalNotes", note.id), note); } catch (e) { console.error(e); }
+      },
 
 
       addVAAuthorization: (auth) => set((state) => ({ vaAuthorizations: [...state.vaAuthorizations, auth] })),
@@ -1117,25 +1136,33 @@ export const useStore = create<AppState>()(
         };
       }),
 
-      addAuditLog: (log) => set((state) => {
-        const previousLog = state.auditLogs[0];
-        const previousHash = previousLog?.hash || '0000000000000000000000000000000000000000000000000000000000000000';
-        const timestamp = new Date().toISOString();
-        const id = `audit_${Date.now()}_${Math.random().toString(36).substring(7)}`;
-        
-        const dataToHash = previousHash + id + timestamp + log.userId + log.action + log.entityId;
-        const currentHash = generateHash(dataToHash);
+      addAuditLog: async (log) => {
+        let newLog: AuditLog | null = null;
+        set((state) => {
+          const previousLog = state.auditLogs[0];
+          const previousHash = previousLog?.hash || '0000000000000000000000000000000000000000000000000000000000000000';
+          const timestamp = new Date().toISOString();
+          const id = `audit_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+          
+          const dataToHash = previousHash + id + timestamp + log.userId + log.action + log.entityId;
+          const currentHash = generateHash(dataToHash);
 
-        return {
-          auditLogs: [{
+          newLog = {
             ...log,
             id,
             timestamp,
             previousHash,
             hash: currentHash
-          }, ...state.auditLogs]
-        };
-      }),
+          };
+
+          return {
+            auditLogs: [newLog, ...state.auditLogs]
+          };
+        });
+        if (newLog) {
+          try { await setDoc(doc(db, "auditLogs", (newLog as AuditLog).id), newLog); } catch (e) { console.error(e); }
+        }
+      },
 
       addClient: async (client) => {
         const uid = auth.currentUser?.uid;
@@ -1354,6 +1381,8 @@ export const initFirebaseSync = async () => {
       for (const c of initialClients) await setDoc(doc(db, "clients", `${uid}_${c.id}`), { ...c, id: `${uid}_${c.id}`, userId: uid });
       for (const a of initialAppointments) await setDoc(doc(db, "appointments", `${uid}_${a.id}`), { ...a, id: `${uid}_${a.id}`, userId: uid });
       for (const cl of initialClaims) await setDoc(doc(db, "claims", `${uid}_${cl.id}`), { ...cl, id: `${uid}_${cl.id}`, userId: uid });
+      for (const cn of initialClinicalNotes) await setDoc(doc(db, "clinicalNotes", `${uid}_${cn.id}`), { ...cn, id: `${uid}_${cn.id}`, userId: uid });
+      for (const al of initialAuditLogs) await setDoc(doc(db, "auditLogs", `${uid}_${al.id}`), { ...al, id: `${uid}_${al.id}`, userId: uid });
     }
 
     onSnapshot(qClients, (snapshot) => {
@@ -1369,6 +1398,23 @@ export const initFirebaseSync = async () => {
     onSnapshot(query(collection(db, "claims"), where("userId", "==", uid)), (snapshot) => {
       const data = snapshot.docs.map(doc => doc.data() as Claim);
       useStore.setState({ claims: data });
+    });
+
+    onSnapshot(query(collection(db, "clinicalNotes"), where("userId", "==", uid)), (snapshot) => {
+      const data = snapshot.docs.map(doc => doc.data() as ClinicalNote);
+      useStore.setState({ clinicalNotes: data });
+    });
+
+    onSnapshot(query(collection(db, "auditLogs"), where("userId", "==", uid)), (snapshot) => {
+      const data = snapshot.docs.map(doc => doc.data() as AuditLog);
+      useStore.setState({ auditLogs: data });
+    });
+
+    onSnapshot(query(collection(db, "webhookLogs"), where("userId", "==", uid)), (snapshot) => {
+      const data = snapshot.docs.map(doc => doc.data() as WebhookLog);
+      // Sort by timestamp descending
+      data.sort((a, b) => b.timestamp - a.timestamp);
+      useStore.setState({ webhookLogs: data });
     });
   } catch (error) {
     console.error("Firebase sync failed:", error);

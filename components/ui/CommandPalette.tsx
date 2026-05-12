@@ -1,123 +1,117 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { 
-  Search, Command, FileText, Sparkles, CreditCard, 
-  Calendar, Shield, Users, Activity, LogOut, Briefcase
-} from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, Calendar, FileText, Settings, User, Bot, Command, ArrowRight } from 'lucide-react';
 
 export function CommandPalette() {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const router = useRouter();
+  const [search, setSearch] = useState('');
 
-  // Handle Cmd+K to open
+  // Toggle with Cmd+K or Ctrl+K
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setIsOpen((prev) => !prev);
+        setIsOpen((open) => !open);
       }
       if (e.key === 'Escape') {
         setIsOpen(false);
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener('keydown', down);
+    return () => document.removeEventListener('keydown', down);
   }, []);
 
   if (!isOpen) return null;
 
-  const actions = [
-    { icon: <Sparkles className="w-4 h-4 text-brand-400" />, label: "Run Daily Scribe Summaries", route: "/ehr", category: "AI Actions" },
-    { icon: <CreditCard className="w-4 h-4 text-emerald-400" />, label: "Audit Pending Claims", route: "/claims", category: "AI Actions" },
-    { icon: <Activity className="w-4 h-4 text-rose-400" />, label: "View Burnout Radar", route: "/intelligence", category: "Analytics" },
-    { icon: <FileText className="w-4 h-4 text-blue-400" />, label: "Go to EHR Dashboard", route: "/ehr", category: "Navigation" },
-    { icon: <Briefcase className="w-4 h-4 text-amber-400" />, label: "Execute Payroll Settlement", route: "/payroll", category: "Financials" },
-    { icon: <Shield className="w-4 h-4 text-purple-400" />, label: "Check Compliance Ledger", route: "/compliance", category: "Security" },
-    { icon: <Calendar className="w-4 h-4 text-sky-400" />, label: "View Schedule", route: "/dashboard", category: "Navigation" },
-    { icon: <Users className="w-4 h-4 text-orange-400" />, label: "Client Portal (Preview)", route: "/portal", category: "Navigation" },
-  ];
-
-  const filteredActions = actions.filter(action => 
-    action.label.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    action.category.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleAction = (route: string) => {
-    setIsOpen(false);
-    setSearchQuery('');
-    router.push(route);
-  };
-
   return (
-    <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh] sm:pt-[20vh] px-4">
-      {/* Backdrop */}
+    <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh]">
+      {/* Blurred Backdrop */}
       <div 
-        className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
         onClick={() => setIsOpen(false)}
       />
-
-      {/* Palette Container */}
-      <div className="relative w-full max-w-2xl bg-slate-900 border border-slate-700/60 shadow-2xl rounded-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      
+      {/* Palette Window */}
+      <div className="relative z-10 w-full max-w-2xl bg-slate-900 border border-slate-700 shadow-2xl shadow-indigo-500/10 rounded-2xl overflow-hidden animate-in fade-in zoom-in-95">
         
         {/* Search Input */}
-        <div className="flex items-center px-4 py-4 border-b border-slate-800 bg-slate-900/50">
-          <Search className="w-5 h-5 text-slate-400 mr-3" />
+        <div className="flex items-center px-4 py-4 border-b border-slate-800">
+          <Search className="w-5 h-5 text-indigo-400 mr-3" />
           <input
             autoFocus
             type="text"
-            className="flex-1 bg-transparent border-none outline-none text-slate-200 placeholder:text-slate-500 text-lg"
-            placeholder="Type a command or search..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Type a command or search... (e.g. 'Book John Smith')"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="flex-1 bg-transparent border-none outline-none text-white text-lg placeholder:text-slate-500 font-medium"
           />
-          <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-slate-800 text-slate-400 text-xs font-medium border border-slate-700">
-            <Command className="w-3 h-3" />
-            <span>K</span>
+          <div className="flex items-center gap-1 text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-slate-800 px-2 py-1 rounded">
+            <Command className="w-3 h-3" /> ESC to close
           </div>
         </div>
 
-        {/* Results */}
-        <div className="max-h-[400px] overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
-          {filteredActions.length === 0 ? (
-            <div className="py-12 text-center text-slate-500">
-              <p>No results found for "{searchQuery}"</p>
+        {/* Action List */}
+        <div className="max-h-[60vh] overflow-y-auto p-2">
+          
+          <div className="px-3 py-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
+            AI Quick Actions
+          </div>
+          <div className="px-2 py-3 mx-2 my-1 bg-indigo-500/10 hover:bg-indigo-500/20 rounded-xl cursor-pointer flex items-center justify-between group transition-colors border border-indigo-500/20">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-indigo-500/20 rounded-lg">
+                <Bot className="w-4 h-4 text-indigo-400" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-white">Ask AI Assistant</h4>
+                <p className="text-xs text-indigo-200/70">"What is Alexander's retention rate this month?"</p>
+              </div>
             </div>
-          ) : (
-            <div className="space-y-1">
-              {filteredActions.map((action, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => handleAction(action.route)}
-                  className="w-full flex items-center px-4 py-3 rounded-xl hover:bg-brand-500/10 hover:text-white text-slate-300 transition-colors group text-left"
-                >
-                  <div className="p-2 rounded-lg bg-slate-800 group-hover:bg-slate-900/50 mr-4 transition-colors">
-                    {action.icon}
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-medium">{action.label}</div>
-                    <div className="text-xs text-slate-500 group-hover:text-brand-300/70">{action.category}</div>
-                  </div>
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-xs text-slate-400">Jump to →</span>
-                  </div>
-                </button>
-              ))}
+            <ArrowRight className="w-4 h-4 text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+
+          <div className="px-3 py-2 mt-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
+            Common Commands
+          </div>
+          
+          <div className="px-2 py-3 mx-2 my-1 hover:bg-slate-800 rounded-xl cursor-pointer flex items-center justify-between group transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-slate-800 rounded-lg group-hover:bg-slate-700">
+                <Calendar className="w-4 h-4 text-slate-300" />
+              </div>
+              <span className="text-sm font-medium text-slate-200">Schedule New Appointment</span>
             </div>
-          )}
+          </div>
+          
+          <div className="px-2 py-3 mx-2 my-1 hover:bg-slate-800 rounded-xl cursor-pointer flex items-center justify-between group transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-slate-800 rounded-lg group-hover:bg-slate-700">
+                <FileText className="w-4 h-4 text-slate-300" />
+              </div>
+              <span className="text-sm font-medium text-slate-200">Create Clinical Note</span>
+            </div>
+          </div>
+
+          <div className="px-2 py-3 mx-2 my-1 hover:bg-slate-800 rounded-xl cursor-pointer flex items-center justify-between group transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-slate-800 rounded-lg group-hover:bg-slate-700">
+                <User className="w-4 h-4 text-slate-300" />
+              </div>
+              <span className="text-sm font-medium text-slate-200">Add New Client</span>
+            </div>
+          </div>
+
+          <div className="px-2 py-3 mx-2 my-1 hover:bg-slate-800 rounded-xl cursor-pointer flex items-center justify-between group transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-slate-800 rounded-lg group-hover:bg-slate-700">
+                <Settings className="w-4 h-4 text-slate-300" />
+              </div>
+              <span className="text-sm font-medium text-slate-200">Practice Settings</span>
+            </div>
+          </div>
+
         </div>
 
-        {/* Footer */}
-        <div className="px-4 py-3 border-t border-slate-800 bg-slate-900/50 flex items-center justify-between text-xs text-slate-500">
-          <div className="flex gap-4">
-            <span className="flex items-center gap-1">↑↓ to navigate</span>
-            <span className="flex items-center gap-1">↵ to select</span>
-            <span className="flex items-center gap-1">esc to close</span>
-          </div>
-          <div>Theraflow OS v2.0</div>
-        </div>
       </div>
     </div>
   );

@@ -36,7 +36,7 @@ Return ONLY a raw JSON array of objects. Each object must have:
 If the document does not contain clinical hours logs, return an empty array [].`;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.1-flash',
       contents: [
         {
           role: 'user',

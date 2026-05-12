@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     }
 
     const response = await ai.models.generateContent({
-      model: 'gemini-pro-latest',
+      model: 'gemini-3.1-flash',
       contents: finalPrompt,
       config,
     });

@@ -22,9 +22,9 @@ export function AuditSimulator() {
 
   return (
     <Card className={`overflow-hidden relative transition-all duration-700 ${
-      auditState === 'idle' ? 'bg-slate-900/60 border-slate-700/50' : 
-      auditState === 'compiling' ? 'bg-rose-950/40 border-rose-500/50 shadow-[0_0_50px_rgba(244,63,94,0.1)]' : 
-      'bg-emerald-950/40 border-emerald-500/50 shadow-[0_0_50px_rgba(16,185,129,0.1)]'
+      auditState === 'idle' ? 'bg-slate-950 border-slate-800' : 
+      auditState === 'compiling' ? 'bg-rose-950 border-rose-500/50 shadow-[0_0_50px_rgba(244,63,94,0.1)]' : 
+      'bg-[#022c22] border-emerald-500/50 shadow-[0_0_50px_rgba(16,185,129,0.1)]'
     }`}>
       
       {/* Background Glow */}
@@ -104,7 +104,7 @@ export function AuditSimulator() {
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
-              <div className="bg-slate-900/50 rounded-xl p-4 border border-emerald-500/20">
+              <div className="bg-slate-950 rounded-xl p-4 border border-emerald-500/20">
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="font-semibold text-white flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-emerald-500" /> CPT Code 90837 Defense
@@ -115,7 +115,7 @@ export function AuditSimulator() {
                 </p>
               </div>
 
-              <div className="bg-slate-900/50 rounded-xl p-4 border border-emerald-500/20">
+              <div className="bg-slate-950 rounded-xl p-4 border border-emerald-500/20">
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="font-semibold text-white flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-emerald-500" /> BBS Supervision Ratios
@@ -126,7 +126,7 @@ export function AuditSimulator() {
                 </p>
               </div>
 
-              <div className="bg-slate-900/50 rounded-xl p-4 border border-emerald-500/20">
+              <div className="bg-slate-950 rounded-xl p-4 border border-emerald-500/20">
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="font-semibold text-white flex items-center gap-2">
                     <FileCheck className="h-4 w-4 text-emerald-500" /> Clinical Notes
@@ -137,7 +137,7 @@ export function AuditSimulator() {
                 </p>
               </div>
 
-              <div className="bg-slate-900/50 rounded-xl p-4 border border-emerald-500/20">
+              <div className="bg-slate-950 rounded-xl p-4 border border-emerald-500/20">
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="font-semibold text-white flex items-center gap-2">
                     <Fingerprint className="h-4 w-4 text-emerald-500" /> Credential Verification
