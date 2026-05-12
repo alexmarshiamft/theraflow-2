@@ -493,6 +493,7 @@ export default function AnalyticsPage() {
                       <th className="px-5 py-4 text-center">No-Show</th>
                       <th className="px-5 py-4 text-center border-l border-border/50">Total Outcomes</th>
                       <th className="px-5 py-4 text-right">Retention Rate</th>
+                      <th className="px-5 py-4 text-right text-brand-400">Annual Value / Client</th>
                       <th className="px-5 py-4 text-right">Generated Rev</th>
                     </tr>
                   </thead>
@@ -519,8 +520,11 @@ export default function AnalyticsPage() {
                               <div className="w-24 h-2 bg-slate-900 border border-slate-800 rounded-full overflow-hidden relative">
                                 <div className={`absolute left-0 top-0 bottom-0 ${isDanger ? 'bg-rose-500' : isWarning ? 'bg-amber-500' : 'bg-emerald-500'} transition-all`} style={{ width: `${assoc.rate}%` }}></div>
                               </div>
-                              <span className={`font-bold w-12 ${rateColor}`}>{assoc.rate.toFixed(0)}%</span>
+                              <span className={`font-bold w-12 ${rateColor}`}>{assoc.rate.toFixed(1)}%</span>
                             </div>
+                          </td>
+                          <td className="px-5 py-3 text-right text-brand-400 font-mono font-bold">
+                            {formatCurrency(48 * 114.34 * (assoc.rate / 100))}
                           </td>
                           <td className="px-5 py-3 text-right text-emerald-400 font-mono font-bold">
                             {formatCurrency(assoc.gross)}
@@ -536,7 +540,8 @@ export default function AnalyticsPage() {
                       <td className="px-5 py-4 text-center text-amber-400">80</td>
                       <td className="px-5 py-4 text-center text-rose-400">56</td>
                       <td className="px-5 py-4 text-center text-brand-400 bg-brand-500/10 text-lg border-l border-border/50">695</td>
-                      <td className="px-5 py-4 text-right text-emerald-400 text-lg">80.43%</td>
+                      <td className="px-5 py-4 text-right text-emerald-400 text-lg">80.4%</td>
+                      <td className="px-5 py-4 text-right text-brand-400 text-lg font-mono">${(48 * 114.34 * 0.8043).toLocaleString(undefined, {maximumFractionDigits: 0})}</td>
                       <td className="px-5 py-4 text-right text-emerald-400 text-lg font-mono">${(559 * 110).toLocaleString()}</td>
                     </tr>
                   </tfoot>
