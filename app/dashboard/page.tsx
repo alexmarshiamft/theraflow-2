@@ -65,8 +65,11 @@ export default function DashboardPage() {
     return acc + (emp.payType === 'salary' ? emp.salary / 24 : emp.salary * 80);
   }, 0);
 
+  const totalMonthlySessions = 1285;
+  const avgSessionRate = 114.34;
+  const grossVolume = totalMonthlySessions * avgSessionRate;
+
   const pendingClaims = claims.filter(c => c.status === 'submitted').length;
-  const activeClients = clients.filter((c) => c.status === 'active').length;
 
   // Mock current associate data
   const associateName = "Alexander Marshi, AMFT";
@@ -86,10 +89,10 @@ export default function DashboardPage() {
         body: JSON.stringify({
           prompt: userRole === 'owner' 
             ? `Based on the following stats: 
-                - Active Clients: ${activeClients}
-                - Pending Claims: ${pendingClaims}
-                - Practice Balance: $239,751
-                - Next Payroll: $${totalPayroll.toLocaleString()}
+                - Monthly Sessions: 1285
+                - Monthly Gross Revenue: $146,926
+                - Insurance Breakdown: 84% TriWest, 16% Commercial
+                - Team Size: ${employees.length} clinicians
                 Provide a 2-sentence executive summary of the practice's health and one actionable recommendation.`
             : `Based on the following stats for associate therapist ${associateName}:
                 - Active Caseload: ${myClients}
@@ -198,18 +201,18 @@ export default function DashboardPage() {
         {userRole === 'owner' ? (
           <>
             <StatCard
-              title="Clients Today"
-              value={clients.length.toString()}
-              change={`${activeClients} active`}
-              changeType="neutral"
+              title="Monthly Sessions"
+              value="1,285"
+              change={`$${grossVolume.toLocaleString('en-US', { maximumFractionDigits: 0 })} gross volume`}
+              changeType="up"
               icon={Activity}
               iconColor="text-brand-600 dark:text-brand-400"
               iconBg="bg-brand-50 dark:bg-brand-500/10"
             />
             <StatCard
-              title="Practice Balance"
-              value="$239,751"
-              change="+8.4% vs last month"
+              title="YTD Revenue"
+              value={`$${(grossVolume * 5).toLocaleString('en-US', { maximumFractionDigits: 0 })}`}
+              change="Projected: $1.76M Annual"
               changeType="up"
               icon={Building2}
               iconColor="text-teal-600 dark:text-teal-400"
@@ -218,17 +221,17 @@ export default function DashboardPage() {
             <StatCard
               title="Next Payroll"
               value={`$${totalPayroll.toLocaleString('en-US', { maximumFractionDigits: 0 })}`}
-              change={`Due ${new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`}
+              change={`For ${employees.length} team members`}
               changeType="neutral"
               icon={CreditCard}
               iconColor="text-purple-600 dark:text-purple-400"
               iconBg="bg-purple-50 dark:bg-purple-500/10"
             />
             <StatCard
-              title="Pending Claims"
-              value={pendingClaims.toString()}
-              change="3 claims pending"
-              changeType="down"
+              title="Monthly Claims"
+              value="1,191"
+              change="84% TriWest VA CCN"
+              changeType="neutral"
               icon={FileText}
               iconColor="text-amber-600 dark:text-amber-400"
               iconBg="bg-amber-50 dark:bg-amber-500/10"
