@@ -235,16 +235,16 @@ export default function AnalyticsPage() {
 
   // Associate Retention Leaderboard Data
   const retentionLeaderboard = [
-    { name: 'Alexander Marshi', comp: 33, canc: 2, ns: 1, missed: 3, total: 36, rate: 91.67, gross: 33 * 110 },
-    { name: 'Juen/Juan Marc', comp: 21, canc: 2, ns: 0, missed: 2, total: 23, rate: 91.30, gross: 21 * 110 },
-    { name: 'Benjamin Raskin', comp: 20, canc: 1, ns: 2, missed: 3, total: 23, rate: 86.96, gross: 20 * 110 },
+    { name: 'Alexander Marshi', comp: 41, canc: 2, ns: 1, missed: 3, total: 44, rate: 93.18, gross: 41 * 110 },
+    { name: 'Juen Marc G. Arzadon', comp: 100, canc: 7, ns: 3, missed: 10, total: 110, rate: 90.90, gross: 100 * 110 },
+    { name: 'Benjamin Raskin', comp: 63, canc: 4, ns: 6, missed: 10, total: 73, rate: 86.30, gross: 63 * 110 },
     { name: 'Kiran Dave', comp: 26, canc: 0, ns: 4, missed: 4, total: 30, rate: 86.67, gross: 26 * 110 },
     { name: 'Eliana Nivon', comp: 28, canc: 1, ns: 4, missed: 5, total: 33, rate: 84.85, gross: 28 * 110 },
     { name: 'Aaron Kuyper', comp: 16, canc: 0, ns: 3, missed: 3, total: 19, rate: 84.21, gross: 16 * 110 },
-    { name: 'Iliana Canez-Gomez', comp: 14, canc: 1, ns: 2, missed: 3, total: 17, rate: 82.35, gross: 14 * 110 },
-    { name: 'Lisa Garratt', comp: 9, canc: 1, ns: 2, missed: 3, total: 12, rate: 75.00, gross: 9 * 110 },
-    { name: 'Kalaya Irby', comp: 22, canc: 6, ns: 4, missed: 10, total: 32, rate: 68.75, gross: 22 * 110 },
-    { name: 'Ashley Beer', comp: 11, canc: 8, ns: 5, missed: 13, total: 24, rate: 45.83, gross: 11 * 110 },
+    { name: 'Iliana Canez-Gonzalez', comp: 14, canc: 1, ns: 2, missed: 3, total: 17, rate: 82.35, gross: 14 * 110 },
+    { name: 'Lisa Garratt', comp: 57, canc: 12, ns: 7, missed: 19, total: 76, rate: 75.00, gross: 57 * 110 },
+    { name: 'Kalaya Irby', comp: 104, canc: 28, ns: 20, missed: 48, total: 152, rate: 68.42, gross: 104 * 110 },
+    { name: 'Ashley Beer', comp: 55, canc: 40, ns: 25, missed: 65, total: 120, rate: 45.83, gross: 55 * 110 },
     { name: 'Jeremy Larson', comp: 0, canc: 14, ns: 0, missed: 14, total: 14, rate: 0.00, gross: 0 },
   ];
 
@@ -533,12 +533,12 @@ export default function AnalyticsPage() {
                   <tfoot className="bg-slate-900/80 font-bold border-t border-slate-700 text-white shadow-inner">
                     <tr>
                       <td className="px-5 py-4 uppercase tracking-widest text-xs text-slate-400">Total / Avg</td>
-                      <td className="px-5 py-4 text-center text-emerald-400 bg-emerald-500/10 text-lg">200</td>
-                      <td className="px-5 py-4 text-center text-amber-400">36</td>
-                      <td className="px-5 py-4 text-center text-rose-400">27</td>
-                      <td className="px-5 py-4 text-center text-brand-400 bg-brand-500/10 text-lg border-l border-border/50">266</td>
-                      <td className="px-5 py-4 text-right text-emerald-400 text-lg">75.19%</td>
-                      <td className="px-5 py-4 text-right text-emerald-400 text-lg font-mono">${(200 * 110).toLocaleString()}</td>
+                      <td className="px-5 py-4 text-center text-emerald-400 bg-emerald-500/10 text-lg">504</td>
+                      <td className="px-5 py-4 text-center text-amber-400">109</td>
+                      <td className="px-5 py-4 text-center text-rose-400">75</td>
+                      <td className="px-5 py-4 text-center text-brand-400 bg-brand-500/10 text-lg border-l border-border/50">688</td>
+                      <td className="px-5 py-4 text-right text-emerald-400 text-lg">73.25%</td>
+                      <td className="px-5 py-4 text-right text-emerald-400 text-lg font-mono">${(504 * 110).toLocaleString()}</td>
                     </tr>
                   </tfoot>
                 </table>
