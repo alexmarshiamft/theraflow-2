@@ -50,6 +50,7 @@ import { AIFixIssues } from '@/components/ui/AIFixIssues';
 import { TriWestChecklist } from '@/components/modules/compliance/TriWestChecklist';
 import { WhatIfSimulator } from '@/components/modules/intelligence/WhatIfSimulator';
 import { MilestoneRings } from '@/components/modules/licensure/MilestoneRings';
+import { CancellationImpactSimulator } from '@/components/modules/intelligence/CancellationImpactSimulator';
 import { AuditDefender } from '@/components/modules/intelligence/AuditDefender';
 import { ClientChurnRadar } from '@/components/modules/intelligence/ClientChurnRadar';
 
@@ -295,12 +296,22 @@ export default function DashboardPage() {
 
       {/* Compliance & Alerts */}
       {userRole === 'owner' && (
-        <div className="mb-6 grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <AIFixIssues />
+        <div className="mb-6 space-y-6">
+          <div className="grid gap-6 lg:grid-cols-3">
+            <div className="lg:col-span-2">
+              <AIFixIssues />
+            </div>
+            <div>
+              <TriWestChecklist />
+            </div>
           </div>
-          <div>
-            <TriWestChecklist />
+          <div className="grid lg:grid-cols-2 gap-6">
+            <CancellationImpactSimulator 
+              monthlyScheduledSessions={totalMonthlySessions} 
+              avgSessionRate={avgSessionRate} 
+              currentCancellationRate={19.6}
+            />
+            {/* You can add another widget here, or let the simulator take full width if we remove grid cols */}
           </div>
         </div>
       )}
