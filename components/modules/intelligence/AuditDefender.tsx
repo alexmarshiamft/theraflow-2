@@ -12,19 +12,19 @@ export function AuditDefender({ role }: { role: string }) {
       
       <div className="flex-1">
         <h3 className="text-base font-bold text-rose-700 dark:text-rose-400 flex items-center gap-2">
-          BBS Audit Defender: Action Required
+          BBS Audit Defender: Caseload Bottleneck
         </h3>
         <p className="text-sm text-rose-900/80 dark:text-slate-300 mt-1">
-          <strong className="text-rose-900 dark:text-white">Ratio Violation Risk:</strong> 
+          <strong className="text-rose-900 dark:text-white">Licensure Risk:</strong> 
           {role === 'owner' 
-            ? " Associate Alexander Marshi has logged 11 client hours this week but only 1 supervision unit is scheduled. This violates the 1:10 BBS requirement and risks hour rejection." 
-            : " You have logged 11 client hours this week but only 1 supervision unit is scheduled. This violates the 1:10 BBS requirement."}
+            ? " Associate Alexander Marshi needs 8 more Couples/Family (CFC) hours per week to hit their December licensure target, but their clinical caseload is at maximum capacity. Restructuring required." 
+            : " You need 8 more Couples/Family (CFC) hours per week to stay on track, but your caseload is near-full. Make an exit plan for December when you'll reach 3,000 total hours."}
         </p>
       </div>
 
       <div className="flex-shrink-0">
         <Button className="bg-rose-500 hover:bg-rose-600 text-white shadow-lg shadow-rose-500/20 w-full md:w-auto">
-          {role === 'owner' ? "Schedule Triage Supervision" : "Request Triage Supervision"}
+          {role === 'owner' ? "Initiate Caseload Restructure" : "Generate Exit Plan"}
         </Button>
       </div>
     </div>
