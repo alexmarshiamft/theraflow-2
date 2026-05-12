@@ -36,9 +36,9 @@ export function AuditDefender({ role }: { role: string }) {
           BBS Audit Defender: Caseload Bottleneck
         </h3>
         <p className="text-sm text-rose-900/80 dark:text-slate-300 mt-1">
-          <strong className="text-rose-900 dark:text-white">Licensure Risk:</strong> 
+          <strong className="text-rose-900 dark:text-white">Retention Risk:</strong> 
           {role === 'owner' 
-            ? ` Associate Alexander Marshi needs ${cfcPerWeekNeeded} more Couples/Family (CFC) hours per week to hit their December licensure target (currently at ${cfcHours.toFixed(1)}/${cfcRequired} CFC), but their clinical caseload is at maximum capacity. Restructuring required.` 
+            ? ` Your strongest clinician, Alexander Marshi, needs ${cfcPerWeekNeeded} more Couples/Family (CFC) hours per week to hit their December licensure target. They are a high flight risk if CFC hours aren't routed to them immediately. If CFC clients are unavailable, consider increasing their compensation to offset the licensure delay.` 
             : ` You need ${cfcPerWeekNeeded} more Couples/Family (CFC) hours per week to hit your requirement, but your caseload is near-full. Make an exit plan for December when you'll have an estimated ${projectedTotalHours.toLocaleString()} total hours.`}
         </p>
       </div>
