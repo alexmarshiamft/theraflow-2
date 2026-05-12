@@ -56,7 +56,7 @@ import { ClientChurnRadar } from '@/components/modules/intelligence/ClientChurnR
 export default function DashboardPage() {
   const { clients, appointments, employees, claims, userRole, clinicalNotes, isOnboarded, setIsOnboarded, trackedHours } = useStore();
 
-  const totalBBSHours = trackedHours ? trackedHours.reduce((sum, h) => sum + h.hours, 0) : 0;
+  const totalBBSHours = trackedHours ? trackedHours.reduce((sum, h) => sum + (h.durationMinutes / 60), 0) : 0;
   const totalHoursRequired = 3000;
   const hoursRemaining = Math.max(0, totalHoursRequired - totalBBSHours);
   const percentComplete = Math.min(100, Math.round((totalBBSHours / totalHoursRequired) * 100));

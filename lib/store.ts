@@ -1000,6 +1000,7 @@ export const useStore = create<AppState>()(
       clients: initialClients,
       employees: initialEmployees,
       appointments: initialAppointments,
+      webhookLogs: [],
       transactions: initialTransactions,
       filings: initialFilings,
       claims: initialClaims,
