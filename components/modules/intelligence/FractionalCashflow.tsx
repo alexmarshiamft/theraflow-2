@@ -8,8 +8,8 @@ export function FractionalCashflow() {
 
   // Profit First percentages for a typical solo practitioner
   const splits = [
-    { name: "Owner's Pay", percent: 50, color: 'bg-brand-500', icon: Briefcase, textClass: 'text-brand-400' },
-    { name: "Taxes", percent: 15, color: 'bg-red-500', icon: Landmark, textClass: 'text-red-400' },
+    { name: "Owner's Pay", percent: 35, color: 'bg-brand-500', icon: Briefcase, textClass: 'text-brand-400' },
+    { name: "CA + Fed Taxes", percent: 30, color: 'bg-red-500', icon: Landmark, textClass: 'text-red-400' },
     { name: "Operating Exp", percent: 30, color: 'bg-slate-500', icon: Calculator, textClass: 'text-slate-400' },
     { name: "Profit (Buffer)", percent: 5, color: 'bg-emerald-500', icon: PieChart, textClass: 'text-emerald-400' },
   ];
@@ -85,7 +85,7 @@ export function FractionalCashflow() {
 
         <div className="mt-8 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
           <p className="text-sm text-emerald-400/90 leading-relaxed">
-            <strong>AI Insight:</strong> By sequestering 15% immediately for taxes, you eliminate quarterly estimate surprises. Your 5% profit buffer currently projects out to a $5,400 end-of-year dividend.
+            <strong>AI Insight:</strong> By sequestering 30% immediately to cover combined California State (up to 14.4%) and Federal (up to 39.6%) marginal tax rates on your pass-through net income, you eliminate quarterly estimate surprises. Your 5% profit buffer currently projects out to a $5,400 end-of-year dividend.
           </p>
         </div>
       </div>

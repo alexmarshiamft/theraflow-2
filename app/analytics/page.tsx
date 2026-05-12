@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useStore } from '@/lib/store';
 import { StatCard } from '@/components/ui/StatCard';
+import { AIAnalyticsDeepDive } from '@/components/modules/intelligence/AIAnalyticsDeepDive';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { 
@@ -549,6 +550,15 @@ export default function AnalyticsPage() {
               </div>
             </CardContent>
           </Card>
+        )}
+
+        {isOwner && (
+          <div className="lg:col-span-3 mb-8">
+            <AIAnalyticsDeepDive 
+              leaderboardData={retentionLeaderboard}
+              practiceCancellationRate={24.6}
+            />
+          </div>
         )}
       </div>
 
