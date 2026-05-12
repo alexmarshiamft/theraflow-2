@@ -6,13 +6,13 @@ import {
 } from '@aws-sdk/client-chime-sdk-meetings';
 
 // Using the default credential provider chain which will look for
-// AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY in the environment.
+// CHIME_AWS_ACCESS_KEY_ID and CHIME_AWS_SECRET_ACCESS_KEY in the environment.
 const chimeClient = new ChimeSDKMeetingsClient({ 
   // The Amazon Chime SDK meetings control plane is only available in us-east-1
   region: 'us-east-1',
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
+    accessKeyId: process.env.CHIME_AWS_ACCESS_KEY_ID || '',
+    secretAccessKey: process.env.CHIME_AWS_SECRET_ACCESS_KEY || '',
   }
 });
 

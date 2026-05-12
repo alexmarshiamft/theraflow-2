@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server';
 import { ChimeSDKMeetingsClient, CreateMeetingCommand, CreateAttendeeCommand } from "@aws-sdk/client-chime-sdk-meetings";
 
 const chimeClient = new ChimeSDKMeetingsClient({ 
-  region: process.env.AWS_REGION || "us-west-2",
+  region: process.env.CHIME_AWS_REGION || "us-west-2",
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || ''
+    accessKeyId: process.env.CHIME_AWS_ACCESS_KEY_ID || '',
+    secretAccessKey: process.env.CHIME_AWS_SECRET_ACCESS_KEY || ''
   }
 });
 
