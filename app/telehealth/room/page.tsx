@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Mic, Video, MonitorUp, PhoneOff, Settings, MessageSquare, BrainCircuit, Activity, Waves, PenTool, LayoutTemplate, Sparkles, AlertTriangle, Lock, MicOff, VideoOff, Loader2 } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { ConsoleLogger, DefaultDeviceController, DefaultMeetingSession, LogLevel, MeetingSessionConfiguration } from 'amazon-chime-sdk-js';
+import { useRouter } from 'next/navigation';
 
 // Extend window for SpeechRecognition
 declare global {
@@ -14,6 +15,7 @@ declare global {
 }
 
 export default function TelehealthRoomPage() {
+  const router = useRouter();
   const [sessionTime, setSessionTime] = useState(0);
   const [sentiment, setSentiment] = useState<{ label: string, color: string, score: number }>({ label: 'Calm / Baseline', color: 'text-emerald-400', score: 85 });
   
@@ -419,7 +421,10 @@ export default function TelehealthRoomPage() {
 
           <div className="w-px h-8 bg-white/20 mx-2" />
 
-          <button className="w-16 h-16 rounded-[1.5rem] bg-rose-500 hover:bg-rose-600 transition-colors flex items-center justify-center shadow-lg shadow-rose-500/20 group border border-rose-400/50 mx-1">
+          <button 
+            onClick={() => router.push('/dashboard')}
+            className="w-16 h-16 rounded-[1.5rem] bg-rose-500 hover:bg-rose-600 transition-colors flex items-center justify-center shadow-lg shadow-rose-500/20 group border border-rose-400/50 mx-1"
+          >
             <PhoneOff className="w-7 h-7 text-white group-hover:scale-110 transition-transform" />
           </button>
         </div>
