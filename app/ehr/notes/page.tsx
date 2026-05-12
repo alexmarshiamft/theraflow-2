@@ -40,9 +40,12 @@ export default function SmartNotesPage() {
           const data = await response.json();
           if (response.ok && data.text) {
              setNoteContent(data.text);
+          } else {
+             setNoteContent(`ERROR: API returned an unexpected response.\n\n${JSON.stringify(data)}`);
           }
-        } catch (error) {
+        } catch (error: any) {
            console.error('Failed to generate SOAP from transcript', error);
+           setNoteContent(`ERROR: Failed to generate SOAP note. Ensure GEMINI_API_KEY is configured in AWS Amplify.\n\nDetails: ${error.message}`);
         } finally {
            setIsGeneratingSoap(false);
            localStorage.removeItem('latestTelehealthTranscript');
