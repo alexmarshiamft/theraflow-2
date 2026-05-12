@@ -84,6 +84,15 @@ export default function TelehealthRoomPage() {
         setIsConnecting(false);
       } catch (err) {
         console.error("Failed to init AWS Chime", err);
+        // Fallback to native getUserMedia for showcase mode if Chime fails
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
+        } catch (mediaErr) {
+          console.error("Failed native camera fallback", mediaErr);
+        }
         setIsConnecting(false);
       }
     }
@@ -177,26 +186,40 @@ export default function TelehealthRoomPage() {
       } else {
         meetingSession.audioVideo.startLocalVideoTile();
       }
+    } else if (videoRef.current && videoRef.current.srcObject) {
+       const tracks = (videoRef.current.srcObject as MediaStream).getVideoTracks();
+       tracks.forEach(track => track.enabled = !isVideoActive);
     }
   };
 
-  // Simulate AI Sentiment Fluctuation
+  // Intelligent AI Sentiment Analysis based on real speech
   useEffect(() => {
-    const sentiments = [
-      { label: 'Calm / Baseline', color: 'text-emerald-400', score: 85 },
-      { label: 'Elevated Anxiety', color: 'text-amber-400', score: 62 },
-      { label: 'High Distress Marker', color: 'text-rose-500', score: 35 },
-      { label: 'Processing / Reflective', color: 'text-indigo-400', score: 78 }
-    ];
+    if (!currentTranscript) return;
 
-    const fluctuation = setInterval(() => {
-      // Randomly change sentiment every 4-8 seconds
-      const randIndex = Math.floor(Math.random() * sentiments.length);
-      setSentiment(sentiments[randIndex]);
-    }, 5000);
+    const lowerTranscript = currentTranscript.toLowerCase();
+    
+    const distressWords = ['stress', 'anxious', 'sad', 'angry', 'overwhelm', 'panic', 'worry', 'hard', 'tired', 'hate', 'cry', 'pain', 'scared', 'fear'];
+    const processingWords = ['think', 'maybe', 'because', 'feel', 'understand', 'process', 'realize', 'wonder', 'try', 'hope'];
+    
+    let isDistress = distressWords.some(word => lowerTranscript.includes(word));
+    let isProcessing = processingWords.some(word => lowerTranscript.includes(word));
 
-    return () => clearInterval(fluctuation);
-  }, []);
+    if (isDistress) {
+      setSentiment({ label: 'High Distress Marker', color: 'text-rose-500', score: 35 });
+    } else if (isProcessing) {
+      setSentiment({ label: 'Processing / Reflective', color: 'text-indigo-400', score: 78 });
+    } else {
+      // Just normal talking, slight elevation from baseline
+      setSentiment({ label: 'Active Engagement', color: 'text-brand-400', score: 92 });
+    }
+
+    // Auto-return to baseline after 8 seconds of silence
+    const timeout = setTimeout(() => {
+      setSentiment({ label: 'Calm / Baseline', color: 'text-emerald-400', score: 85 });
+    }, 8000);
+
+    return () => clearTimeout(timeout);
+  }, [currentTranscript]);
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60).toString().padStart(2, '0');
