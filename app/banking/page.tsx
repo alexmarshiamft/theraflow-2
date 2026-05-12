@@ -4,7 +4,12 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useStore } from '@/lib/store';
 import { AccountSummary } from '@/components/modules/banking/AccountSummary';
 import { TransactionList } from '@/components/modules/banking/TransactionList';
-import { CashFlowChart } from '@/components/modules/banking/CashFlowChart';
+import dynamic from 'next/dynamic';
+
+const CashFlowChart = dynamic(
+  () => import('@/components/modules/banking/CashFlowChart').then(mod => mod.CashFlowChart),
+  { ssr: false, loading: () => <div className="h-72 w-full animate-pulse bg-slate-800 rounded-xl" /> }
+);
 import { StatCard } from '@/components/ui/StatCard';
 import {
   ArrowDownLeft,

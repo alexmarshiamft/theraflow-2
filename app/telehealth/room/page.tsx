@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Mic, Video, MonitorUp, PhoneOff, Settings, MessageSquare, BrainCircuit, Activity, Waves, PenTool, LayoutTemplate, Sparkles, AlertTriangle, Lock, MicOff, VideoOff, Loader2 } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { ConsoleLogger, DefaultDeviceController, DefaultMeetingSession, LogLevel, MeetingSessionConfiguration } from 'amazon-chime-sdk-js';
+import type { DefaultMeetingSession } from 'amazon-chime-sdk-js';
 import { useRouter } from 'next/navigation';
 
 // Extend window for SpeechRecognition
@@ -44,6 +44,8 @@ export default function TelehealthRoomPage() {
   useEffect(() => {
     async function initializeChime() {
       try {
+        const { ConsoleLogger, DefaultDeviceController, DefaultMeetingSession, LogLevel, MeetingSessionConfiguration } = await import('amazon-chime-sdk-js');
+
         const response = await fetch('/api/chime', { method: 'POST', body: JSON.stringify({}) });
         const { meeting, attendee } = await response.json();
 
