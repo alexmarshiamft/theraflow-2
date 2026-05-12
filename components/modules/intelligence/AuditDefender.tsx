@@ -11,11 +11,11 @@ export function AuditDefender({ role }: { role: string }) {
       </div>
       
       <div className="flex-1">
-        <h3 className="text-base font-bold text-rose-400 flex items-center gap-2">
+        <h3 className="text-base font-bold text-rose-700 dark:text-rose-400 flex items-center gap-2">
           BBS Audit Defender: Action Required
         </h3>
-        <p className="text-sm text-slate-300 mt-1">
-          <strong className="text-white">Ratio Violation Risk:</strong> 
+        <p className="text-sm text-rose-900/80 dark:text-slate-300 mt-1">
+          <strong className="text-rose-900 dark:text-white">Ratio Violation Risk:</strong> 
           {role === 'owner' 
             ? " Associate Alexander Marshi has logged 11 client hours this week but only 1 supervision unit is scheduled. This violates the 1:10 BBS requirement and risks hour rejection." 
             : " You have logged 11 client hours this week but only 1 supervision unit is scheduled. This violates the 1:10 BBS requirement."}

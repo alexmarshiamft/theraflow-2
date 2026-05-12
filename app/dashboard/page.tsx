@@ -125,8 +125,8 @@ export default function DashboardPage() {
               {userRole === 'owner' ? "Good morning, Dr. Sarah Jenkins 👋" : "Good morning, Alexander Marshi 👋"}
             </h1>
             <p className="page-subtitle text-muted-foreground" suppressHydrationWarning>
-              {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })} 
-              · {userRole === 'owner' ? "Here's your practice overview" : "Here's your daily schedule"}
+              {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+               · {userRole === 'owner' ? "Here's your practice overview" : "Here's your daily schedule"}
             </p>
           </div>
           <div className="flex items-center gap-3">

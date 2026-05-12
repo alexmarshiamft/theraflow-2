@@ -7,7 +7,7 @@ export function ClientChurnRadar() {
     <Card className="bg-slate-900/60 border-rose-500/20 shadow-xl overflow-hidden relative">
       <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 blur-2xl rounded-full" />
       <CardHeader className="pb-3 border-b border-white/5">
-        <CardTitle className="text-lg font-bold text-white flex items-center justify-between">
+        <CardTitle className="text-lg font-bold text-white flex items-center justify-between w-full">
           <span className="flex items-center gap-2">
             <Activity className="h-5 w-5 text-rose-400" />
             Predictive Churn Radar

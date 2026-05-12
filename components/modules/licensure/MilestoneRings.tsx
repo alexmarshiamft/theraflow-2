@@ -64,7 +64,7 @@ export function MilestoneRings({ totalBBSHours, totalHoursRequired }: MilestoneR
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-3xl font-bold text-white">{percentComplete}%</span>
+                <span className="text-3xl font-bold text-white">{Math.round(percentComplete)}%</span>
                 <span className="text-xs font-semibold text-purple-300 uppercase tracking-widest mt-1">Complete</span>
               </div>
             </div>

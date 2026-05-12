@@ -49,7 +49,7 @@ export function WhatIfSimulator() {
           <Sparkles className="h-5 w-5 text-indigo-400" />
           "What-If" Income & Hours Simulator
         </CardTitle>
-        <p className="text-sm text-slate-400">Play with your schedule to see your tiered income potential and licensure date.</p>
+        <p className="text-sm text-slate-400 mt-1">Play with your schedule to see your tiered income potential and licensure date.</p>
       </CardHeader>
       
       <CardContent className="pt-6">
