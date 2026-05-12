@@ -72,11 +72,11 @@ export function AccountSummary() {
         <div className="mt-4 grid grid-cols-2 gap-3 border-t border-gray-100 pt-4">
           <div>
             <p className="text-xs text-gray-500">Monthly Revenue</p>
-            <p className="mt-0.5 text-base font-semibold text-gray-800">{formatCurrency(48_200)}</p>
+            <p className="mt-0.5 text-base font-semibold text-gray-800">{formatCurrency(105_993)}</p>
           </div>
           <div>
             <p className="text-xs text-gray-500">Monthly Expenses</p>
-            <p className="mt-0.5 text-base font-semibold text-gray-800">{formatCurrency(31_450)}</p>
+            <p className="mt-0.5 text-base font-semibold text-gray-800">{formatCurrency(62_450)}</p>
           </div>
         </div>
       </div>
