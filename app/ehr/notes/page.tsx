@@ -17,6 +17,7 @@ export default function SmartNotesPage() {
   const [isFixed, setIsFixed] = useState(false);
   const [editorMode, setEditorMode] = useState<'edit' | 'review'>('edit');
   const [isGeneratingSoap, setIsGeneratingSoap] = useState(false);
+  const [autoScanPending, setAutoScanPending] = useState(false);
 
   useEffect(() => {
     const transcript = localStorage.getItem('latestTelehealthTranscript');
@@ -40,6 +41,7 @@ export default function SmartNotesPage() {
           const data = await response.json();
           if (response.ok && data.text) {
              setNoteContent(data.text);
+             setAutoScanPending(true);
           } else {
              setNoteContent(`ERROR: API returned an unexpected response.\n\n${JSON.stringify(data)}`);
           }
@@ -55,6 +57,17 @@ export default function SmartNotesPage() {
       generateSoap();
     }
   }, []);
+
+  // Auto-trigger audit after AI finishes formulating the SOAP note
+  useEffect(() => {
+    if (autoScanPending && noteContent && !isGeneratingSoap) {
+      setAutoScanPending(false);
+      const timer = setTimeout(() => {
+        handleRunAudit();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [autoScanPending, noteContent, isGeneratingSoap]);
 
   const handleRunAudit = async () => {
     if (!noteContent.trim() || isAnalyzing) return;
@@ -290,16 +303,16 @@ If no issues are found, return {"problematicPhrase": null}.`
                     <span className={`text-sm font-medium ${aiSuggestion ? 'text-amber-100' : isFixed ? 'text-emerald-100' : 'text-slate-300'}`}>Objective Language</span>
                   </div>
                   <span className={`text-xs font-bold uppercase tracking-wider ${aiSuggestion ? 'text-amber-500' : isFixed ? 'text-emerald-500' : 'text-slate-500'}`}>
-                    {aiSuggestion ? 'Warning' : isFixed ? 'Resolved' : 'Scanning'}
+                    {aiSuggestion ? 'Warning' : isFixed ? 'Resolved' : isAnalyzing ? 'Scanning' : 'Pending'}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between p-3 rounded-lg bg-slate-800 border border-slate-700">
                   <div className="flex items-center gap-3">
-                    <RefreshCw className="w-5 h-5 text-slate-500 animate-spin-slow" />
+                    <RefreshCw className={`w-5 h-5 text-slate-500 ${isAnalyzing ? 'animate-spin-slow' : ''}`} />
                     <span className="text-sm font-medium text-slate-300">Goal Alignment</span>
                   </div>
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Scanning</span>
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{isAnalyzing ? 'Scanning' : 'Pending'}</span>
                 </div>
 
               </CardContent>

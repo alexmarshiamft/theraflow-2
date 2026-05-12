@@ -197,7 +197,7 @@ export default function TelehealthRoomPage() {
     
     // Provide a rich fallback transcript if the user didn't speak during the short demo
     if (!combinedTranscript || combinedTranscript.trim() === '') {
-      combinedTranscript = "Client reported increased feelings of anxiety and stress over the past week regarding a new promotion at work. Stated 'I feel completely overwhelmed and like I'm failing'. Sleep has been poor, averaging 4 hours per night. We explored cognitive distortions, specifically all-or-nothing thinking, and practiced a 5-4-3-2-1 grounding technique. Client was receptive but appeared visibly exhausted.";
+      combinedTranscript = "[SIMULATED AUDIO TRACK]: Patient described an intense, sudden fear of squirrels that developed over the weekend after a mild encounter at a park. Stated 'Every time I see a squirrel now, I feel a complete sense of impending doom and my heart races.' We discussed exposure therapy techniques and scheduled a follow-up session to begin systematic desensitization.";
     }
     
     localStorage.setItem('latestTelehealthTranscript', combinedTranscript);
