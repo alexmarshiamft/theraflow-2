@@ -19,6 +19,7 @@ import {
   Mail,
   BarChart3,
   Zap,
+  ShieldCheck,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/lib/store';
@@ -270,6 +271,16 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                   >
                     <Zap className="h-4 w-4 text-brand-400" />
                     Liquid Treasury
+                  </Link>
+                  <Link
+                    href="/financial/credentialing"
+                    className={cn(
+                      'sidebar-link',
+                      pathname === '/financial/credentialing' && 'active'
+                    )}
+                  >
+                    <ShieldCheck className="h-4 w-4 text-emerald-400" />
+                    Credentialing
                   </Link>
                 </>
               )}
