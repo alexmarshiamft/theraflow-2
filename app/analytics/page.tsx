@@ -77,12 +77,15 @@ export default function AnalyticsPage() {
         </h2>
         
         <div className="grid gap-4 sm:grid-cols-3">
-          <div className="bg-slate-900/50 border border-amber-500/20 rounded-2xl p-6 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full blur-2xl -mr-8 -mt-8" />
-            <h3 className="text-slate-400 text-sm font-medium mb-1">Overall cancellation and no show rate</h3>
-            <div className="text-3xl font-bold text-amber-400">20.8%</div>
-            <div className="mt-4 flex items-center text-xs text-amber-500/80 bg-amber-500/10 px-2 py-1 rounded-md w-fit">
-              <AlertCircle className="h-3 w-3 mr-1" /> Requires attention
+          <div className="bg-slate-900/50 border border-emerald-500/20 rounded-2xl p-6 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl -mr-8 -mt-8" />
+            <div className="flex justify-between items-start mb-1">
+              <h3 className="text-slate-400 text-sm font-medium">Your cancellation rate</h3>
+              <span className="text-[10px] uppercase tracking-wider font-bold text-slate-500">Clinic Avg: 20.8%</span>
+            </div>
+            <div className="text-3xl font-bold text-emerald-400">5.0%</div>
+            <div className="mt-4 flex items-center text-xs text-emerald-500/80 bg-emerald-500/10 px-2 py-1 rounded-md w-fit">
+              <TrendingUp className="h-3 w-3 mr-1" /> Top 1% of providers
             </div>
           </div>
 
