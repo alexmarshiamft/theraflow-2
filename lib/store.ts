@@ -205,6 +205,16 @@ export interface TrackedHour {
   notes?: string;
 }
 
+export interface BankingStats {
+  totalBalance: number;
+  monthlyRevenue: number;
+  monthlyExpenses: number;
+  netCashFlow: number;
+  associateBalance: number;
+  associateIncome: number;
+  associateExpenses: number;
+}
+
 interface AppState {
   clients: Client[];
   employees: Employee[];
@@ -229,6 +239,9 @@ interface AppState {
   setBankAccountConnected: (connected: boolean) => void;
   userRole: 'owner' | 'associate';
   setUserRole: (role: 'owner' | 'associate') => void;
+  
+  bankingStats: BankingStats;
+  setBankingStats: (stats: Partial<BankingStats>) => void;
   
   isOnboarded: boolean;
   setIsOnboarded: (onboarded: boolean) => void;
@@ -956,6 +969,16 @@ export const useStore = create<AppState>()(
       trackedHours: initialTrackedHours,
       vaultDocuments: initialVaultDocuments,
       emails: initialEmails,
+      bankingStats: {
+        totalBalance: 239751,
+        monthlyRevenue: 105993,
+        monthlyExpenses: 62450,
+        netCashFlow: 105993 - 62450,
+        associateBalance: 1308.63,
+        associateIncome: 1308.63,
+        associateExpenses: 850.25,
+      },
+      setBankingStats: (stats) => set((state) => ({ bankingStats: { ...state.bankingStats, ...stats } })),
       privacyMode: false,
       setPrivacyMode: (enabled) => set({ privacyMode: enabled }),
       isLocked: false,

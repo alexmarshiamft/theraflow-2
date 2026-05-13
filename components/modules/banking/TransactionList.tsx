@@ -180,43 +180,45 @@ export function TransactionList({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Add Manual Transaction</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-gray-700">Description</label>
-                <input 
-                  type="text" 
-                  value={newDesc} 
-                  onChange={e => setNewDesc(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-200 p-2 text-sm focus:border-brand-500 focus:outline-none" 
-                  placeholder="e.g. Office Supplies" 
-                />
+            <form onSubmit={(e) => { e.preventDefault(); handleAddTransaction(); }}>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Description</label>
+                  <input 
+                    type="text" 
+                    value={newDesc} 
+                    onChange={e => setNewDesc(e.target.value)}
+                    className="mt-1 w-full rounded-lg border border-gray-200 p-2 text-sm focus:border-brand-500 focus:outline-none" 
+                    placeholder="e.g. Office Supplies" 
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Amount</label>
+                  <input 
+                    type="number" 
+                    value={newAmount} 
+                    onChange={e => setNewAmount(e.target.value)}
+                    className="mt-1 w-full rounded-lg border border-gray-200 p-2 text-sm focus:border-brand-500 focus:outline-none" 
+                    placeholder="0.00" 
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Type</label>
+                  <select 
+                    value={newType} 
+                    onChange={e => setNewType(e.target.value as 'credit' | 'debit')}
+                    className="mt-1 w-full rounded-lg border border-gray-200 p-2 text-sm focus:border-brand-500 focus:outline-none"
+                  >
+                    <option value="debit">Debit (Expense)</option>
+                    <option value="credit">Credit (Income)</option>
+                  </select>
+                </div>
               </div>
-              <div>
-                <label className="text-sm font-medium text-gray-700">Amount</label>
-                <input 
-                  type="number" 
-                  value={newAmount} 
-                  onChange={e => setNewAmount(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-200 p-2 text-sm focus:border-brand-500 focus:outline-none" 
-                  placeholder="0.00" 
-                />
+              <div className="mt-6 flex justify-end gap-3">
+                <button type="button" className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                <button type="submit" className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">Save Transaction</button>
               </div>
-              <div>
-                <label className="text-sm font-medium text-gray-700">Type</label>
-                <select 
-                  value={newType} 
-                  onChange={e => setNewType(e.target.value as 'credit' | 'debit')}
-                  className="mt-1 w-full rounded-lg border border-gray-200 p-2 text-sm focus:border-brand-500 focus:outline-none"
-                >
-                  <option value="debit">Debit (Expense)</option>
-                  <option value="credit">Credit (Income)</option>
-                </select>
-              </div>
-            </div>
-            <div className="mt-6 flex justify-end gap-3">
-              <button className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50" onClick={() => setIsModalOpen(false)}>Cancel</button>
-              <button className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700" onClick={handleAddTransaction}>Save Transaction</button>
-            </div>
+            </form>
           </div>
         </div>
       )}

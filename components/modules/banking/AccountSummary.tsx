@@ -1,7 +1,9 @@
 'use client';
 
+import { useMemo } from 'react';
 import { ArrowDownLeft, ArrowUpRight, Building, CreditCard, DollarSign, TrendingUp } from 'lucide-react';
 import { cn, formatCurrency } from '@/lib/utils';
+import { useStore } from '@/lib/store';
 
 interface Account {
   id: string;
@@ -50,7 +52,23 @@ const accountColors = [
 ];
 
 export function AccountSummary() {
-  const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0);
+  const { bankingStats, transactions } = useStore();
+  
+  const dynamicAccounts = useMemo(() => {
+    const deltas = transactions.reduce((acc, t) => {
+      if (!acc[t.account]) acc[t.account] = 0;
+      acc[t.account] += (t.type === 'credit' ? t.amount : -t.amount);
+      return acc;
+    }, {} as Record<string, number>);
+
+    return accounts.map(a => {
+      const currentBalance = a.balance + (deltas[a.name] || 0);
+      const currentAvailable = a.available + (deltas[a.name] || 0);
+      return { ...a, balance: currentBalance, available: currentAvailable };
+    });
+  }, [transactions]);
+
+  const totalBalance = bankingStats.totalBalance;
 
   return (
     <div className="space-y-4">
@@ -72,18 +90,18 @@ export function AccountSummary() {
         <div className="mt-4 grid grid-cols-2 gap-3 border-t border-gray-100 pt-4">
           <div>
             <p className="text-xs text-gray-500">Monthly Revenue</p>
-            <p className="mt-0.5 text-base font-semibold text-gray-800">{formatCurrency(105_993)}</p>
+            <p className="mt-0.5 text-base font-semibold text-gray-800">{formatCurrency(bankingStats.monthlyRevenue)}</p>
           </div>
           <div>
             <p className="text-xs text-gray-500">Monthly Expenses</p>
-            <p className="mt-0.5 text-base font-semibold text-gray-800">{formatCurrency(62_450)}</p>
+            <p className="mt-0.5 text-base font-semibold text-gray-800">{formatCurrency(bankingStats.monthlyExpenses)}</p>
           </div>
         </div>
       </div>
 
       {/* Account Cards */}
       <div className="grid gap-4 sm:grid-cols-3">
-        {accounts.map((account, i) => (
+        {dynamicAccounts.map((account, i) => (
           <div
             key={account.id}
             className={cn(

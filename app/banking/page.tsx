@@ -23,17 +23,21 @@ import {
 } from 'lucide-react';
 
 export default function BankingPage() {
-  const { transactions, userRole } = useStore();
+  const { transactions, userRole, bankingStats } = useStore();
+  const {
+    totalBalance,
+    monthlyRevenue,
+    monthlyExpenses,
+    netCashFlow,
+    associateBalance,
+    associateIncome,
+    associateExpenses,
+  } = bankingStats;
 
-  const totalBalance = transactions.reduce((acc: number, t: any) => acc + (t.type === 'credit' ? t.amount : -t.amount), 239751); // Base offset for demo
-  const monthlyRevenue = 105993; // Fixed to match 927 sessions * $114.34
-  const monthlyExpenses = 62450; // Fixed to approximate 50% payroll + ops
-  const netCashFlow = monthlyRevenue - monthlyExpenses;
-
-  // Associate specific data
-  const associateBalance = 1308.63;
-  const associateIncome = 1308.63;
-  const associateExpenses = 850.25;
+  const taxRate = 0.169;
+  const grossEarnings = associateIncome / (1 - taxRate);
+  const estimatedTaxes = grossEarnings - associateIncome;
+  const advanceAmount = associateIncome * 0.5;
 
   if (userRole === 'associate') {
     return (
@@ -44,8 +48,8 @@ export default function BankingPage() {
               <h1 className="page-title">Theraflow Checking Account</h1>
               <p className="page-subtitle">Your personal account for direct deposits and expenses</p>
             </div>
-            <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-500">
-              FDIC Insured · Debit Card Active
+            <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-500" title="Theraflow is a financial technology company, not a bank. Banking services provided by TheraBank, Member FDIC.">
+              Theraflow is a financial technology company, not a bank. Banking services provided by TheraBank, Member FDIC.
             </span>
           </div>
         </div>
@@ -84,48 +88,6 @@ export default function BankingPage() {
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-6">
             <TransactionList 
-              transactions={[
-                {
-                  id: 'AT001',
-                  date: '2026-04-30',
-                  description: 'Theraflow Payroll Deposit',
-                  category: 'Payroll',
-                  account: 'Checking',
-                  amount: 1308.63,
-                  type: 'credit',
-                  status: 'posted',
-                },
-                {
-                  id: 'AT002',
-                  date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
-                  description: 'Target Store #1204',
-                  category: 'Operations',
-                  account: 'Checking',
-                  amount: 84.50,
-                  type: 'debit',
-                  status: 'posted',
-                },
-                {
-                  id: 'AT003',
-                  date: new Date(Date.now() - 86400000 * 2).toISOString().split('T')[0],
-                  description: 'Starbucks Coffee',
-                  category: 'Operations',
-                  account: 'Checking',
-                  amount: 6.50,
-                  type: 'debit',
-                  status: 'posted',
-                },
-                {
-                  id: 'AT004',
-                  date: new Date(Date.now() - 86400000 * 4).toISOString().split('T')[0],
-                  description: 'Rent Payment - ACH',
-                  category: 'Operations',
-                  account: 'Checking',
-                  amount: 1200.00,
-                  type: 'debit',
-                  status: 'posted',
-                }
-              ]}
               hideAdd={true}
               title="Recent Activity"
               subtitle="Theraflow Checking · Last 30 days"
@@ -177,7 +139,7 @@ export default function BankingPage() {
               
               <div className="mb-6 relative z-10">
                 <div className="text-sm font-medium text-muted-foreground mb-1">Est. Net Deposit (Post-Tax)</div>
-                <div className="text-4xl font-bold tracking-tight text-foreground">$1,727.65</div>
+                <div className="text-4xl font-bold tracking-tight text-foreground">${associateIncome.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 <p className="text-sm text-emerald-600 dark:text-emerald-400 font-medium flex items-center mt-2">
                   <TrendingUp className="w-3.5 h-3.5 mr-1.5" />
                   +58.9% from last period
@@ -187,11 +149,11 @@ export default function BankingPage() {
               <div className="space-y-1 relative z-10">
                 <div className="flex items-center justify-between text-sm py-2.5 border-b border-border/40">
                   <span className="text-muted-foreground">Gross Earnings</span>
-                  <span className="font-medium text-foreground">$2,079.00</span>
+                  <span className="font-medium text-foreground">${grossEarnings.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm py-2.5 border-b border-border/40">
                   <span className="text-muted-foreground">Est. Taxes (16.9%)</span>
-                  <span className="font-medium text-red-500 dark:text-red-400">-$351.35</span>
+                  <span className="font-medium text-red-500 dark:text-red-400">-${estimatedTaxes.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm py-2.5 border-b border-border/40">
                   <span className="text-muted-foreground">Status</span>
@@ -206,7 +168,11 @@ export default function BankingPage() {
                     <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
                   </button>
                   <p className="text-xs text-center text-muted-foreground mt-3 leading-relaxed">
-                    Access up to 50% <span className="font-medium text-foreground">($863.82)</span> instantly for a 1.5% fee. 
+                    Access up to 50% <span className="font-medium text-foreground">(${advanceAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})</span> instantly for a 1.5% fee.
+                    <br />
+                    <span className="text-[10px] opacity-70 block mt-1">
+                      *Theraflow is a financial technology company, not a lender. Earned Wage Access (EWA) is subject to eligibility. Truth in Lending Act (TILA) Disclosure: The 1.5% transaction fee equates to an APR based on your repayment date. Review terms for exact APR calculations.
+                    </span>
                   </p>
                 </div>
               </div>
@@ -225,8 +191,8 @@ export default function BankingPage() {
             <h1 className="page-title">Practice Banking</h1>
             <p className="page-subtitle">Manage accounts, transactions, and cash flow for your practice</p>
           </div>
-          <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-500">
-            FDIC Insured · $250k per account
+          <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-500" title="Theraflow is a financial technology company, not a bank. Banking services provided by TheraBank, Member FDIC.">
+            Theraflow is a financial technology company, not a bank. Banking services provided by TheraBank, Member FDIC.
           </span>
         </div>
       </div>

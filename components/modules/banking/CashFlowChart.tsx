@@ -15,17 +15,36 @@ import { useMemo } from 'react';
 export function CashFlowChart() {
   const { transactions } = useStore();
 
-  // Create mock historical data based on current transactions volume for the visual
   const data = useMemo(() => {
-    return [
-      { name: 'Dec', revenue: 18400, expenses: 4200 },
-      { name: 'Jan', revenue: 21200, expenses: 5100 },
-      { name: 'Feb', revenue: 19800, expenses: 4800 },
-      { name: 'Mar', revenue: 24500, expenses: 5600 },
-      { name: 'Apr', revenue: 23100, expenses: 4900 },
-      { name: 'May', revenue: 27800, expenses: 6200 },
-    ];
-  }, []);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    // Initialize last 6 months
+    const today = new Date();
+    const result = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      result.push({
+        name: months[d.getMonth()],
+        monthKey: `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}`,
+        revenue: 0,
+        expenses: 0
+      });
+    }
+
+    transactions.forEach(t => {
+      const tMonthKey = t.date.substring(0, 7);
+      const targetMonth = result.find(r => r.monthKey === tMonthKey);
+      if (targetMonth) {
+        if (t.type === 'credit') {
+          targetMonth.revenue += t.amount;
+        } else if (t.type === 'debit') {
+          targetMonth.expenses += t.amount;
+        }
+      }
+    });
+
+    return result.map(({ name, revenue, expenses }) => ({ name, revenue, expenses }));
+  }, [transactions]);
 
   return (
     <div className="section-card p-6 mb-6">
