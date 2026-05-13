@@ -85,7 +85,7 @@ export default function AnalyticsPage() {
             </div>
             <div className="text-3xl font-bold text-emerald-400">5.0%</div>
             <div className="mt-4 flex items-center text-xs text-emerald-500/80 bg-emerald-500/10 px-2 py-1 rounded-md w-fit">
-              <TrendingUp className="h-3 w-3 mr-1" /> Top 1% of providers
+              <TrendingUp className="h-3 w-3 mr-1" /> Top performing provider
             </div>
           </div>
 
