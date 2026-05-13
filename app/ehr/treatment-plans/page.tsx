@@ -157,7 +157,7 @@ export default function TreatmentPlansPage() {
                 Start Dictation
               </Button>
             ) : (
-              <Button size="lg" onClick={handleStop} variant="destructive" className="px-8 rounded-full h-14 text-lg animate-pulse">
+              <Button size="lg" onClick={handleStop} variant="danger" className="px-8 rounded-full h-14 text-lg animate-pulse">
                 <Square className="mr-2 h-5 w-5" />
                 End & Generate Plan
               </Button>

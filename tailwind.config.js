@@ -49,6 +49,16 @@ module.exports = {
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
+      keyframes: {
+        'slide-up': {
+          '0%, 100%': { transform: 'translateY(100%)', opacity: '0' },
+          '10%, 90%': { transform: 'translateY(0)', opacity: '1' },
+          '25%, 75%': { transform: 'translateY(0)', opacity: '1' },
+        }
+      },
+      animation: {
+        'slide-up': 'slide-up 4s ease-in-out infinite',
+      }
     },
   },
   plugins: [],

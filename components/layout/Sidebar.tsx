@@ -21,6 +21,9 @@ import {
   Zap,
   ShieldCheck,
   BrainCircuit,
+  Radio,
+  HeartHandshake,
+  ShieldAlert,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/lib/store';
@@ -222,6 +225,16 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               Treatment Roadmap
             </Link>
             <Link
+              href="/ehr/live-queue"
+              className={cn(
+                'sidebar-link mt-2 text-brand-500 hover:text-brand-400 font-medium',
+                pathname === '/ehr/live-queue' && 'active'
+              )}
+            >
+              <Radio className="h-4 w-4" />
+              Live Queue
+            </Link>
+            <Link
               href="/intelligence/churn"
               className={cn(
                 'sidebar-link mt-2 text-amber-500 hover:text-amber-400',
@@ -231,6 +244,25 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               <Activity className="h-4 w-4" />
               Predictive Churn
             </Link>
+          </div>
+
+          {/* Patient Access */}
+          <div className="mb-6">
+            <p className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Patient Access
+            </p>
+            <div className="flex flex-col gap-0.5">
+              <Link
+                href="/portal/instant-care"
+                className={cn(
+                  'sidebar-link',
+                  pathname.startsWith('/portal/instant-care') && 'active'
+                )}
+              >
+                <HeartHandshake className="h-4 w-4 text-rose-400" />
+                Instant Care
+              </Link>
+            </div>
           </div>
 
           {/* Financial */}
@@ -377,9 +409,13 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                     <Users className="h-4 w-4" />
                     Staff
                   </Link>
-                  <Link href="/compliance" className={cn("sidebar-link", pathname.startsWith('/compliance') && 'active')}>
+                  <Link href="/compliance" className={cn("sidebar-link", pathname === '/compliance' && 'active')}>
                     <Lock className="h-4 w-4" />
                     Compliance
+                  </Link>
+                  <Link href="/compliance/audit" className={cn("sidebar-link mt-1 text-rose-500 hover:text-rose-400 font-medium", pathname === '/compliance/audit' && 'active')}>
+                    <ShieldAlert className="h-4 w-4" />
+                    Audit Simulator
                   </Link>
                 </>
               )}
