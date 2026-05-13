@@ -29,9 +29,15 @@ export default function SmartNotesPage() {
   const [downcodedAlert, setDowncodedAlert] = useState(false);
   const [sessionDuration, setSessionDuration] = useState<number | null>(null);
 
-  const generateSoapFromTranscript = async (transcript: string) => {
+  const generateSoapFromTranscript = async (transcript: string, durationInSeconds?: number | null) => {
     setIsGeneratingSoap(true);
     try {
+      let systemInstruction = `You are an expert clinical psychologist AI. Convert the provided telehealth session transcript into a highly professional, clinical SOAP note (Subjective, Objective, Assessment, Plan). Do NOT use any subjective or biased language. Keep it objective, BBS-compliant, and formatted clearly with headings.`;
+      
+      if (durationInSeconds !== undefined && durationInSeconds !== null && durationInSeconds < 3180) {
+        systemInstruction += ` IMPORTANT: This session ended in less than 53 minutes. You MUST include a brief, clinical explanation in the note detailing why the session ended early.`;
+      }
+
       const response = await fetch('/api/gemini', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -39,7 +45,7 @@ export default function SmartNotesPage() {
           prompt: `Please convert this clinical session transcript into a professional SOAP note:\n\n${transcript}`,
           responseFormat: 'text',
           context: {
-            systemInstruction: `You are an expert clinical psychologist AI. Convert the provided telehealth session transcript into a highly professional, clinical SOAP note (Subjective, Objective, Assessment, Plan). Do NOT use any subjective or biased language. Keep it objective, BBS-compliant, and formatted clearly with headings.`
+            systemInstruction
           }
         })
       });
@@ -73,9 +79,12 @@ export default function SmartNotesPage() {
         setDowncodedAlert(true);
       }
       localStorage.removeItem('latestTelehealthDuration');
-    }
-
-    if (transcript) {
+      
+      if (transcript) {
+        localStorage.removeItem('latestTelehealthTranscript');
+        generateSoapFromTranscript(transcript, duration);
+      }
+    } else if (transcript) {
       localStorage.removeItem('latestTelehealthTranscript');
       generateSoapFromTranscript(transcript);
     }
@@ -399,6 +408,9 @@ If no issues are found, return {"problematicPhrase": null}.`
                   <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 text-xs text-amber-200/80 leading-relaxed">
                     <strong className="text-amber-400 block mb-1">Upcoding Prevented:</strong>
                     Session duration ({sessionDuration ? Math.floor(sessionDuration / 60) : '< 53'} min) did not meet the 53-minute requirement for 90837. Automatically downcoded to 90834.
+                    <div className="mt-2 pt-2 border-t border-amber-500/20 text-rose-300">
+                      <strong className="text-rose-400">Financial Impact:</strong> Shorter sessions have lower reimbursement rates. You will earn less for this session. AI has been instructed to document the reason for early termination.
+                    </div>
                   </div>
                 )}
 
