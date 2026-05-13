@@ -159,6 +159,19 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               <Rocket className="h-4 w-4" />
               100+ Features
             </Link>
+            
+            <Link
+              href="/platform/future-founders"
+              className={cn(
+                'sidebar-link mt-1',
+                pathname === '/platform/future-founders' && 'active'
+              )}
+            >
+              <div className="h-4 w-4 rounded bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
+                <span className="text-[10px] text-white font-bold leading-none">F</span>
+              </div>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-500 font-medium">Future Founders</span>
+            </Link>
           </div>
 
           {/* Clinical */}
