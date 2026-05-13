@@ -132,35 +132,46 @@ export default function LiquidPayrollPage() {
             </CardContent>
           </Card>
 
-          {/* Float Yield Radar */}
+          {/* Arbitrage & Float Yield Radar */}
           <Card className="bg-gradient-to-br from-emerald-950/30 to-black border-emerald-500/20 relative overflow-hidden">
             <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-emerald-500/10 rounded-full blur-[80px] pointer-events-none" />
             <CardHeader>
-              <CardTitle className="text-xl flex items-center gap-2 text-emerald-400">
-                <TrendingUp className="h-5 w-5" />
-                Projected Monthly Float Yield
+              <CardTitle className="text-xl flex items-center justify-between text-emerald-400">
+                <span className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5" />
+                  Arbitrage Earned
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                  {marginDelta}% ROI
+                </span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6 relative z-10">
               
               <div className="text-5xl font-bold text-white tracking-tight">
                 ${floatYield.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-                <span className="text-lg text-emerald-500/70 font-medium ml-2">/ mo extra profit</span>
+                <span className="text-lg text-emerald-500/70 font-medium ml-2">/ mo pure spread</span>
               </div>
 
               <div className="space-y-3 pt-4 border-t border-white/10">
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-400">Total Collected Revenue</span>
-                  <span className="text-white">${monthlyClaimVolume.toLocaleString()}</span>
+                  <span className="text-slate-400">Total Liquid Access Fronted</span>
+                  <span className="text-white">${liquidVolume.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-400">Base Profit (Standard Split)</span>
-                  <span className="text-slate-300">${baseProfit.toLocaleString()}</span>
+                  <span className="text-slate-400">Base Practice Split Yield</span>
+                  <span className="text-slate-300">${(liquidVolume * (standardMargin / 100)).toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-sm font-bold">
-                  <span className="text-brand-300">Total Adjusted Profit</span>
-                  <span className="text-brand-400">${totalProjectedProfit.toLocaleString()}</span>
+                  <span className="text-emerald-400">Total Yield with Arbitrage</span>
+                  <span className="text-emerald-400">${(liquidVolume * (liquidMargin / 100)).toLocaleString()}</span>
                 </div>
+              </div>
+
+              <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4">
+                <p className="text-sm text-emerald-200/80">
+                  By utilizing Theraflow's treasury to front associate pay, you capture the {marginDelta}% spread when the insurance claims finally clear in 45 days.
+                </p>
               </div>
 
             </CardContent>

@@ -23,7 +23,8 @@ import {
   Lock,
   Fingerprint,
   Banknote,
-  Landmark
+  Landmark,
+  Zap
 } from 'lucide-react';
 
 export default function PayrollPage() {
@@ -418,6 +419,49 @@ export default function PayrollPage() {
                 <span className="font-medium">-{formatCurrency(estimatedTaxes)}</span>
               </div>
               <p className="text-xs text-rose-400 mt-1">Federal ~24% + CA State ~9.3%</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Payout Strategy Configuration Matrix */}
+      <div className="bg-slate-950 rounded-2xl border border-slate-800 shadow-xl overflow-hidden mb-8 relative">
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-brand-500/10 blur-[100px] pointer-events-none" />
+        <div className="p-6 border-b border-slate-800 bg-slate-900/50 flex items-center justify-between relative z-10">
+          <div className="flex items-center gap-2">
+            <Zap className="h-5 w-5 text-amber-400" />
+            <h3 className="font-semibold text-white">Liquid Treasury Repricing Configuration</h3>
+          </div>
+          <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">Arbitrage Enabled</span>
+        </div>
+        <div className="p-6 relative z-10">
+          <p className="text-sm text-slate-400 mb-6 max-w-3xl">
+            Configure the fee you charge associates for fronting their pay instantly. Theraflow's treasury handles the liquidity, and you capture the spread when the insurance claim finally clears.
+          </p>
+          
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-slate-900/80 border border-emerald-500/20 rounded-xl p-5 relative overflow-hidden transition-all hover:border-emerald-500/40">
+              <div className="absolute top-0 right-0 p-3 opacity-20"><Banknote className="h-10 w-10 text-emerald-400" /></div>
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-white font-medium">Standard Processing</h4>
+                <div className="px-2 py-1 bg-slate-800 rounded-md text-xs font-mono text-emerald-400">30-45 Days</div>
+              </div>
+              <div className="flex items-end gap-3 mb-2">
+                <div className="text-3xl font-bold text-white">50% <span className="text-sm font-normal text-slate-500">/ 50%</span></div>
+              </div>
+              <p className="text-xs text-slate-400">Owner keeps 50%. Associate waits for insurance to clear to get paid their 50%.</p>
+            </div>
+
+            <div className="bg-slate-900/80 border border-amber-500/30 rounded-xl p-5 relative overflow-hidden shadow-[0_0_15px_rgba(245,158,11,0.05)] transition-all hover:border-amber-500/50">
+              <div className="absolute top-0 right-0 p-3 opacity-20"><Zap className="h-10 w-10 text-amber-400" /></div>
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-white font-medium">Instant Liquid Payout</h4>
+                <div className="px-2 py-1 bg-amber-500/20 rounded-md text-xs font-mono text-amber-400 font-bold">Same Day</div>
+              </div>
+              <div className="flex items-end gap-3 mb-2">
+                <div className="text-3xl font-bold text-white">60% <span className="text-sm font-normal text-slate-500">/ 40%</span></div>
+              </div>
+              <p className="text-xs text-slate-400">Owner keeps 60%. Associate gets paid 40% instantly. <strong className="text-amber-400">You capture a 10% premium.</strong></p>
             </div>
           </div>
         </div>
