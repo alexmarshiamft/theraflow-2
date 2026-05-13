@@ -27,6 +27,7 @@ import {
   Headset,
   Briefcase,
   GraduationCap,
+  Gamepad2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/lib/store';
@@ -179,6 +180,17 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                 <span className="text-[10px] text-white font-bold leading-none">F</span>
               </div>
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-500 font-medium">Future Founders</span>
+            </Link>
+            
+            <Link
+              href="/platform/simulator"
+              className={cn(
+                'sidebar-link mt-1',
+                pathname === '/platform/simulator' && 'active'
+              )}
+            >
+              <Gamepad2 className="h-4 w-4 text-brand-400" />
+              Practice Simulator
             </Link>
           </div>
 
