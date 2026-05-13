@@ -38,20 +38,27 @@ service cloud.firestore {
 
     // 2. Patients / Clients (PHI Data)
     match /clients/{clientId} {
-      // Client can read their own record, assigned clinician or admin can read
-      allow read: if isUser(clientId) || isClinician();
-      // Client can create their initial intake (if onboarding)
-      allow create: if isUser(clientId);
-      // Client can update basic info, clinicians can update clinical data
-      allow update: if isUser(clientId) || isClinician();
+      allow read: if resource.data.userId == request.auth.uid || isClinician();
+      allow create: if request.resource.data.userId == request.auth.uid || isClinician();
+      allow update: if resource.data.userId == request.auth.uid || isClinician();
       allow delete: if isAdmin();
     }
 
     // 3. Clinical Notes & Records (Strict PHI)
     match /clinicalNotes/{noteId} {
-      // Only clinicians and admins can read/write clinical notes
-      // Patients CANNOT access internal clinical notes directly (unless explicitly shared)
-      allow read, write: if isClinician();
+      allow read: if resource.data.userId == request.auth.uid || isClinician();
+      allow write: if resource.data.userId == request.auth.uid || isClinician();
+      allow create: if request.resource.data.userId == request.auth.uid || isClinician();
+    }
+
+    match /appointments/{appointmentId} {
+      allow read, write: if resource.data.userId == request.auth.uid || isClinician();
+      allow create: if request.resource.data.userId == request.auth.uid || isClinician();
+    }
+
+    match /claims/{claimId} {
+      allow read, write: if resource.data.userId == request.auth.uid || isClinician();
+      allow create: if request.resource.data.userId == request.auth.uid || isClinician();
     }
 
     // 4. Financial / Billing & Payroll
@@ -74,15 +81,13 @@ service cloud.firestore {
 
     // 5. Audit Logs & Webhooks
     match /auditLogs/{logId} {
-      // Audit logs are append-only. 
-      // For production webhooks, we allow true to support unauthenticated API writes.
-      allow read: if isAuthenticated();
+      allow read: if resource.data.userId == request.auth.uid || isClinician();
       allow create: if isAuthenticated(); 
       allow update, delete: if false; // IMMUTABLE
     }
     
     match /webhookLogs/{logId} {
-      allow read: if isAdmin();
+      allow read: if resource.data.userId == request.auth.uid || isAdmin();
       allow create: if true; // Webhooks bypass auth rules
       allow update, delete: if false;
     }

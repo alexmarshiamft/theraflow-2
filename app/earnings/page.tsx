@@ -13,8 +13,6 @@ import { IncentiveTracker } from '@/components/modules/intelligence/IncentiveTra
 export default function EarningsPage() {
   const userRole = useStore(state => state.userRole);
   const { showToast } = useToast();
-  
-  const [payoutSpeed, setPayoutSpeed] = useState<'instant' | 'standard'>('instant');
 
   const paystubs = [
     { id: 'pay-004', date: '2026-04-30', period: 'Apr 13 - Apr 27', amount: 1308.63, status: 'Paid' },
@@ -52,35 +50,6 @@ export default function EarningsPage() {
 
         <IncentiveTracker />
 
-        {/* Repricing Toggle */}
-        <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-[300px] h-full bg-brand-500/5 blur-[80px] pointer-events-none" />
-          <div>
-            <h3 className="text-lg font-bold text-white flex items-center gap-2 mb-2">
-              <Zap className="h-5 w-5 text-amber-400" />
-              Payout Configuration
-            </h3>
-            <p className="text-sm text-slate-400 max-w-lg">
-              Choose between getting paid instantly by Theraflow's treasury, or wait for insurance reimbursement for a higher percentage split.
-            </p>
-          </div>
-          
-          <div className="bg-slate-950 border border-slate-800 rounded-xl p-1 flex items-center gap-1 shrink-0">
-            <button 
-              onClick={() => setPayoutSpeed('instant')}
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${payoutSpeed === 'instant' ? 'bg-amber-500/20 text-amber-400' : 'text-slate-500 hover:text-slate-300'}`}
-            >
-              Instant (40% Split)
-            </button>
-            <button 
-              onClick={() => setPayoutSpeed('standard')}
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${payoutSpeed === 'standard' ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-500 hover:text-slate-300'}`}
-            >
-              Standard (50% Split)
-            </button>
-          </div>
-        </div>
-
         <div className="grid gap-6 md:grid-cols-3">
           <div className="section-card p-6 flex flex-col justify-between">
             <div className="flex items-center gap-3 text-muted-foreground mb-4">
@@ -108,11 +77,7 @@ export default function EarningsPage() {
             <div>
               <p className="text-3xl font-bold tracking-tight text-white">$1,308.63</p>
               <p className="text-sm text-slate-400 mt-1 font-medium flex items-center gap-1.5">
-                {payoutSpeed === 'instant' ? (
-                  <><Zap className="h-3 w-3 text-amber-400" /> Instant Payment</>
-                ) : (
-                  <><Clock className="h-3 w-3 text-emerald-400" /> Standard Cleared</>
-                )}
+                <Clock className="h-3 w-3 text-emerald-400" /> Standard Cleared
               </p>
             </div>
           </div>
@@ -126,7 +91,7 @@ export default function EarningsPage() {
             </div>
             <div>
               <p className="text-3xl font-bold tracking-tight text-white">
-                {payoutSpeed === 'instant' ? 'Today' : 'May 15'}
+                May 15
               </p>
               <p className="text-sm text-muted-foreground mt-1 font-medium">
                 Period: Apr 28 - May 12

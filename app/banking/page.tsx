@@ -3,6 +3,8 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useStore } from '@/lib/store';
 import { AccountSummary } from '@/components/modules/banking/AccountSummary';
+import { TreasuryManager } from '@/components/modules/banking/TreasuryManager';
+import { VirtualCardsManager } from '@/components/modules/banking/VirtualCardsManager';
 import { TransactionList } from '@/components/modules/banking/TransactionList';
 import dynamic from 'next/dynamic';
 
@@ -240,6 +242,8 @@ export default function BankingPage() {
       {/* Accounts + Transactions */}
       <div className="space-y-6">
         <CashFlowChart />
+        <TreasuryManager />
+        <VirtualCardsManager />
         <AccountSummary />
         <TransactionList />
       </div>

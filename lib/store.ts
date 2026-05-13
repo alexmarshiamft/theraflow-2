@@ -290,6 +290,7 @@ interface AppState {
   updateClinicalNote: (id: string, data: Partial<ClinicalNote>) => void;
   addClinicalNote: (note: ClinicalNote) => void;
   batchSubmitClaims: (noteIds: string[]) => void;
+  signNextNote: (associateName?: string) => void;
 
   addVAAuthorization: (auth: VAAuthorization) => void;
   updateVAAuthorization: (id: string, data: Partial<VAAuthorization>) => void;
@@ -1102,6 +1103,20 @@ export const useStore = create<AppState>()(
           claims: [...newClaims, ...state.claims],
           clinicalNotes: updatedNotes
         };
+      }),
+
+      signNextNote: (associateName?: string) => set((state) => {
+        const notes = state.clinicalNotes;
+        const pendingNotes = notes.filter(n => n.status === 'pending_review' && (!associateName || n.associateName === associateName));
+        if (pendingNotes.length === 0) return { clinicalNotes: notes };
+        
+        // Find the oldest pending note
+        const noteToSign = pendingNotes[0];
+        
+        const updatedNotes = notes.map(n => 
+          n.id === noteToSign.id ? { ...n, status: 'signed' as const } : n
+        );
+        return { clinicalNotes: updatedNotes };
       }),
 
       addAuditLog: async (log) => {

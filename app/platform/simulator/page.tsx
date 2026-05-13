@@ -15,16 +15,19 @@ import {
   Briefcase,
   HeartPulse,
   BrainCircuit,
-  Zap
+  Zap,
+  ShieldCheck,
+  Smile
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 
-type GameState = 'setup' | 'playing' | 'event' | 'resolution';
+type GameState = 'setup' | 'playing' | 'event' | 'resolution' | 'gameover' | 'victory';
 
 export default function PracticeSimulator() {
   const [gameState, setGameState] = useState<GameState>('setup');
+  const [gameOverReason, setGameOverReason] = useState('');
   
   // Paper Practice Metrics
   const [month, setMonth] = useState(1);
@@ -32,6 +35,8 @@ export default function PracticeSimulator() {
   const [caseload, setCaseload] = useState(0);
   const [health, setHealth] = useState(100);
   const [revenue, setRevenue] = useState(0);
+  const [compliance, setCompliance] = useState(100);
+  const [morale, setMorale] = useState(100);
 
   // Setup Options
   const [model, setModel] = useState<'cash' | 'insurance' | 'hybrid'>('hybrid');
@@ -52,9 +57,9 @@ export default function PracticeSimulator() {
       bg: 'bg-rose-500/10',
       border: 'border-rose-500/30',
       options: [
-        { label: 'Use AI Audit Defense (Cost: $0)', effect: { cash: 0, health: 10, msg: 'Audit passed cleanly thanks to AI!' } },
-        { label: 'Hire external consultant (Cost: $2,500)', effect: { cash: -2500, health: 5, msg: 'Passed, but it cost you.' } },
-        { label: 'Ignore it (Risk: Severe)', effect: { cash: -10000, health: -40, msg: 'You were fined $10,000 and suspended.' } }
+        { label: 'Use AI Audit Defense (Cost: $0)', effect: { cash: 0, health: 10, compliance: 5, msg: 'Audit passed cleanly thanks to AI!' } },
+        { label: 'Hire external consultant (Cost: $2,500)', effect: { cash: -2500, health: 5, compliance: 15, msg: 'Passed, but it cost you.' } },
+        { label: 'Ignore it (Risk: Severe)', effect: { cash: -10000, health: -40, compliance: -50, msg: 'You were fined $10,000 and suspended.' } }
       ]
     },
     {
@@ -68,9 +73,9 @@ export default function PracticeSimulator() {
       bg: 'bg-emerald-500/10',
       border: 'border-emerald-500/30',
       options: [
-        { label: 'Hire an Associate (Cost: 40% Split)', effect: { cash: -1000, caseload: 15, revenue: 5000, msg: 'Associate hired! Revenue is up.' } },
-        { label: 'Turn them away', effect: { health: -5, msg: 'Lost potential revenue.' } },
-        { label: 'Raise your rates', effect: { cash: 2000, caseload: -2, health: 5, msg: 'Lost 2 clients, but margins improved.' } }
+        { label: 'Hire an Associate (Cost: 40% Split)', effect: { cash: -1000, caseload: 15, revenue: 5000, morale: -5, msg: 'Associate hired! Revenue is up.' } },
+        { label: 'Turn them away', effect: { health: -5, morale: -5, msg: 'Lost potential revenue.' } },
+        { label: 'Raise your rates', effect: { cash: 2000, caseload: -2, health: 5, morale: 10, msg: 'Lost 2 clients, but margins improved.' } }
       ]
     },
     {
@@ -85,7 +90,7 @@ export default function PracticeSimulator() {
       border: 'border-amber-500/30',
       options: [
         { label: 'Activate Liquid Treasury', effect: { cash: -50, msg: 'Liquid Treasury absorbed the shock for a small fee.' } },
-        { label: 'Take the hit from cash reserves', effect: { cash: -4000, health: -10, msg: 'Cash reserves took a major hit.' } }
+        { label: 'Take the hit from cash reserves', effect: { cash: -4000, health: -10, morale: -10, msg: 'Cash reserves took a major hit.' } }
       ]
     },
     {
@@ -99,35 +104,162 @@ export default function PracticeSimulator() {
       bg: 'bg-indigo-500/10',
       border: 'border-indigo-500/30',
       options: [
-        { label: 'Open 501c3 (PSLF safety, High setup)', effect: { cash: -2500, health: -10, msg: 'PSLF clock ticking down! High setup stress, but long-term safety.' } },
-        { label: 'Prof. Corp with S-Corp (Best taxes, High cost)', effect: { cash: -3500, revenue: 2000, msg: 'Tax arbitrage secured. High upfront cost, but optimal for growth.' } },
-        { label: 'Sole Proprietor (Fast setup, Worst taxes)', effect: { cash: -200, revenue: 1000, health: -5, msg: 'Immediate credentialing, but personal liability and self-employment taxes hurt.' } }
+        { label: 'Open 501c3 (PSLF safety, High setup)', effect: { cash: -2500, health: -10, compliance: 20, msg: 'PSLF clock ticking down! High setup stress, but long-term safety.' } },
+        { label: 'Prof. Corp with S-Corp (Best taxes, High cost)', effect: { cash: -3500, revenue: 2000, compliance: 10, msg: 'Tax arbitrage secured. High upfront cost, but optimal for growth.' } },
+        { label: 'Sole Proprietor (Fast setup, Worst taxes)', effect: { cash: -200, revenue: 1000, health: -5, compliance: -10, msg: 'Immediate credentialing, but personal liability and self-employment taxes hurt.' } }
+      ]
+    },
+    {
+      id: 'rogue_associate',
+      type: 'compliance',
+      title: 'The Rogue Associate',
+      description: 'An audit reveals an associate has been copy-pasting the exact same note for 20 different sessions.',
+      impact: 'Severe Compliance Risk',
+      icon: ShieldAlert,
+      color: 'text-rose-400',
+      bg: 'bg-rose-500/10',
+      border: 'border-rose-500/30',
+      options: [
+        { label: 'Fire them immediately', effect: { caseload: -15, revenue: -4000, morale: -15, compliance: 20, msg: 'You fired them. Revenue took a hit and morale dipped, but compliance is secure.' } },
+        { label: 'Put them on probation & retrain', effect: { cash: -500, health: -15, compliance: -10, msg: 'You kept them on, but it took hours of your time and increased risk.' } },
+        { label: 'Ignore it', effect: { compliance: -40, morale: -5, msg: 'You ignored it. Your compliance rating plummeted.' } }
+      ]
+    },
+    {
+      id: 'data_breach',
+      type: 'compliance',
+      title: 'EHR Data Breach',
+      description: 'Your 3rd party scheduling software was hacked. 500 patient records were exposed.',
+      impact: 'Catastrophic',
+      icon: AlertCircle,
+      color: 'text-rose-600',
+      bg: 'bg-rose-600/10',
+      border: 'border-rose-600/30',
+      options: [
+        { label: 'Activate Cyber Liability Insurance', effect: { cash: -1000, compliance: -10, health: -20, msg: 'Insurance covered the fines, but your premium skyrocketed.' } },
+        { label: 'Pay the HIPAA fines out of pocket', effect: { cash: -15000, compliance: -30, health: -40, msg: 'Devastating financial blow.' } }
+      ]
+    },
+    {
+      id: 'viral_marketing',
+      type: 'growth',
+      title: 'Viral TikTok',
+      description: 'A video you posted about ADHD coping mechanisms got 2 million views overnight.',
+      impact: 'Massive Growth',
+      icon: TrendingUp,
+      color: 'text-emerald-400',
+      bg: 'bg-emerald-500/10',
+      border: 'border-emerald-500/30',
+      options: [
+        { label: 'Capitalize: Hire 3 Associates', effect: { cash: -3000, caseload: 45, revenue: 15000, morale: -10, msg: 'Massive growth, but onboarding 3 associates drained your energy.' } },
+        { label: 'Launch a passive income course', effect: { cash: 5000, revenue: 2000, msg: 'Course launched! Immediate cash injection.' } },
+        { label: 'Ignore it', effect: { health: 10, msg: 'You preserved your peace, but left money on the table.' } }
+      ]
+    },
+    {
+      id: 'network_cut',
+      type: 'finance',
+      title: 'Major Payer Cuts Rates',
+      description: 'Optum just announced a 15% rate cut for 90837 across the board.',
+      impact: 'Margin Compression',
+      icon: DollarSign,
+      color: 'text-amber-400',
+      bg: 'bg-amber-500/10',
+      border: 'border-amber-500/30',
+      options: [
+        { label: 'Drop Optum and go out-of-network', effect: { caseload: -20, revenue: -3000, morale: 20, health: 15, msg: 'Lost clients, but morale improved significantly without insurance headaches.' } },
+        { label: 'Absorb the hit', effect: { revenue: -2000, morale: -10, msg: 'You absorbed the hit. Margins are tighter.' } },
+        { label: 'Pass the cut to associates', effect: { morale: -40, msg: 'You protected your margin, but associates are furious.' } }
+      ]
+    },
+    {
+      id: 'mutiny',
+      type: 'business',
+      title: 'Associate Mutiny',
+      description: 'Your associates are unhappy with the split and are threatening to leave and take their caseloads.',
+      impact: 'Existential Threat',
+      icon: Users,
+      color: 'text-rose-400',
+      bg: 'bg-rose-500/10',
+      border: 'border-rose-500/30',
+      options: [
+        { label: 'Increase their split to 60/40', effect: { revenue: -3000, morale: 40, msg: 'They stayed, but your margins are much slimmer.' } },
+        { label: 'Let them leave', effect: { caseload: -30, revenue: -10000, health: -20, msg: 'They left. Huge revenue hit, but you retained control.' } },
+        { label: 'Offer them Theraflow Liquid Payroll', effect: { cash: -500, morale: 30, msg: 'Instant access to funds pacified them without changing the split!' } }
       ]
     }
   ];
+
+  useEffect(() => {
+    if (gameState !== 'playing' && gameState !== 'resolution') return;
+
+    if (cash < 0) {
+      setGameOverReason('Your cash reserves dropped below $0. The practice is bankrupt and you can no longer meet payroll.');
+      setGameState('gameover');
+    } else if (health <= 0) {
+      setGameOverReason('Your health and sanity dropped to 0. You suffered severe burnout and had to close the practice to recover.');
+      setGameState('gameover');
+    } else if (caseload >= 100 && revenue >= 30000) {
+      setGameState('victory');
+    }
+  }, [cash, health, caseload, revenue, gameState]);
 
   const handleStart = () => {
     setGameState('playing');
   };
 
   const advanceMonth = () => {
-    // Simulate baseline growth based on setup
     setMonth(prev => prev + 1);
-    setCash(prev => prev + revenue - marketing);
     
-    // 30% chance of a random event each month
-    if (Math.random() > 0.6) {
-      const randomEvent = SCENARIOS[Math.floor(Math.random() * SCENARIOS.length)];
-      setActiveEvent(randomEvent);
-      setGameState('event');
+    // Simulate baseline growth based on setup
+    let monthlyRev = revenue;
+    if (model === 'cash') monthlyRev += 500;
+    if (model === 'insurance') monthlyRev += 1500;
+    
+    // Passive cash calculation
+    setCash(prev => prev + monthlyRev - marketing);
+
+    // Passive mechanics simulation
+    if (morale < 40 && caseload > 10) {
+      // Risk of losing an associate due to poor morale
+      if (Math.random() > 0.6) {
+        setCaseload(prev => Math.max(0, prev - 10));
+        setRevenue(prev => Math.max(0, prev - 3000));
+        setMorale(prev => Math.min(100, prev + 10)); // remaining staff feel slightly better after the tension breaks
+      }
+    }
+    
+    // Calculate Random Event Probability
+    let eventChance = 0.3; // Base 30%
+    if (morale < 50) eventChance += 0.15;
+    if (compliance < 50) eventChance += 0.2;
+
+    if (Math.random() < eventChance) {
+      let randomEvent;
+      
+      // Weight certain events based on metrics
+      if (morale <= 30 && Math.random() > 0.4) {
+        randomEvent = SCENARIOS.find(s => s.id === 'mutiny');
+      } else if (compliance <= 30 && Math.random() > 0.4) {
+        randomEvent = SCENARIOS.find(s => s.id === 'audit');
+      } else {
+        randomEvent = SCENARIOS[Math.floor(Math.random() * SCENARIOS.length)];
+      }
+      
+      if (randomEvent) {
+        setActiveEvent(randomEvent);
+        setGameState('event');
+      }
     }
   };
 
   const handleEventChoice = (option: any) => {
     if (option.effect.cash) setCash(prev => prev + option.effect.cash);
     if (option.effect.health) setHealth(prev => Math.min(100, Math.max(0, prev + option.effect.health)));
-    if (option.effect.caseload) setCaseload(prev => prev + option.effect.caseload);
-    if (option.effect.revenue) setRevenue(prev => prev + option.effect.revenue);
+    if (option.effect.caseload) setCaseload(prev => Math.max(0, prev + option.effect.caseload));
+    if (option.effect.revenue) setRevenue(prev => Math.max(0, prev + option.effect.revenue));
+    if (option.effect.compliance) setCompliance(prev => Math.min(100, Math.max(0, prev + option.effect.compliance)));
+    if (option.effect.morale) setMorale(prev => Math.min(100, Math.max(0, prev + option.effect.morale)));
     
     setActiveEvent({ ...activeEvent, resolution: option.effect.msg });
     setGameState('resolution');
@@ -148,24 +280,40 @@ export default function PracticeSimulator() {
         
         {/* Status HUD */}
         {gameState !== 'setup' && (
-          <div className="flex gap-6">
+          <div className="flex gap-4 lg:gap-6">
             <div className="flex flex-col items-end">
               <span className="text-xs text-slate-500 uppercase tracking-wider font-bold">Month</span>
               <span className="text-xl font-bold text-white">{month}</span>
             </div>
             <div className="w-px bg-slate-800" />
             <div className="flex flex-col items-end">
-              <span className="text-xs text-slate-500 uppercase tracking-wider font-bold">Cash Reserves</span>
+              <span className="text-xs text-slate-500 uppercase tracking-wider font-bold">Cash</span>
               <span className={cn("text-xl font-bold", cash < 5000 ? "text-rose-400" : "text-emerald-400")}>
                 ${cash.toLocaleString()}
               </span>
             </div>
              <div className="w-px bg-slate-800" />
             <div className="flex flex-col items-end">
-              <span className="text-xs text-slate-500 uppercase tracking-wider font-bold">Practice Health</span>
+              <span className="text-xs text-slate-500 uppercase tracking-wider font-bold">Health</span>
               <div className="flex items-center gap-2">
                 <HeartPulse className={cn("h-4 w-4", health > 70 ? "text-brand-400" : "text-rose-400")} />
                 <span className="text-xl font-bold text-white">{health}%</span>
+              </div>
+            </div>
+            <div className="w-px bg-slate-800" />
+            <div className="flex flex-col items-end hidden md:flex">
+              <span className="text-xs text-slate-500 uppercase tracking-wider font-bold">Morale</span>
+              <div className="flex items-center gap-2">
+                <Smile className={cn("h-4 w-4", morale > 70 ? "text-amber-400" : "text-rose-400")} />
+                <span className="text-xl font-bold text-white">{morale}%</span>
+              </div>
+            </div>
+            <div className="w-px bg-slate-800 hidden md:block" />
+            <div className="flex flex-col items-end hidden md:flex">
+              <span className="text-xs text-slate-500 uppercase tracking-wider font-bold">Compliance</span>
+              <div className="flex items-center gap-2">
+                <ShieldCheck className={cn("h-4 w-4", compliance > 70 ? "text-indigo-400" : "text-rose-400")} />
+                <span className="text-xl font-bold text-white">{compliance}%</span>
               </div>
             </div>
           </div>
@@ -246,7 +394,7 @@ export default function PracticeSimulator() {
                 <div className="absolute top-0 right-0 p-4 opacity-10"><DollarSign className="w-24 h-24" /></div>
                 <h3 className="text-slate-400 text-sm font-bold mb-1">Monthly Run Rate</h3>
                 <div className="text-3xl font-bold text-white">${revenue.toLocaleString()}/mo</div>
-                <div className="text-xs text-emerald-400 mt-2 flex items-center gap-1"><TrendingUp className="h-3 w-3" /> Projected stable</div>
+                <div className="text-xs text-emerald-400 mt-2 flex items-center gap-1"><TrendingUp className="h-3 w-3" /> Growth driven by {model}</div>
               </div>
               <div className="bg-slate-900/40 border border-slate-800 rounded-3xl p-6 relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-4 opacity-10"><Users className="w-24 h-24" /></div>
@@ -265,9 +413,9 @@ export default function PracticeSimulator() {
               <div className="w-16 h-16 bg-brand-500/10 rounded-full flex items-center justify-center mb-4">
                 <BrainCircuit className="h-8 w-8 text-brand-400" />
               </div>
-              <h2 className="text-2xl font-bold text-white mb-2">Business is stable.</h2>
+              <h2 className="text-2xl font-bold text-white mb-2">Business is active.</h2>
               <p className="text-slate-400 max-w-md mb-8">
-                Your practice is running smoothly. Use the controls below to advance time and see how your metrics hold up over the long term.
+                Your practice is running smoothly. Use the controls below to advance time and see how your metrics hold up over the long term. Watch out for random events!
               </p>
               
               <Button size="lg" onClick={advanceMonth} className="h-14 bg-white text-slate-950 hover:bg-slate-100 rounded-2xl px-8 font-bold shadow-xl shadow-white/5">
@@ -338,6 +486,60 @@ export default function PracticeSimulator() {
                 className="w-full h-14 bg-brand-600 hover:bg-brand-500 text-white rounded-2xl font-bold"
               >
                 Continue Simulation
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* GAMEOVER PHASE */}
+        {gameState === 'gameover' && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in">
+            <div className="max-w-md w-full bg-slate-950 border border-rose-500/30 rounded-3xl p-8 shadow-2xl text-center">
+              <div className="w-20 h-20 bg-rose-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <AlertCircle className="h-10 w-10 text-rose-500" />
+              </div>
+              <h2 className="text-3xl font-bold text-white mb-2">Practice Closed</h2>
+              <p className="text-slate-300 mb-8 leading-relaxed">
+                {gameOverReason}
+              </p>
+              <div className="space-y-3">
+                <div className="text-left bg-slate-900 rounded-xl p-4 text-sm text-slate-400 mb-6 space-y-2">
+                  <div className="flex justify-between"><span>Months Survived:</span> <span className="text-white font-bold">{month}</span></div>
+                  <div className="flex justify-between"><span>Peak Caseload:</span> <span className="text-white font-bold">{caseload}</span></div>
+                </div>
+                <Button 
+                  size="lg" 
+                  onClick={() => window.location.reload()} 
+                  className="w-full h-14 bg-rose-600 hover:bg-rose-500 text-white rounded-2xl font-bold"
+                >
+                  Restart Simulation
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* VICTORY PHASE */}
+        {gameState === 'victory' && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in">
+            <div className="max-w-md w-full bg-slate-950 border border-emerald-500/30 rounded-3xl p-8 shadow-2xl text-center">
+              <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <TrendingUp className="h-10 w-10 text-emerald-500" />
+              </div>
+              <h2 className="text-3xl font-bold text-white mb-2">Enterprise Scale Achieved!</h2>
+              <p className="text-slate-300 mb-8 leading-relaxed">
+                Congratulations! You scaled your practice to over 100 active clients with a massive revenue run rate. You are a true God-tier clinic owner.
+              </p>
+              <div className="text-left bg-slate-900 rounded-xl p-4 text-sm text-slate-400 mb-6 space-y-2">
+                <div className="flex justify-between"><span>Time to Scale:</span> <span className="text-white font-bold">{month} Months</span></div>
+                <div className="flex justify-between"><span>Final Cash:</span> <span className="text-emerald-400 font-bold">${cash.toLocaleString()}</span></div>
+              </div>
+              <Button 
+                size="lg" 
+                onClick={() => window.location.reload()} 
+                className="w-full h-14 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-bold"
+              >
+                Play Again
               </Button>
             </div>
           </div>

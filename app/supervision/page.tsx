@@ -3,11 +3,29 @@
 import { useState } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
-import { Users, FileSearch, AlertTriangle, CheckCircle2, ChevronRight, User, BrainCircuit, Activity, HeartHandshake } from 'lucide-react';
+import { Users, FileSearch, AlertTriangle, CheckCircle2, ChevronRight, User, BrainCircuit, Activity, HeartHandshake, DollarSign, PenTool, CheckSquare, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { useStore } from '@/lib/store';
+import { BonusEngine, AssociateMetrics } from '@/components/modules/supervision/BonusEngine';
 
 export default function SupervisionPage() {
-  const associates = [
+  const [signingId, setSigningId] = useState<string | null>(null);
+  const clinicalNotes = useStore(state => state.clinicalNotes);
+  const signNextNote = useStore(state => state.signNextNote);
+
+  const pendingNotes = clinicalNotes.filter(n => n.status === 'pending_review');
+  const signatureBountyValue = pendingNotes.length * 2.50; // $2.50 bonus per note
+
+  const associates: {
+    id: string;
+    name: string;
+    status: string;
+    statusColor: string;
+    bgColor: string;
+    borderColor: string;
+    agendaItems: any[];
+    metrics: AssociateMetrics;
+  }[] = [
     {
       id: '1',
       name: 'Ashley Beer, AMFT',
@@ -18,7 +36,14 @@ export default function SupervisionPage() {
       agendaItems: [
         { type: 'Audit Risk', icon: FileSearch, text: 'Aetna Medical Necessity failure on client M.B. (Missing PHQ-9 baseline).', color: 'text-rose-400', bg: 'bg-rose-500/20' },
         { type: 'Burnout Risk', icon: Activity, text: 'AI Churn Radar detects 8 clients at risk due to high cancellation rates.', color: 'text-amber-400', bg: 'bg-amber-500/20' },
-      ]
+      ],
+      metrics: {
+        notesOnTime: 12, totalNotes: 25,
+        longSessions: 5, totalSessions: 25,
+        retainedClients: 10, totalClients: 25,
+        attendedSessions: 25, bookedSessions: 35,
+        complianceViolations: 2
+      }
     },
     {
       id: '2',
@@ -30,7 +55,14 @@ export default function SupervisionPage() {
       agendaItems: [
         { type: 'Coding Error', icon: AlertTriangle, text: 'Frequent upcoding to 90837 for low-acuity sessions. Flagged by Audit Defense.', color: 'text-amber-400', bg: 'bg-amber-500/20' },
         { type: 'Countertransference', icon: BrainCircuit, text: 'Bias detector flagged subjective language in 2 notes this week.', color: 'text-indigo-400', bg: 'bg-indigo-500/20' },
-      ]
+      ],
+      metrics: {
+        notesOnTime: 28, totalNotes: 30,
+        longSessions: 20, totalSessions: 30,
+        retainedClients: 25, totalClients: 30,
+        attendedSessions: 30, bookedSessions: 32,
+        complianceViolations: 0
+      }
     },
     {
       id: '3',
@@ -42,9 +74,24 @@ export default function SupervisionPage() {
       agendaItems: [
         { type: 'Milestone', icon: CheckCircle2, text: 'Hit 33 completed sessions. Highest volume and retention (91.67%) in practice.', color: 'text-emerald-400', bg: 'bg-emerald-500/20' },
         { type: 'Supervision', icon: HeartHandshake, text: 'Standard case consultation. No AI flags detected.', color: 'text-slate-400', bg: 'bg-slate-800' },
-      ]
+      ],
+      metrics: {
+        notesOnTime: 33, totalNotes: 33,
+        longSessions: 30, totalSessions: 33,
+        retainedClients: 33, totalClients: 36,
+        attendedSessions: 33, bookedSessions: 34,
+        complianceViolations: 0
+      }
     }
   ];
+
+  const handleSignNext = (assocName: string, assocId: string) => {
+    setSigningId(assocId);
+    setTimeout(() => {
+      signNextNote(assocName);
+      setSigningId(null);
+    }, 1500); // Simulated delay for individual reading/signing (avoiding full 31s for demo)
+  };
 
   return (
     <DashboardLayout>
@@ -64,6 +111,31 @@ export default function SupervisionPage() {
             <p className="text-slate-400 max-w-2xl text-lg">
               AI aggregates data across the entire practice to automatically generate high-priority 1-on-1 supervision agendas for your Clinical Directors.
             </p>
+          </div>
+        </div>
+
+        {/* HUD - Signature Bounty */}
+        <div className="bg-slate-900 border-b border-white/5 px-8 py-4 flex items-center justify-between shadow-lg relative z-20">
+          <div className="flex items-center gap-8">
+            <div className="flex items-center gap-4">
+              <div className="bg-indigo-500/20 p-2 rounded-lg border border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
+                <PenTool className="w-5 h-5 text-indigo-400" />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Unsigned Notes</p>
+                <p className="text-xl font-bold text-white leading-none">{pendingNotes.length} Pending</p>
+              </div>
+            </div>
+            <div className="h-10 w-px bg-white/10" />
+            <div className="flex items-center gap-4">
+              <div className="bg-emerald-500/20 p-2 rounded-lg border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                <DollarSign className="w-5 h-5 text-emerald-400" />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Liability Transfer Bounty</p>
+                <p className="text-xl font-bold text-emerald-400 leading-none">${signatureBountyValue.toFixed(2)} For Assuming Risk</p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -110,9 +182,35 @@ export default function SupervisionPage() {
                     })}
                   </div>
 
-                  <Button className="w-full mt-6 bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 group-hover:border-indigo-500/50 transition-colors">
-                    Start Supervision Note <ChevronRight className="w-4 h-4 ml-2" />
-                  </Button>
+                  <BonusEngine metrics={assoc.metrics} />
+
+                  <div className="mt-6 flex flex-col gap-3">
+                    <Button 
+                      onClick={() => handleSignNext(assoc.name, assoc.id)}
+                      disabled={signingId !== null || pendingNotes.filter(n => n.associateName === assoc.name).length === 0}
+                      className="w-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+                    >
+                      {signingId === assoc.id ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Simulating Audit Review Delay...
+                        </>
+                      ) : pendingNotes.filter(n => n.associateName === assoc.name).length > 0 ? (
+                        <>
+                          <CheckSquare className="w-4 h-4 mr-2" />
+                          Sign Next Note & Attest ({pendingNotes.filter(n => n.associateName === assoc.name).length} pending)
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 className="w-4 h-4 mr-2" />
+                          All Notes Signed
+                        </>
+                      )}
+                    </Button>
+                    <Button variant="outline" className="w-full bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 group-hover:border-indigo-500/50 transition-colors">
+                      Start Supervision Note <ChevronRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}

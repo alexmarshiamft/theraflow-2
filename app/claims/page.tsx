@@ -23,6 +23,7 @@ export default function ClaimsPage() {
   // State for the Batch Submit Workflow
   const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
   const [workflowStage, setWorkflowStage] = useState<'review' | 'scrubbing' | 'ready' | 'submitted' | 'dispatching' | 'dispatched'>('review');
+  const [attested, setAttested] = useState(false);
   const [scrubSteps, setScrubSteps] = useState<ScrubStep[]>([
     { id: 'cpt', label: 'CPT Code Match & Verification', status: 'pending' },
     { id: 'modifier', label: 'Modifier Validation', status: 'pending' },
@@ -260,10 +261,32 @@ export default function ClaimsPage() {
                   </div>
 
                   {workflowStage === 'ready' && (
-                    <div className="flex justify-center pt-8 animate-in slide-in-from-bottom-4 fade-in">
-                      <Button onClick={handleSubmitBatch} size="lg" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-xl shadow-emerald-200 h-14 text-lg">
-                        Submit {signedNotes.length} Claims to Clearinghouse
-                      </Button>
+                    <div className="pt-8 space-y-6 animate-in slide-in-from-bottom-4 fade-in">
+                      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+                        <div className="pt-0.5">
+                          <input 
+                            type="checkbox" 
+                            id="attestation" 
+                            className="w-5 h-5 rounded border-amber-300 text-amber-600 focus:ring-amber-600"
+                            checked={attested}
+                            onChange={(e) => setAttested(e.target.checked)}
+                          />
+                        </div>
+                        <label htmlFor="attestation" className="text-sm text-amber-900 font-medium leading-relaxed cursor-pointer select-none">
+                          I attest under penalty of perjury that I have individually reviewed and approved these clinical notes, and accept full liability for their accuracy and compliance.
+                        </label>
+                      </div>
+                      
+                      <div className="flex justify-center">
+                        <Button 
+                          onClick={handleSubmitBatch} 
+                          disabled={!attested}
+                          size="lg" 
+                          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-xl shadow-emerald-200 h-14 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          Submit {signedNotes.length} Claims to Clearinghouse
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -311,11 +334,34 @@ export default function ClaimsPage() {
                   </div>
 
                   {workflowStage === 'submitted' && (
-                    <div className="pt-4 animate-in fade-in">
-                      <Button onClick={handleDispatchPayouts} size="lg" className="w-full bg-brand-600 hover:bg-brand-700 text-white shadow-xl shadow-brand-200 h-14 text-lg">
-                        <Sparkles className="h-5 w-5 mr-2" />
-                        Authorize Associate Payouts & Dispatch Messages
-                      </Button>
+                    <div className="pt-6 animate-in fade-in space-y-4">
+                      <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-6 shadow-sm">
+                        <h3 className="text-xl font-bold text-indigo-900 mb-2 flex items-center justify-center gap-2">
+                          <Sparkles className="h-5 w-5 text-indigo-500" />
+                          Claim Submission Complete!
+                        </h3>
+                        <p className="text-indigo-800 font-medium text-sm text-center">
+                          Claim has been submitted. Projected value is <span className="font-bold">{formatCurrency(payoutAmount)}</span> and average wait time is 6 days, but liquid payroll means you can take your earnings for the week the second you've finished signing and submitting all outstanding notes.
+                        </p>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <Button 
+                          onClick={handleDispatchPayouts} 
+                          className="bg-indigo-600 hover:bg-indigo-700 text-white h-14 shadow-lg shadow-indigo-200 flex flex-col items-center justify-center py-2"
+                        >
+                          <span className="font-bold text-sm">Instant Transfer</span>
+                          <span className="text-[10px] opacity-80">(1.5% Fee)</span>
+                        </Button>
+                        <Button 
+                          onClick={handleDispatchPayouts} 
+                          variant="outline"
+                          className="bg-white border-2 border-indigo-100 hover:bg-indigo-50 hover:border-indigo-200 text-indigo-700 h-14 shadow-sm flex flex-col items-center justify-center py-2"
+                        >
+                          <span className="font-bold text-sm">Keep in Theraflow</span>
+                          <span className="text-[10px] opacity-80">(No Fee, Virtual Card)</span>
+                        </Button>
+                      </div>
                     </div>
                   )}
 
