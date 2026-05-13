@@ -25,6 +25,8 @@ import {
   HeartHandshake,
   ShieldAlert,
   Headset,
+  Briefcase,
+  GraduationCap,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/lib/store';
@@ -369,6 +371,45 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               >
                 <FileText className="h-4 w-4" />
                 {userRole === 'associate' ? 'Tax Documents' : 'Tax'}
+              </Link>
+            </div>
+          </div>
+
+          {/* Network & Community */}
+          <div className="mb-6">
+            <p className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Network
+            </p>
+            <div className="flex flex-col gap-0.5">
+              <Link
+                href="/network/community"
+                className={cn(
+                  'sidebar-link',
+                  pathname.startsWith('/network/community') && 'active'
+                )}
+              >
+                <Users className="h-4 w-4 text-indigo-400" />
+                Community
+              </Link>
+              <Link
+                href="/network/jobs"
+                className={cn(
+                  'sidebar-link',
+                  pathname.startsWith('/network/jobs') && 'active'
+                )}
+              >
+                <Briefcase className="h-4 w-4" />
+                Job Board
+              </Link>
+              <Link
+                href="/network/academy"
+                className={cn(
+                  'sidebar-link',
+                  pathname.startsWith('/network/academy') && 'active'
+                )}
+              >
+                <GraduationCap className="h-4 w-4 text-brand-400" />
+                Academy
               </Link>
             </div>
           </div>
