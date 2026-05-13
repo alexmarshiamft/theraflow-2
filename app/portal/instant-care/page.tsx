@@ -114,12 +114,12 @@ export default function InstantCarePortal() {
               </div>
             </div>
             
-            <h3 className="text-2xl font-bold text-white mb-2">Scanning Network...</h3>
+            <h3 className="text-2xl font-bold text-white mb-2">Paging Intake Coordinator...</h3>
             <p className="text-slate-400 text-center max-w-xs h-6 overflow-hidden relative">
               <span className="absolute inset-0 flex items-center justify-center animate-[slide-up_4s_ease-in-out_infinite]">
-                <span className="block h-full">Matching specialization: {selectedConcern}...</span>
-                <span className="block h-full">Checking current availability...</span>
-                <span className="block h-full">Reviewing state licensure...</span>
+                <span className="block h-full">Reviewing concern: {selectedConcern}...</span>
+                <span className="block h-full">Locating available coordinator...</span>
+                <span className="block h-full">Preparing secure triage room...</span>
               </span>
             </p>
           </div>
@@ -153,21 +153,17 @@ export default function InstantCarePortal() {
                 </div>
                 
                 <div className="text-center md:text-left flex-1">
-                  <h3 className="text-2xl font-bold text-white mb-1">Alexander Marshi, AMFT</h3>
-                  <p className="text-brand-400 font-medium mb-4">Therapist • Spec: {selectedConcern}</p>
+                  <h3 className="text-2xl font-bold text-white mb-1">Sarah, Intake Coordinator</h3>
+                  <p className="text-brand-400 font-medium mb-4">Clinical Triage Team</p>
                   
                   <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 text-sm">
                       <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
-                      Verified License
+                      HIPAA Secure
                     </span>
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 text-sm">
                       <Activity className="h-3.5 w-3.5 text-blue-400" />
-                      Accepts Insurance
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 text-sm">
-                      <MapPin className="h-3.5 w-3.5 text-rose-400" />
-                      California
+                      Live Assessment
                     </span>
                   </div>
                 </div>
@@ -175,7 +171,7 @@ export default function InstantCarePortal() {
 
               <div className="bg-slate-950/50 rounded-2xl p-6 border border-slate-800 mb-8">
                 <p className="text-slate-300 leading-relaxed text-sm">
-                  "Hi there! I have an opening right now and I specialize in working with {selectedConcern?.toLowerCase()}. We can jump into a secure video room immediately to discuss what you're going through and see if we're a good fit."
+                  "Hi there! I'm here to help connect you with the right clinician. We can jump into a secure video room immediately to discuss what you're going through, and I'll match you with someone available right now."
                 </p>
               </div>
 

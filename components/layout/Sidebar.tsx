@@ -24,6 +24,7 @@ import {
   Radio,
   HeartHandshake,
   ShieldAlert,
+  Headset,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/lib/store';
@@ -233,6 +234,16 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             >
               <Radio className="h-4 w-4" />
               Live Queue
+            </Link>
+            <Link
+              href="/ehr/intake-dispatch"
+              className={cn(
+                'sidebar-link text-indigo-400 hover:text-indigo-300',
+                pathname === '/ehr/intake-dispatch' && 'active'
+              )}
+            >
+              <Headset className="h-4 w-4" />
+              Intake Dispatch
             </Link>
             <Link
               href="/intelligence/churn"
