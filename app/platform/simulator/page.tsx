@@ -87,6 +87,22 @@ export default function PracticeSimulator() {
         { label: 'Activate Liquid Treasury', effect: { cash: -50, msg: 'Liquid Treasury absorbed the shock for a small fee.' } },
         { label: 'Take the hit from cash reserves', effect: { cash: -4000, health: -10, msg: 'Cash reserves took a major hit.' } }
       ]
+    },
+    {
+      id: 'crossroads',
+      type: 'business',
+      title: 'The Post-Licensure Crossroads',
+      description: 'You hit 3,000 hours! You want to take your clients with you via Triwest credentialing, but how do you structure the new practice?',
+      impact: 'Career Defining',
+      icon: Briefcase,
+      color: 'text-indigo-400',
+      bg: 'bg-indigo-500/10',
+      border: 'border-indigo-500/30',
+      options: [
+        { label: 'Open 501c3 (PSLF safety, High setup)', effect: { cash: -2500, health: -10, msg: 'PSLF clock ticking down! High setup stress, but long-term safety.' } },
+        { label: 'Prof. Corp with S-Corp (Best taxes, High cost)', effect: { cash: -3500, revenue: 2000, msg: 'Tax arbitrage secured. High upfront cost, but optimal for growth.' } },
+        { label: 'Sole Proprietor (Fast setup, Worst taxes)', effect: { cash: -200, revenue: 1000, health: -5, msg: 'Immediate credentialing, but personal liability and self-employment taxes hurt.' } }
+      ]
     }
   ];
 
