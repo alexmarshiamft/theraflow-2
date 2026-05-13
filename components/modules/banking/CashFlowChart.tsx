@@ -20,7 +20,7 @@ export function CashFlowChart() {
     
     // Initialize last 6 months
     const today = new Date();
-    const result = [];
+    const result: { name: string; monthKey: string; revenue: number; expenses: number }[] = [];
     for (let i = 5; i >= 0; i--) {
       const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
       result.push({
