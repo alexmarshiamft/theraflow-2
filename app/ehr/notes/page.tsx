@@ -25,6 +25,10 @@ export default function SmartNotesPage() {
   const [liveTranscript, setLiveTranscript] = useState('');
   const recognitionRef = useRef<any>(null);
 
+  const [cptCode, setCptCode] = useState('90837');
+  const [downcodedAlert, setDowncodedAlert] = useState(false);
+  const [sessionDuration, setSessionDuration] = useState<number | null>(null);
+
   const generateSoapFromTranscript = async (transcript: string) => {
     setIsGeneratingSoap(true);
     try {
@@ -58,6 +62,19 @@ export default function SmartNotesPage() {
   useEffect(() => {
     // Check if we came from telehealth room
     const transcript = localStorage.getItem('latestTelehealthTranscript');
+    const durationStr = localStorage.getItem('latestTelehealthDuration');
+    
+    if (durationStr) {
+      const duration = parseInt(durationStr, 10);
+      setSessionDuration(duration);
+      // 53 minutes = 3180 seconds
+      if (duration < 3180) {
+        setCptCode('90834');
+        setDowncodedAlert(true);
+      }
+      localStorage.removeItem('latestTelehealthDuration');
+    }
+
     if (transcript) {
       localStorage.removeItem('latestTelehealthTranscript');
       generateSoapFromTranscript(transcript);
@@ -248,6 +265,10 @@ If no issues are found, return {"problematicPhrase": null}.`
                   <p className="text-slate-300 font-medium flex items-center gap-1"><Clock className="w-3 h-3" /> May 11, 2026</p>
                 </div>
                 <div className="text-right">
+                  <p className="text-slate-500 font-bold uppercase text-[10px] tracking-wider">CPT</p>
+                  <p className={`font-medium ${downcodedAlert ? 'text-amber-400 font-bold animate-pulse' : 'text-slate-300'}`}>{cptCode}</p>
+                </div>
+                <div className="text-right">
                   <p className="text-slate-500 font-bold uppercase text-[10px] tracking-wider">Template</p>
                   <p className="text-slate-300 font-medium">GIRP</p>
                 </div>
@@ -364,6 +385,23 @@ If no issues are found, return {"problematicPhrase": null}.`
               </CardHeader>
               <CardContent className="space-y-4">
                 
+                <div className={`flex items-center justify-between p-3 rounded-lg ${downcodedAlert ? 'bg-amber-500/10 border border-amber-500/20' : 'bg-emerald-500/10 border border-emerald-500/20'}`}>
+                  <div className="flex items-center gap-3">
+                    {downcodedAlert ? <AlertTriangle className="w-5 h-5 text-amber-500" /> : <Check className="w-5 h-5 text-emerald-500" />}
+                    <span className={`text-sm font-medium ${downcodedAlert ? 'text-amber-100' : 'text-emerald-100'}`}>Time Compliance</span>
+                  </div>
+                  <span className={`text-xs font-bold uppercase tracking-wider ${downcodedAlert ? 'text-amber-500' : 'text-emerald-500'}`}>
+                    {downcodedAlert ? 'Adjusted' : 'Pass'}
+                  </span>
+                </div>
+                
+                {downcodedAlert && (
+                  <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 text-xs text-amber-200/80 leading-relaxed">
+                    <strong className="text-amber-400 block mb-1">Upcoding Prevented:</strong>
+                    Session duration ({sessionDuration ? Math.floor(sessionDuration / 60) : '< 53'} min) did not meet the 53-minute requirement for 90837. Automatically downcoded to 90834.
+                  </div>
+                )}
+
                 <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
                   <div className="flex items-center gap-3">
                     <Check className="w-5 h-5 text-emerald-500" />

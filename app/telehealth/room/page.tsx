@@ -202,6 +202,7 @@ export default function TelehealthRoomPage() {
     }
     
     localStorage.setItem('latestTelehealthTranscript', combinedTranscript);
+    localStorage.setItem('latestTelehealthDuration', sessionTime.toString());
     router.push('/ehr/notes');
   };
 
