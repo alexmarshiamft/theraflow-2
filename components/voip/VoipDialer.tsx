@@ -60,11 +60,14 @@ export function VoipDialer({ onClose }: VoipDialerProps) {
     let interval: NodeJS.Timeout;
     if (activeCall?.status === 'connected') {
       interval = setInterval(() => {
-        updateActiveCall({ duration: activeCall.duration + 1 });
+        const currentCall = useStore.getState().activeCall;
+        if (currentCall) {
+          updateActiveCall({ duration: currentCall.duration + 1 });
+        }
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [activeCall?.status, activeCall?.duration, updateActiveCall]);
+  }, [activeCall?.status, updateActiveCall]);
 
   const handleDial = async () => {
     if (!number) return;

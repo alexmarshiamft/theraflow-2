@@ -68,12 +68,9 @@ export default function LicensureProgressPage() {
       try {
         let allHours: TrackedHour[] = [];
         let savedToVaultCount = 0;
-        
-        for (let i = 0; i < files.length; i++) {
-          const file = files[i];
-          setUploadProgress(10 + Math.floor((i / files.length) * 70));
-          setUploadStatusMessage(`Analyzing document ${i + 1} of ${files.length}...`);
+        let completedCount = 0;
 
+        const processFile = async (file: File, i: number) => {
           // Convert file to Base64
           const fileBase64 = await new Promise<string>((resolve, reject) => {
             const reader = new FileReader();
@@ -88,6 +85,7 @@ export default function LicensureProgressPage() {
           });
 
           let parsedHoursFromDoc = false;
+          let fileHours: TrackedHour[] = [];
 
           try {
             const response = await fetch('/api/licensure/parse', {
@@ -104,18 +102,17 @@ export default function LicensureProgressPage() {
             if (response.ok) {
               const data = await response.json();
               if (data.hours && data.hours.length > 0) {
-                const uniqueHours = data.hours.map((hour: any) => ({
+                fileHours = data.hours.map((hour: any) => ({
                   ...hour,
                   id: `EXTRACT-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
                 }));
-                allHours = [...allHours, ...uniqueHours];
                 parsedHoursFromDoc = true;
               }
             } else {
-              console.warn(`Document ${i + 1} could not be parsed for hours.`);
+              console.warn(`Document ${file.name} could not be parsed for hours.`);
             }
           } catch (docError) {
-            console.error(`Error processing document ${i + 1}:`, docError);
+            console.error(`Error processing document ${file.name}:`, docError);
           }
 
           // Save ALL documents to vault
@@ -128,8 +125,19 @@ export default function LicensureProgressPage() {
             category: parsedHoursFromDoc ? 'licensure' : 'general'
             // Omit data to prevent QuotaExceededError in localStorage
           });
-          
-          if (!parsedHoursFromDoc) {
+
+          completedCount++;
+          setUploadProgress(10 + Math.floor((completedCount / files.length) * 70));
+          setUploadStatusMessage(`Analyzed ${completedCount} of ${files.length} documents...`);
+
+          return { fileHours, parsedHoursFromDoc };
+        };
+
+        const results = await Promise.all(files.map((file, i) => processFile(file, i)));
+        
+        for (const res of results) {
+          allHours = [...allHours, ...res.fileHours];
+          if (!res.parsedHoursFromDoc) {
             savedToVaultCount++;
           }
         }

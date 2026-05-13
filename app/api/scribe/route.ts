@@ -82,7 +82,7 @@ Format the output cleanly in Markdown. Do NOT include extreme PHI (like social s
   } catch (error: any) {
     console.error('Scribe API Error:', error);
     return NextResponse.json(
-      { error: error?.message || 'Failed to process audio and generate note' },
+      { error: error?.message || 'Failed to process audio and generate note: ' + String(error) },
       { status: 500 }
     );
   }

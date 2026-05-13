@@ -37,12 +37,16 @@ Format your response cleanly in markdown. Do not include a greeting or conclusio
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt })
       });
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `Server responded with status ${res.status}`);
+      }
       
       const data = await res.json();
       setInsight(data.text);
-    } catch (error) {
-      console.error(error);
-      setInsight("Failed to generate operational deep dive. Please ensure your Gemini API key is configured.");
+    } catch (error: any) {
+      console.error("Deep Dive Generation Error:", error);
+      setInsight(`**Analysis Failed**\n\nWe encountered an error while generating the operational deep dive: *${error.message}*\n\nPlease check your network connection, verify your Gemini API key is configured correctly in \`.env.local\`, and try again.`);
     } finally {
       setLoading(false);
     }

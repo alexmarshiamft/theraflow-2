@@ -20,10 +20,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ meeting, attendee });
   } catch (error: any) {
     console.error('Error creating Chime meeting/attendee:', error);
-    try {
-      require('fs').appendFileSync('chime-error.log', new Date().toISOString() + ': ' + (error.stack || error.message || error) + '\n');
-    } catch (e) {}
     
+
     return NextResponse.json(
       { error: error.message || 'Failed to provision telehealth session' },
       { status: 500 }
