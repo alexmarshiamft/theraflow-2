@@ -20,6 +20,7 @@ import {
   BarChart3,
   Zap,
   ShieldCheck,
+  BrainCircuit,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/lib/store';
@@ -199,6 +200,16 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             >
               <FileText className="h-4 w-4" />
               AI Clinical Notes
+            </Link>
+            <Link
+              href="/ehr/treatment-plans"
+              className={cn(
+                'sidebar-link',
+                pathname === '/ehr/treatment-plans' && 'active'
+              )}
+            >
+              <BrainCircuit className="h-4 w-4 text-indigo-400" />
+              AI Treatment Plans
             </Link>
             <Link
               href="/ehr/roadmap"
