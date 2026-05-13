@@ -18,6 +18,7 @@ import {
   Clock,
   Mail,
   BarChart3,
+  Zap,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/lib/store';
@@ -236,16 +237,28 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                 Banking
               </Link>
               {userRole !== 'associate' && (
-                <Link
-                  href="/payroll"
-                  className={cn(
-                    'sidebar-link',
-                    pathname.startsWith('/payroll') && 'active'
-                  )}
-                >
-                  <CreditCard className="h-4 w-4" />
-                  Payroll
-                </Link>
+                <>
+                  <Link
+                    href="/payroll"
+                    className={cn(
+                      'sidebar-link',
+                      pathname === '/payroll' && 'active'
+                    )}
+                  >
+                    <CreditCard className="h-4 w-4" />
+                    Payroll
+                  </Link>
+                  <Link
+                    href="/payroll/liquid"
+                    className={cn(
+                      'sidebar-link',
+                      pathname === '/payroll/liquid' && 'active'
+                    )}
+                  >
+                    <Zap className="h-4 w-4 text-brand-400" />
+                    Liquid Treasury
+                  </Link>
+                </>
               )}
               <Link
                 href="/analytics"
