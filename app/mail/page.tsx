@@ -17,7 +17,8 @@ import {
   Archive, 
   X, 
   PenSquare,
-  UserCircle
+  UserCircle,
+  Sparkles
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
@@ -33,6 +34,7 @@ export default function MailPage() {
   const [activeFolder, setActiveFolder] = useState<FolderType>('inbox');
   const [selectedEmailId, setSelectedEmailId] = useState<string | null>(null);
   const [isComposing, setIsComposing] = useState(false);
+  const [isGeneratingResponse, setIsGeneratingResponse] = useState(false);
   
   const [composeForm, setComposeForm] = useState({ to: '', subject: '', body: '' });
 
@@ -68,6 +70,30 @@ export default function MailPage() {
       deleteEmail(selectedEmailId);
       setSelectedEmailId(null);
     }
+  };
+
+  const handleGenerateAIDraft = async () => {
+    if (!selectedEmail) return;
+    
+    setIsComposing(true);
+    setComposeForm({ 
+      to: activeFolder === 'sent' ? selectedEmail.recipient : selectedEmail.sender, 
+      subject: `Re: ${selectedEmail.subject}`, 
+      body: '' 
+    });
+    setIsGeneratingResponse(true);
+
+    const draftText = `Dear ${selectedEmail.sender.split('@')[0]},\n\nThank you for reaching out. I have reviewed your message regarding "${selectedEmail.subject}". \n\nOur team is currently looking into this matter and will provide a comprehensive update shortly. Rest assured, all your data is being handled securely in compliance with HIPAA guidelines.\n\nBest regards,\nTheraflow Team`;
+
+    // Simulate typing effect
+    let currentText = '';
+    for (let i = 0; i < draftText.length; i++) {
+      currentText += draftText[i];
+      setComposeForm(prev => ({ ...prev, body: currentText }));
+      await new Promise(r => setTimeout(r, 10)); // Fast typing effect
+    }
+    
+    setIsGeneratingResponse(false);
   };
 
   const folders: { id: FolderType; label: string; icon: any; count?: number }[] = [
@@ -234,13 +260,20 @@ export default function MailPage() {
                   />
                 </div>
               </div>
-              <div className="flex-1 p-4">
+              <div className="flex-1 p-4 relative">
                 <textarea 
                   value={composeForm.body}
                   onChange={e => setComposeForm({...composeForm, body: e.target.value})}
                   className="w-full h-full bg-transparent border-none focus:outline-none resize-none text-sm leading-relaxed"
                   placeholder="Write your message here..."
+                  disabled={isGeneratingResponse}
                 />
+                {isGeneratingResponse && (
+                  <div className="absolute bottom-4 right-4 flex items-center gap-2 text-primary/70 text-sm animate-pulse">
+                    <Sparkles className="h-4 w-4" />
+                    AI Generating...
+                  </div>
+                )}
               </div>
               <div className="p-4 border-t border-border/50 flex items-center justify-between bg-muted/5">
                 <div className="flex gap-2">
@@ -295,7 +328,7 @@ export default function MailPage() {
                   ))}
                 </div>
               </div>
-              <div className="p-4 border-t border-border/50 mt-auto bg-muted/5">
+              <div className="p-4 border-t border-border/50 mt-auto bg-muted/5 flex items-center justify-between">
                 <div className="flex gap-2">
                   <Button variant="outline" className="gap-2" onClick={() => {
                     setIsComposing(true);
@@ -313,6 +346,13 @@ export default function MailPage() {
                     Forward
                   </Button>
                 </div>
+                <Button 
+                  onClick={handleGenerateAIDraft}
+                  className="gap-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white border-0 shadow-lg shadow-purple-500/20"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Draft with AI
+                </Button>
               </div>
             </div>
           ) : (

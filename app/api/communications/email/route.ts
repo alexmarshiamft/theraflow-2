@@ -28,10 +28,28 @@ export async function POST(req: Request) {
     // ZERO-RETENTION COMPLIANCE LOGGING
     console.log(`[COMPLIANCE] Dispatching real Email to ${to.replace(/(?<=.).(?=.*@)/g, '*')}`);
 
-    // Mocking email send since we can't install the resend package
-    console.log("Mocking email send via Resend API", subject);
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${resendApiKey}`
+      },
+      body: JSON.stringify({
+        from: 'Theraflow <notifications@theraflow.com>',
+        to: [to],
+        subject: subject,
+        html: html,
+      })
+    });
 
-    return NextResponse.json({ success: true, messageId: "mock_id_" + Date.now() });
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.error('Resend API Error:', data);
+      return NextResponse.json({ error: data.message || 'Failed to send via Resend' }, { status: res.status });
+    }
+
+    return NextResponse.json({ success: true, messageId: data.id });
   } catch (error: any) {
     console.error('Resend Error:', error);
     return NextResponse.json(

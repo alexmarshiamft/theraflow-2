@@ -1018,13 +1018,28 @@ export const useStore = create<AppState>()(
         try { await updateDoc(doc(db, "messages", id), { isRead: true }); } catch (e) { console.error(e); }
       },
 
-      sendEmail: (email) => {
+      sendEmail: async (email) => {
         const newEmail: EmailMessage = {
           ...email,
           id: `EML-${Date.now()}`,
           timestamp: new Date().toISOString()
         };
         set((state) => ({ emails: [newEmail, ...state.emails] }));
+
+        // Fire off actual email using Resend API
+        try {
+          await fetch('/api/communications/email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              to: email.recipient,
+              subject: email.subject,
+              html: email.body,
+            }),
+          });
+        } catch (err) {
+          console.error("Failed to send real email via Resend:", err);
+        }
       },
       markEmailRead: (id) => set((state) => ({
         emails: state.emails.map(e => e.id === id ? { ...e, isRead: true } : e)
