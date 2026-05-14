@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { rateLimit } from '@/lib/rateLimit';
+import nodemailer from 'nodemailer';
 
 export async function POST(req: Request) {
   try {
@@ -16,11 +17,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing "to", "subject", or "html" fields.' }, { status: 400 });
     }
 
-    const resendApiKey = process.env.RESEND_API_KEY;
+    const emailUser = process.env.EMAIL_USER;
+    const emailAppPassword = process.env.EMAIL_APP_PASSWORD;
 
-    if (!resendApiKey) {
+    if (!emailUser || !emailAppPassword) {
       return NextResponse.json(
-        { error: 'RESEND_API_KEY is not set in the environment. Please configure it to send real emails.' },
+        { error: 'EMAIL_USER or EMAIL_APP_PASSWORD is not set in the environment.' },
         { status: 500 }
       );
     }
@@ -28,30 +30,24 @@ export async function POST(req: Request) {
     // ZERO-RETENTION COMPLIANCE LOGGING
     console.log(`[COMPLIANCE] Dispatching real Email to ${to.replace(/(?<=.).(?=.*@)/g, '*')}`);
 
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${resendApiKey}`
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: emailUser,
+        pass: emailAppPassword,
       },
-      body: JSON.stringify({
-        from: 'Theraflow <notifications@theraflow.com>',
-        to: [to],
-        subject: subject,
-        html: html,
-      })
     });
 
-    const data = await res.json();
+    const info = await transporter.sendMail({
+      from: `"Theraflow" <${emailUser}>`,
+      to,
+      subject,
+      html,
+    });
 
-    if (!res.ok) {
-      console.error('Resend API Error:', data);
-      return NextResponse.json({ error: data.message || 'Failed to send via Resend' }, { status: res.status });
-    }
-
-    return NextResponse.json({ success: true, messageId: data.id });
+    return NextResponse.json({ success: true, messageId: info.messageId });
   } catch (error: any) {
-    console.error('Resend Error:', error);
+    console.error('Nodemailer Error:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to send Email.' },
       { status: 500 }
