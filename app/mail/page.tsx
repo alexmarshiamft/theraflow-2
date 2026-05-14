@@ -18,7 +18,9 @@ import {
   X, 
   PenSquare,
   UserCircle,
-  Sparkles
+  Sparkles,
+  ShieldAlert,
+  Loader2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
@@ -35,6 +37,8 @@ export default function MailPage() {
   const [selectedEmailId, setSelectedEmailId] = useState<string | null>(null);
   const [isComposing, setIsComposing] = useState(false);
   const [isGeneratingResponse, setIsGeneratingResponse] = useState(false);
+  const [isScanningPhi, setIsScanningPhi] = useState(false);
+  const [phiWarning, setPhiWarning] = useState<string | null>(null);
   
   const [composeForm, setComposeForm] = useState({ to: '', subject: '', body: '' });
 
@@ -48,9 +52,35 @@ export default function MailPage() {
     }
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!composeForm.to || !composeForm.subject) return;
+
+    // If we haven't warned about PHI yet, scan it
+    if (!phiWarning) {
+      setIsScanningPhi(true);
+      try {
+        const res = await fetch('/api/communications/scan-phi', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: composeForm.body })
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          if (data.hasPhi) {
+            setComposeForm(prev => ({ ...prev, body: data.scrubbedText }));
+            setPhiWarning(`HIPAA Compliance Alert: PHI detected (${data.detectedEntities.join(', ')}). The text has been auto-scrubbed to protect patient privacy. Please review and click Send again to confirm.`);
+            setIsScanningPhi(false);
+            return; // Stop the send process so user can review
+          }
+        }
+      } catch (error) {
+        console.error('PHI Scan Failed:', error);
+      }
+      setIsScanningPhi(false);
+    }
     
+    // Proceed with sending
     sendEmail({
       sender: 'associate@theraflow.com',
       recipient: composeForm.to,
@@ -62,6 +92,7 @@ export default function MailPage() {
     
     setIsComposing(false);
     setComposeForm({ to: '', subject: '', body: '' });
+    setPhiWarning(null);
     setActiveFolder('sent');
   };
 
@@ -82,6 +113,7 @@ export default function MailPage() {
       body: '' 
     });
     setIsGeneratingResponse(true);
+    setPhiWarning(null);
 
     const draftText = `Dear ${selectedEmail.sender.split('@')[0]},\n\nThank you for reaching out. I have reviewed your message regarding "${selectedEmail.subject}". \n\nOur team is currently looking into this matter and will provide a comprehensive update shortly. Rest assured, all your data is being handled securely in compliance with HIPAA guidelines.\n\nBest regards,\nTheraflow Team`;
 
@@ -238,13 +270,24 @@ export default function MailPage() {
                   </Button>
                 </div>
               </div>
+              
+              {phiWarning && (
+                <div className="mx-4 mt-4 p-3 rounded-lg bg-orange-500/10 border border-orange-500/20 flex gap-3 text-sm text-orange-600 dark:text-orange-400 animate-in fade-in slide-in-from-top-2">
+                  <ShieldAlert className="h-5 w-5 shrink-0" />
+                  <p>{phiWarning}</p>
+                </div>
+              )}
+
               <div className="p-4 border-b border-border/50 space-y-4">
                 <div className="flex items-center">
                   <span className="w-16 text-sm text-muted-foreground">To:</span>
                   <input 
                     type="email" 
                     value={composeForm.to}
-                    onChange={e => setComposeForm({...composeForm, to: e.target.value})}
+                    onChange={e => {
+                      setComposeForm({...composeForm, to: e.target.value});
+                      setPhiWarning(null); // Clear warning on edit
+                    }}
                     className="flex-1 bg-transparent border-none focus:outline-none text-sm" 
                     placeholder="recipient@example.com"
                   />
@@ -254,7 +297,10 @@ export default function MailPage() {
                   <input 
                     type="text" 
                     value={composeForm.subject}
-                    onChange={e => setComposeForm({...composeForm, subject: e.target.value})}
+                    onChange={e => {
+                      setComposeForm({...composeForm, subject: e.target.value});
+                      setPhiWarning(null); // Clear warning on edit
+                    }}
                     className="flex-1 bg-transparent border-none focus:outline-none text-sm font-medium" 
                     placeholder="Enter subject"
                   />
@@ -263,10 +309,13 @@ export default function MailPage() {
               <div className="flex-1 p-4 relative">
                 <textarea 
                   value={composeForm.body}
-                  onChange={e => setComposeForm({...composeForm, body: e.target.value})}
+                  onChange={e => {
+                    setComposeForm({...composeForm, body: e.target.value});
+                    setPhiWarning(null); // Clear warning on edit
+                  }}
                   className="w-full h-full bg-transparent border-none focus:outline-none resize-none text-sm leading-relaxed"
                   placeholder="Write your message here..."
-                  disabled={isGeneratingResponse}
+                  disabled={isGeneratingResponse || isScanningPhi}
                 />
                 {isGeneratingResponse && (
                   <div className="absolute bottom-4 right-4 flex items-center gap-2 text-primary/70 text-sm animate-pulse">
@@ -279,9 +328,32 @@ export default function MailPage() {
                 <div className="flex gap-2">
                   <Button variant="ghost" size="icon"><Paperclip className="h-4 w-4" /></Button>
                 </div>
-                <Button onClick={handleSend} className="gap-2 shadow-primary/20 shadow-lg" disabled={!composeForm.to || !composeForm.subject}>
-                  <Send className="h-4 w-4" />
-                  Send
+                <Button 
+                  onClick={handleSend} 
+                  className={cn(
+                    "gap-2 shadow-lg transition-all",
+                    phiWarning 
+                      ? "bg-orange-500 hover:bg-orange-600 text-white shadow-orange-500/20" 
+                      : "shadow-primary/20"
+                  )} 
+                  disabled={!composeForm.to || !composeForm.subject || isScanningPhi}
+                >
+                  {isScanningPhi ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Scanning...
+                    </>
+                  ) : phiWarning ? (
+                    <>
+                      <Send className="h-4 w-4" />
+                      Confirm Send
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4" />
+                      Send
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
@@ -337,6 +409,7 @@ export default function MailPage() {
                       subject: `Re: ${selectedEmail.subject}`, 
                       body: `\n\n--- Original Message ---\n${selectedEmail.body}` 
                     });
+                    setPhiWarning(null);
                   }}>
                     <CornerUpLeft className="h-4 w-4" />
                     Reply
