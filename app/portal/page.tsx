@@ -16,7 +16,12 @@ import {
   MessageSquare,
   Video,
   Clock,
-  Bell
+  Bell,
+  HeartPulse,
+  Send,
+  BrainCircuit,
+  ActivitySquare,
+  Sparkles
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
@@ -32,6 +37,68 @@ export default function ClientPortal() {
   const [signing, setSigning] = useState(false);
 
   const [activeTab, setActiveTab] = useState('appointments');
+  
+  // AI Chat State
+  const [messages, setMessages] = useState<{role: 'user'|'ai', text: string}[]>([
+    { role: 'ai', text: 'Hi there. I am your 24/7 AI Support Companion. How are you feeling today?' }
+  ]);
+  const [chatInput, setChatInput] = useState('');
+  const [chatLoading, setChatLoading] = useState(false);
+
+  // Wellness Check-in State
+  const [mood, setMood] = useState(50);
+  const [stress, setStress] = useState(50);
+  const [wellnessInsight, setWellnessInsight] = useState('');
+  const [generatingInsight, setGeneratingInsight] = useState(false);
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatInput.trim() || chatLoading) return;
+    
+    const userMsg = chatInput;
+    setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
+    setChatInput('');
+    setChatLoading(true);
+
+    try {
+      const res = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          prompt: `You are the Theraflow AI Clinical Companion, a supportive 24/7 mental health bot for a client portal. Respond empathetically and concisely to the client. Client says: "${userMsg}"` 
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMessages(prev => [...prev, { role: 'ai', text: data.text }]);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
+  const handleGenerateInsight = async () => {
+    setGeneratingInsight(true);
+    try {
+      const res = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          prompt: `A therapy client just logged their daily wellness check-in. Mood level: ${mood}/100. Stress level: ${stress}/100. Provide a 2-3 sentence personalized, supportive clinical insight or short coping tip based on these numbers.` 
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setWellnessInsight(data.text);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setGeneratingInsight(false);
+    }
+  };
 
   const handleVerify = (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,6 +181,15 @@ export default function ClientPortal() {
                 Documents
               </button>
               <button
+                onClick={() => setActiveTab('wellness')}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
+                  activeTab === 'wellness' ? 'bg-brand-500/10 text-brand-500 border border-brand-500/20 shadow-[0_0_15px_rgba(var(--brand-500-rgb),0.1)]' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                }`}
+              >
+                <HeartPulse className="w-5 h-5" />
+                Wellness
+              </button>
+              <button
                 onClick={() => setActiveTab('messages')}
                 className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
                   activeTab === 'messages' ? 'bg-brand-500/10 text-brand-500 border border-brand-500/20 shadow-[0_0_15px_rgba(var(--brand-500-rgb),0.1)]' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
@@ -121,9 +197,19 @@ export default function ClientPortal() {
               >
                 <div className="flex items-center gap-3">
                   <MessageSquare className="w-5 h-5" />
-                  Messages
+                  AI Companion
                 </div>
               </button>
+              
+              <div className="pt-8">
+                <Button 
+                  onClick={() => window.location.href = '/portal/instant-care'}
+                  className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 transition-all font-bold group"
+                >
+                  <ActivitySquare className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                  Instant Care
+                </Button>
+              </div>
             </nav>
           </div>
 
@@ -263,17 +349,160 @@ export default function ClientPortal() {
             )}
             
             {activeTab === 'messages' && (
-              <div className="space-y-6 h-full flex flex-col">
-                <h1 className="text-2xl font-bold text-foreground">Messages</h1>
-                <div className="flex-1 bg-card/60 backdrop-blur-xl rounded-3xl border border-white/5 shadow-xl flex items-center justify-center min-h-[400px]">
-                  <div className="text-center">
-                    <div className="w-20 h-20 bg-muted/30 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <MessageSquare className="w-8 h-8 text-muted-foreground" />
-                    </div>
-                    <h3 className="font-semibold text-foreground text-lg">No messages yet</h3>
-                    <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">When your provider sends you a secure message, it will appear here.</p>
+              <div className="h-[600px] flex flex-col animate-in fade-in slide-in-from-bottom-8 duration-700">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 bg-gradient-to-br from-brand-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-brand-500/20">
+                    <BrainCircuit className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-2xl font-bold text-foreground">AI Support Companion</h1>
+                    <p className="text-sm text-brand-500 font-medium flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+                      Online & Secure
+                    </p>
                   </div>
                 </div>
+
+                <div className="flex-1 bg-card/60 backdrop-blur-xl rounded-3xl border border-white/5 shadow-xl flex flex-col overflow-hidden">
+                  {/* Chat Messages */}
+                  <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                    {messages.map((msg, idx) => (
+                      <div key={idx} className={`flex items-end gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                        {msg.role === 'ai' && (
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-indigo-600 flex items-center justify-center shrink-0">
+                            <BrainCircuit className="w-4 h-4 text-white" />
+                          </div>
+                        )}
+                        <div className={`max-w-[80%] rounded-2xl px-5 py-3.5 shadow-sm ${
+                          msg.role === 'user' 
+                            ? 'bg-brand-600 text-white rounded-br-sm' 
+                            : 'bg-muted/50 border border-white/5 text-foreground rounded-bl-sm'
+                        }`}>
+                          <p className="text-sm leading-relaxed">{msg.text}</p>
+                        </div>
+                      </div>
+                    ))}
+                    {chatLoading && (
+                      <div className="flex items-end gap-3 justify-start">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-indigo-600 flex items-center justify-center shrink-0">
+                          <BrainCircuit className="w-4 h-4 text-white" />
+                        </div>
+                        <div className="bg-muted/50 border border-white/5 rounded-2xl rounded-bl-sm px-5 py-4">
+                          <div className="flex gap-1">
+                            <div className="w-1.5 h-1.5 bg-brand-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                            <div className="w-1.5 h-1.5 bg-brand-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                            <div className="w-1.5 h-1.5 bg-brand-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Chat Input */}
+                  <div className="p-4 bg-background/50 backdrop-blur-xl border-t border-white/5">
+                    <form onSubmit={handleSendMessage} className="relative flex items-center">
+                      <input
+                        type="text"
+                        value={chatInput}
+                        onChange={(e) => setChatInput(e.target.value)}
+                        placeholder="Type a message..."
+                        className="w-full bg-muted/30 border border-white/10 rounded-2xl pl-5 pr-14 py-4 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-all placeholder:text-muted-foreground"
+                      />
+                      <button 
+                        type="submit"
+                        disabled={!chatInput.trim() || chatLoading}
+                        className="absolute right-2 w-10 h-10 rounded-xl bg-brand-600 hover:bg-brand-500 disabled:bg-muted disabled:text-muted-foreground text-white flex items-center justify-center transition-colors shadow-md"
+                      >
+                        <Send className="w-4 h-4" />
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'wellness' && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg shadow-rose-500/20">
+                    <HeartPulse className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-2xl font-bold text-foreground">Daily Wellness Check-in</h1>
+                    <p className="text-sm text-muted-foreground">Track your mood and stress levels.</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Mood Slider */}
+                  <div className="bg-card/60 backdrop-blur-xl border border-white/5 rounded-3xl p-8 shadow-xl">
+                    <h3 className="font-bold text-foreground mb-6 flex items-center justify-between">
+                      Current Mood
+                      <span className="text-2xl">{mood > 70 ? '😄' : mood > 40 ? '😐' : '😔'}</span>
+                    </h3>
+                    <input 
+                      type="range" 
+                      min="0" max="100" 
+                      value={mood} 
+                      onChange={(e) => setMood(Number(e.target.value))}
+                      className="w-full accent-rose-500 h-2 bg-muted rounded-full appearance-none cursor-pointer"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground font-medium mt-3">
+                      <span>Struggling</span>
+                      <span>Thriving</span>
+                    </div>
+                  </div>
+
+                  {/* Stress Slider */}
+                  <div className="bg-card/60 backdrop-blur-xl border border-white/5 rounded-3xl p-8 shadow-xl">
+                    <h3 className="font-bold text-foreground mb-6 flex items-center justify-between">
+                      Stress Level
+                      <span className="text-2xl">{stress > 70 ? '😫' : stress > 40 ? '🤔' : '😌'}</span>
+                    </h3>
+                    <input 
+                      type="range" 
+                      min="0" max="100" 
+                      value={stress} 
+                      onChange={(e) => setStress(Number(e.target.value))}
+                      className="w-full accent-indigo-500 h-2 bg-muted rounded-full appearance-none cursor-pointer"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground font-medium mt-3">
+                      <span>Very Relaxed</span>
+                      <span>Overwhelmed</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-end pt-4">
+                  <Button 
+                    onClick={handleGenerateInsight} 
+                    disabled={generatingInsight}
+                    className="bg-brand-600 hover:bg-brand-500 text-white px-8 py-6 rounded-2xl text-lg shadow-[0_0_20px_rgba(14,165,233,0.3)] transition-all"
+                  >
+                    {generatingInsight ? (
+                      <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Analyzing Patterns...</>
+                    ) : (
+                      <><BrainCircuit className="w-5 h-5 mr-2" /> Log Check-in & Get AI Insight</>
+                    )}
+                  </Button>
+                </div>
+
+                {wellnessInsight && (
+                  <div className="mt-8 bg-gradient-to-br from-brand-900/40 to-indigo-900/40 border border-brand-500/30 rounded-3xl p-8 backdrop-blur-xl shadow-2xl relative overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-brand-500/10 blur-[80px] rounded-full pointer-events-none"></div>
+                    <div className="flex gap-4 relative z-10">
+                      <div className="w-12 h-12 bg-brand-500/20 rounded-full flex items-center justify-center shrink-0 border border-brand-500/30">
+                        <Sparkles className="w-6 h-6 text-brand-400" />
+                      </div>
+                      <div>
+                        <h4 className="text-brand-400 font-bold mb-2 uppercase tracking-widest text-sm">Theraflow Insight</h4>
+                        <p className="text-foreground text-lg leading-relaxed font-medium">
+                          {wellnessInsight}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
